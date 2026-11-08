@@ -27,11 +27,11 @@ npm run test:ui
 
 构建产物为 `apps/web/dist`。页面／屏宽场景覆盖基础布局，但不等于真实登录、手机麦克风或云端保存通过。
 
-## 3. Netlify 配置（仅由有权限者在发布授权后处理）
+## 3. 正式域名与同源代理（2026-11-08 更新）
 
-目标站点为 `voiceatalass.netlify.app`。Base directory 使用工作区根；构建命令 `npm run build`，Publish directory 为 `apps/web/dist`，Node 24.21。实际生产分支必须在控制台核对；旧 README 曾写过 v2，不能据此假定当前就是它。
+当前正式站点为 `https://wanwu.proterm.ink`，H5 静态文件与后端在 ECS，由 Nginx 在 `/api/v1/` 做同源代理。构建仍在本机／CI，输出 `apps/web/dist`，不在共享 ECS 构建。前后端独立发布；本轮后端优化不改前端源码／样式，也不自动发布网站。
 
-根 `netlify.toml` 已带 `/api/v1/*` → `https://wanwu-api.proterm.ink/api/v1/:splat` 的 200 代理，且排在 SPA 回退前。不另写一条优先级更高的全站回退，不加永久密钥，不将 Cookie 登录改成 localStorage token。
+后端仓库提供两入口共同引用的 `deploy/runtime/wanwu-api-routes.nginx.conf.example`，由获授权的后端维护者审核后配置；不要让 SPA 回退拦截 API。历史 Netlify 配置不是当前正式部署的前提；如将来恢复使用，须单独确认 Origin、Cookie、跨域及代理时限，不能照抄旧站点就发布。
 
 前端不需要 `VITE_OSS_ACCESS_KEY`、数据库 URL 或后端会话密钥，也不要把 API 客户端改成跨源 fetch。预览域名不在当前精确 Origin／CORS 范围内时，不能用预览站登录失败证明生产站不可用，或私自放开通配符。
 
@@ -39,6 +39,10 @@ npm run test:ui
 
 ## 4. 与后端维护者联调
 
-前端路由正确后，把真实 Origin 和发布时间给后端维护者；由其创建管理员、核对精确代理 IP，并按授权受控开启 session。前端作者不需要 root 或任何生产凭据。
+前端路由正确后，把真实 Origin 和发布时间给后端维护者；由其只读核实管理员与认证状态、核对精确代理 IP，并按具体授权处理缺项。不能默认新建账号或修改已有密码。前端作者不需要 root 或任何生产凭据。
 
 双方按 [ACCEPTANCE.md](ACCEPTANCE.md) 验收。联调报告要写清：前端提交 SHA、发布分支、部署 URL、JSON 代理检查、Cookie／CSRF、上传、草稿冲突、成品和分享／撤销的实际结果。
+
+## 5. 本轮后端职责拆分
+
+人和 Claude Code 都再读 [前后端边界与接入增量](BACKEND_BOUNDARY.md)。既有接口保持兼容；任务持久化、预算和校验是后端内部改动。新增作品事实／使用量接口需前端以后明确接入，不能声称当前线上页面已使用。本轮没有同步修改五个共享包。

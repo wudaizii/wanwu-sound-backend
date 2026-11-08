@@ -8,6 +8,7 @@ import type { Actor, CloudContext, SourceRow } from './context.ts';
 import { lockActor, digest } from './context.ts';
 import { transaction } from '../db/transaction.ts';
 import { ApiError } from '../errors.ts';
+import { quotaLock, admit, PLAYBACK_RESERVATION } from './quotas.ts';
 import { enqueueMedia } from '../jobs/mediaQueue.ts';
 
 /** New grants need an active entry; an older work can retain only its own existing grant. */
@@ -101,6 +102,7 @@ export class Sources {
     const { pool, store } = this.context;
     const result = await transaction(pool, async (tx) => {
       await lockActor(tx, actor);
+      await quotaLock(tx, actor.id);
       await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [id]);
       const found = await tx.query<SourceRow>('SELECT * FROM sources WHERE id=$1 FOR UPDATE', [id]);
       let row = found.rows[0];
@@ -115,7 +117,12 @@ export class Sources {
           throw new ApiError(409, 'source-mismatch');
         if (row.status === 'disabled') throw new ApiError(403, 'forbidden');
         if (row.status !== 'uploading') return { row };
+        const live = (
+          await tx.query('SELECT 1 FROM uploads WHERE source_id=$1 AND expires_at>now()', [id])
+        ).rowCount;
+        if (!live) await admit(tx, actor.id, 'source', 0); // Reactivation is a new pending slot, not new storage.
       } else {
+        await admit(tx, actor.id, 'source', input.bytes + PLAYBACK_RESERVATION);
         row = (
           await tx.query<SourceRow>(
             'INSERT INTO sources(id,owner_id,metadata,checksum,bytes,selection) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
@@ -170,6 +177,7 @@ export class Sources {
       throw new ApiError(400, 'invalid-request');
     return transaction(this.context.pool, async (tx) => {
       await lockActor(tx, actor);
+      await quotaLock(tx, actor.id);
       const parent = await authorizedSource(tx, actor, parentId);
       if (
         !parent.catalogue ||
@@ -182,6 +190,7 @@ export class Sources {
       let row = (await tx.query<SourceRow>('SELECT * FROM sources WHERE id=$1 FOR UPDATE', [id]))
         .rows[0];
       if (!row) {
+        await admit(tx, actor.id, 'source', PLAYBACK_RESERVATION);
         const metadata = {
           ...parent.metadata,
           id,
@@ -189,8 +198,8 @@ export class Sources {
         };
         row = (
           await tx.query<SourceRow>(
-            `INSERT INTO sources(id,catalogue,metadata,checksum,bytes,status,original_key,original_version,parent_id,selection)
-     VALUES($1,true,$2,$3,$4,'queued',$5,$6,$7,$8) RETURNING *`,
+            `INSERT INTO sources(id,catalogue,metadata,checksum,bytes,status,original_key,original_version,parent_id,selection,requested_by)
+     VALUES($1,true,$2,$3,$4,'queued',$5,$6,$7,$8,$9) RETURNING *`,
             [
               id,
               JSON.stringify(metadata),
@@ -200,6 +209,7 @@ export class Sources {
               parent.original_version,
               parentId,
               JSON.stringify(selection),
+              actor.id,
             ],
           )
         ).rows[0]!;

@@ -24,6 +24,8 @@ import { CONFIRMATION_VERSION } from '@wanwu-v2/contracts/cloud';
 import { DEFAULT_COMPOSE_SETTINGS } from '@wanwu-v2/contracts/work';
 import { analyseSamples } from '@wanwu-v2/sound-rules/analysis';
 import { pcm16Wave } from '@wanwu-v2/audio-engine/pcm';
+import { pinBackupObjects, withBackupLock } from '../../src/maintenance/backupProtection.ts';
+import { verifyRestoredMedia } from '../../src/maintenance/restoredMedia.ts';
 
 test(
   'garbage collection and real encrypted PostgreSQL restore are isolated and reference-safe',
@@ -179,6 +181,36 @@ test(
           await database.pool.query(
             "UPDATE stored_objects SET collect_after=now()-interval '1 second'",
           );
+          const backupId = randomUUID();
+          await owner.pool.query(
+            "INSERT INTO maintenance_runs(id,kind,status) VALUES($1,'backup','running')",
+            [backupId],
+          );
+          await withBackupLock(owner.pool, async (lock) => {
+            await assert.rejects(collectGarbage(context), /collection-already-running/);
+            assert.equal(await pinBackupObjects(lock, backupId, new Date()), 2);
+          });
+          assert.equal(
+            (await collectGarbage(context)).deleted,
+            0,
+            'retained backups protect unreferenced media',
+          );
+          await store.head(original);
+          await assert.rejects(
+            database.pool.query('DELETE FROM backup_object_pins'),
+            (error: unknown) => (error as { code: string }).code === '42501',
+          );
+          await owner.pool.query(
+            "UPDATE backup_object_pins SET protected_until=now()-interval '1 second'",
+          );
+          assert.equal(
+            (await collectGarbage(context)).marked,
+            2,
+            'a fresh grace period starts after the last backup pin expires',
+          );
+          await database.pool.query(
+            "UPDATE stored_objects SET collect_after=now()-interval '1 second'",
+          );
           const removed = await collectGarbage(context);
           assert.equal(removed.deleted, 2);
           assert.equal(removed.failures, 0);
@@ -222,6 +254,34 @@ test(
       await scenario(
         'pg_dump → authenticated encryption → pg_restore into a fresh independent database retains data and audit records',
         async () => {
+          // Keep real synthetic audio in the dump so a database-only restore cannot falsely pass.
+          const restoredSource = `file:${randomUUID()}`,
+            restoredOriginal = store.key('originals'),
+            restoredPlayback = store.key('playback');
+          await database.pool.query(
+            `INSERT INTO sources(id,owner_id,metadata,checksum,bytes,status,original_key,playback_key,playback_checksum,analysis,duration_ms)
+            VALUES($1,$2,$3,$4,$5,'ready',$6,$7,$4,$8,100)`,
+            [
+              restoredSource,
+              account.id,
+              JSON.stringify({ ...source, id: restoredSource }),
+              checksum,
+              wave.length,
+              restoredOriginal,
+              restoredPlayback,
+              JSON.stringify(analysis),
+            ],
+          );
+          for (const [key, kind] of [
+            [restoredOriginal, 'original'],
+            [restoredPlayback, 'playback'],
+          ]) {
+            await store.put(key!, file, 'audio/wav');
+            await database.pool.query(
+              'INSERT INTO stored_objects(object_key,kind,source_id) VALUES($1,$2,$3)',
+              [key, kind, restoredSource],
+            );
+          }
           const key = generateKeyPairSync('rsa', {
             modulusLength: 3072,
             publicKeyEncoding: { type: 'spki', format: 'pem' },
@@ -275,6 +335,19 @@ test(
               .rows[0].checksum,
             checksum,
           );
+          assert.deepEqual(await verifyRestoredMedia(restoreClient, store), { verifiedObjects: 2 });
+          await store.remove(restoredPlayback);
+          await assert.rejects(
+            verifyRestoredMedia(restoreClient, store),
+            'a missing audio file must fail the drill',
+          );
+          const wrong = join(directory, 'wrong.wav');
+          await writeFile(wrong, Buffer.from('not the backed-up audio'));
+          await store.put(restoredPlayback, wrong, 'audio/wav');
+          await assert.rejects(verifyRestoredMedia(restoreClient, store), /checksum-mismatch/);
+          await store.remove(restoredPlayback);
+          await store.put(restoredPlayback, file, 'audio/wav');
+          assert.deepEqual(await verifyRestoredMedia(restoreClient, store), { verifiedObjects: 2 });
           assert.deepEqual(
             await readFile(plain).then((bytes) => bytes.subarray(0, 5)),
             Buffer.from('PGDMP'),

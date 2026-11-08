@@ -177,6 +177,46 @@ test('the real client refuses plain http, private literals and names that resolv
     );
 });
 
+test('mapped IPv6 stays private after URL normalization and cannot reach the transport', async () => {
+  for (const literal of [
+    '::ffff:127.0.0.1',
+    '::ffff:169.254.169.254',
+    '::ffff:10.0.0.1',
+    '0:0:0:0:0:ffff:ac10:1',
+    '::ffff:192.168.1.1',
+    '::ffff:100.100.100.200',
+  ]) {
+    const url = new URL(`https://[${literal}]/v1`);
+    assert.equal(publicAddress(url.hostname.slice(1, -1)), false, literal);
+    assert.equal(
+      parseOverride(
+        encode({
+          language: {
+            baseUrl: url.href,
+            model: 'test',
+            apiKey: key,
+          },
+        }),
+      ),
+      'invalid',
+    );
+    await assert.rejects(postJson(url.href, {}, {}, 100), GuestFailure);
+  }
+  for (const literal of [
+    '::',
+    '2001:db8::1',
+    'ff02::1',
+    '64:ff9b::a00:1',
+    '2002:7f00:1::',
+    'fe80::1%eth0',
+    '192.0.2.1',
+    '203.0.113.1',
+  ])
+    assert.equal(publicAddress(literal), false, literal);
+  assert.equal(publicAddress('::ffff:8.8.8.8'), true);
+  assert.equal(publicAddress('2606:4700:4700::1111'), true);
+});
+
 test('built-in settings come from their own variables; the music model may stay empty', () => {
   assert.deepEqual(readGuestConfig({}), {
     language: null,
@@ -735,6 +775,23 @@ const discoveryBrief: DiscoveryBrief = {
 };
 /** A set that passes (written with the same rules as the page's local set). */
 const goodSet = localSet(discoveryBrief.points, discoveryEvidence, discoveryActions);
+
+test('discovery route never returns early events described as the end, even after model repair', async () => {
+  const calls: Call[] = [];
+  const wrong = structuredClone(goodSet);
+  for (const point of wrong.points) {
+    point.where = '听乐曲快结束时的声音。';
+    point.discovery = '「声音1」在结尾再次出现。';
+  }
+  const { server } = await app(fakeModel(() => wrong, calls));
+  const response = await server.inject({
+    method: 'POST',
+    url: '/api/v1/discovery/work',
+    payload: discoveryBrief,
+  });
+  assert.equal(response.statusCode, 502);
+  assert.equal(calls.length, 2, 'one bounded repair, never unlimited retries or invented facts');
+});
 
 test('discovery: partial entries survive and one targeted repair can recover the failed entry', async () => {
   const calls: Call[] = [];

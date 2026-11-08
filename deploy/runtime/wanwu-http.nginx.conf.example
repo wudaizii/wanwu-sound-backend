@@ -1,0 +1,2 @@
+# Install once in http{} before Wanwu's server files. No URI/query/share tokens/cookies in access logs.
+log_format wanwu_minimal escape=json '{"time":"$time_iso8601","method":"$request_method","status":$status,"seconds":$request_time}';

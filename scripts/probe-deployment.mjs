@@ -8,7 +8,7 @@ function origin(value) {
   return value;
 }
 export async function probe(
-  frontend = 'https://voiceatalass.netlify.app',
+  frontend = 'https://wanwu.proterm.ink',
   backend = 'https://wanwu-api.proterm.ink',
   fetcher = fetch,
 ) {

@@ -38,6 +38,13 @@ export async function installMediaQueue(pool: Pool) {
       expireInSeconds: 240,
       deleteAfterSeconds: 7 * 86400,
     });
+    // AI is I/O-bound and must never occupy the singleton Chromium/FFmpeg media slot.
+    await boss.createQueue('ai-background', {
+      policy: 'standard',
+      retryLimit: 0,
+      expireInSeconds: 90,
+      deleteAfterSeconds: 3600,
+    });
   } finally {
     await boss.stop();
   }

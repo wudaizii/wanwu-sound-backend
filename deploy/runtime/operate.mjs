@@ -3,6 +3,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createHash} from 'node:crypto';
 import {releaseManifest,environmentPins,imageKinds} from './image-pins.ts';
+import { validateModelEnvironment } from './model-environment.ts';
 
 const execute=promisify(execFile),root='/srv/wudaizii/wanwu-sound',command=process.argv[2]??'status';
 const allowed=['preflight','status','start','rollback','stop','backup','cleanup'];
@@ -33,10 +34,11 @@ async function oldSite(){
  return {host:url.host,status:response.status,bodySha256:createHash('sha256').update(Buffer.from(body)).digest('hex')};
 }
 async function checkedConfig(){
- for(const name of ['.env.api','.env.worker','.env.database','.env.ops',release]){
+ for(const name of ['.env.api','.env.models','.env.worker','.env.database','.env.ops',release]){
   const file=await stat(`${root}/${name}`);
   if(!file.isFile()||file.mode&0o077)throw new Error('Wanwu environment files must be private regular files (0600)');
  }
+ validateModelEnvironment(await readFile(`${root}/.env.models`,'utf8'));
  const manifest=releaseManifest(JSON.parse(await readFile(`${root}/${previous?'previous-manifest.json':'release-manifest.json'}`,'utf8')));
  const ids=environmentPins(await readFile(`${root}/${release}`,'utf8'),manifest);
  for(const kind of imageKinds)if(await run('docker',['image','inspect',ids[kind],'--format','{{.Id}}'])!==ids[kind])throw new Error('Missing exact release image');

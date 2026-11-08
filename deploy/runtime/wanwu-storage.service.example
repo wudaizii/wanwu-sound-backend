@@ -1,0 +1,10 @@
+[Unit]
+Description=Wanwu registry-led private object audit (no deletion)
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/etc/wanwu-sound/maintenance
+ExecStart=/usr/local/sbin/wanwu-maintenance storage
+UMask=0077
+NoNewPrivileges=true
+TimeoutStartSec=10min

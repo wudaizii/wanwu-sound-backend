@@ -1,0 +1,9 @@
+# Included inside every API location; shared by the H5 and dedicated API hosts.
+proxy_pass http://127.0.0.1:3100;
+proxy_set_header Host wanwu-api.proterm.ink;
+proxy_set_header X-Forwarded-Proto https;
+proxy_set_header X-Forwarded-For $remote_addr;
+proxy_set_header X-Forwarded-Host $host;
+proxy_connect_timeout 3s;
+proxy_buffering off;
+# Do not rewrite Cookie, Set-Cookie, Origin, CSRF or If-Match. No proxy cache.

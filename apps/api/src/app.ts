@@ -22,6 +22,8 @@ import { cloudRoutes } from './cloud/routes.ts';
 import type { CloudContext } from './cloud/context.ts';
 import { guestRoutes } from './guest/routes.ts';
 import type { GuestContext } from './guest/routes.ts';
+import { PgBackgroundJobs } from './guest/pgJobs.ts';
+import { buildIdentity } from './version.ts';
 
 /** Status and reason for an error: ours carry both; the framework's own (rate limit, body size, schema) are named. */
 function errorOutcome(error: unknown) {
@@ -108,7 +110,7 @@ export async function buildApp(
       .header('Cache-Control', 'no-store')
       .header('Referrer-Policy', 'no-referrer')
       .header('X-Content-Type-Options', 'nosniff');
-    if (request.url.split('?')[0] === '/api/v1/health') return;
+    if (['/api/v1/health', '/api/v1/version'].includes(request.url.split('?')[0]!)) return;
     if (config.cloudAuthMode !== 'session') throw new ApiError(503, 'not-open');
     if (request.protocol !== 'https') throw new ApiError(400, 'https-required');
   });
@@ -131,11 +133,16 @@ export async function buildApp(
     await database.db.execute(sql`SELECT 1`);
     return { status: 'ok' };
   });
+  app.get('/api/v1/version', async () => buildIdentity());
   authRoutes(app, { accounts, authenticated });
   adminRoutes(app, { config, accounts, authenticated });
   limitAttemptsByName(app);
   if (cloud) cloudRoutes(app, cloud, authenticated);
   if (guest) guestRoutes(app, guest);
+  if (guest?.jobs instanceof PgBackgroundJobs)
+    app.addHook('onClose', () =>
+      guest.jobs instanceof PgBackgroundJobs ? guest.jobs.close() : Promise.resolve(),
+    );
   await app.ready();
   return app;
 }

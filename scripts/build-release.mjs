@@ -70,6 +70,7 @@ async function sourceSnapshot() {
 const { sourceDigest, sourceFiles } = await sourceSnapshot(),
   commit = await call('git', ['rev-parse', 'HEAD']),
   id = `${commit.slice(0, 12)}-${sourceDigest.slice(0, 12)}`;
+const dirty = (await call('git', ['status', '--porcelain'])).length > 0;
 const output = path.join(root, 'artifacts', 'releases', id),
   bundle = path.join(output, 'deployment');
 await mkdir(bundle, { recursive: true, mode: 0o700 });
@@ -85,6 +86,12 @@ const build = (args) =>
         'linux/amd64',
         '--file',
         'deploy/runtime/Dockerfile',
+        '--build-arg',
+        `WANWU_BUILD_COMMIT=${commit}`,
+        '--build-arg',
+        `WANWU_BUILD_SOURCE_DIGEST=${sourceDigest}`,
+        '--build-arg',
+        `WANWU_BUILD_DIRTY=${dirty}`,
         ...args,
         '.',
       ],
@@ -153,7 +160,7 @@ const manifest = {
   project: 'wanwu-sound',
   commit,
   sourceDigest,
-  dirty: (await call('git', ['status', '--porcelain'])).length > 0,
+  dirty,
   builtAt: new Date().toISOString(),
   platform: 'linux/amd64',
   images,
@@ -163,9 +170,16 @@ releaseManifest(manifest);
 for (const name of [
   'compose.yml',
   'operate.mjs',
+  'wanwu-maintenance.sh',
   'resolve-images.mjs',
   'image-pins.ts',
   'wanwu-api.nginx.conf.example',
+  'wanwu-api-proxy.nginx.conf.example',
+  'wanwu-api-routes.nginx.conf.example',
+  'wanwu-http.nginx.conf.example',
+  'wanwu-h5.nginx.conf.example',
+  'model-environment.ts',
+  'models.env.example',
   'api.env.example',
   'worker.env.example',
   'database.env.example',
@@ -179,6 +193,8 @@ for (const name of [
   'wanwu-cleanup.timer.example',
   'wanwu-health.service.example',
   'wanwu-health.timer.example',
+  'wanwu-storage.service.example',
+  'wanwu-storage.timer.example',
 ])
   await copyFile(path.join(root, 'deploy/runtime', name), path.join(bundle, name));
 await writeFile(

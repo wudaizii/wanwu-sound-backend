@@ -3,6 +3,7 @@ import type { Actor, CloudContext } from './context.ts';
 import { lockActor, audit } from './context.ts';
 import { transaction } from '../db/transaction.ts';
 import { ApiError } from '../errors.ts';
+import { operationalHealth } from '../maintenance/operationalHealth.ts';
 
 export class ContentAdmin {
   readonly context: CloudContext;
@@ -89,6 +90,7 @@ export class ContentAdmin {
         await tx.query("SELECT seen_at FROM runtime_status WHERE component='media-worker'")
       ).rows[0];
       return {
+        operations: await operationalHealth(tx),
         renders: pending.rows,
         sources: sources.rows,
         queue,

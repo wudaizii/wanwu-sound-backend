@@ -5,6 +5,7 @@ import { request } from 'node:https';
 import { lookup } from 'node:dns';
 import type { LookupAddress } from 'node:dns';
 import { isIP } from 'node:net';
+import ipaddr from 'ipaddr.js';
 
 export type GuestFailureReason = 'not-open' | 'quota' | 'timeout' | 'failed';
 /** A model step did not give a usable answer; routes turn it into an error reply or an unavailable background. */
@@ -17,33 +18,16 @@ export class GuestFailure extends Error {
 }
 
 export function publicAddress(ip: string): boolean {
-  if (isIP(ip) === 4) {
-    const [a, b] = ip.split('.').map(Number) as [number, number];
-    return !(
-      a === 0 ||
-      a === 10 ||
-      a === 127 ||
-      a >= 224 ||
-      (a === 100 && b >= 64 && b < 128) ||
-      (a === 169 && b === 254) ||
-      (a === 172 && b >= 16 && b < 32) ||
-      (a === 192 && (b === 168 || b === 0)) ||
-      (a === 198 && (b === 18 || b === 19))
-    );
+  // Require a strict literal before parsing (no legacy octal/hex/short IPv4 or zone IDs).
+  if (!isIP(ip) || ip.includes('%')) return false;
+  try {
+    // process() converts *all* IPv4-mapped spellings, including WHATWG URL's
+    // hexadecimal normalization, into IPv4 before applying the public policy.
+    // Other special/transition/documentation ranges fail closed as non-unicast.
+    return ipaddr.process(ip).range() === 'unicast';
+  } catch {
+    return false;
   }
-  if (isIP(ip) === 6) {
-    const lower = ip.toLowerCase();
-    const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(lower);
-    if (mapped) return publicAddress(mapped[1]!);
-    return !(
-      lower === '::' ||
-      lower === '::1' ||
-      /^f[cd]/.test(lower) ||
-      /^fe[89ab]/.test(lower) ||
-      lower.startsWith('ff')
-    );
-  }
-  return false;
 }
 
 export type PostReply = { status: number; json: unknown };
@@ -55,7 +39,7 @@ export type Post = (
   timeoutMs: number,
 ) => Promise<PostReply>;
 
-const guardedLookup = (
+export const guardedLookup = (
   hostname: string,
   options: { all?: boolean },
   callback: (...args: unknown[]) => void,
@@ -74,6 +58,9 @@ export const postJson: Post = (url, headers, body, timeoutMs) =>
     const target = new URL(url);
     if (
       target.protocol !== 'https:' ||
+      target.username ||
+      target.password ||
+      target.hash ||
       (isIP(target.hostname.replace(/^\[|\]$/g, '')) &&
         !publicAddress(target.hostname.replace(/^\[|\]$/g, '')))
     )

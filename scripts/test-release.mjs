@@ -90,6 +90,7 @@ try {
     appDb + origin + oss + `WANWU_SESSION_SECRET=${password()}\nWANWU_CLOUD_AUTH_MODE=disabled\n`,
   );
   await write('.env.worker', appDb + origin + oss);
+  await write('.env.models', '# No paid models in a release test.\n');
   await write(
     '.env.ops',
     appDb +
@@ -238,10 +239,60 @@ try {
   const health = async () => {
     const url = `http://127.0.0.1:${await published(await apiId(), 3100)}`;
     assert.equal((await fetch(url + '/api/v1/health')).status, 200);
+    const version = await (await fetch(url + '/api/v1/version')).json();
+    assert.equal(version.sourceDigest, manifest.sourceDigest);
+    assert.equal(version.commit, manifest.commit);
+    assert.equal(version.dirty, manifest.dirty);
     const r = await fetch(url + '/api/v1/auth/me');
     assert.equal(r.status, 503);
     assert.equal((await r.json()).reason, 'not-open');
   };
+  await health();
+  stage = 'real-session-ai-runtime';
+  const apiEnvFile = path.join(folder, '.env.api'),
+    disabledEnv = await readFile(apiEnvFile, 'utf8');
+  await writeFile(
+    apiEnvFile,
+    disabledEnv.replace('WANWU_CLOUD_AUTH_MODE=disabled', 'WANWU_CLOUD_AUTH_MODE=session') +
+      'WANWU_TRUSTED_PROXY_ADDRESSES=127.0.0.1\n',
+    { mode: 0o600 },
+  );
+  await up();
+  // Real main.ts + HTTP Cookie/CSRF + pg-boss adapter, closed providers (no OSS/model/network call).
+  const runtimeProbe = `
+    import assert from 'node:assert/strict';
+    import {calmLullaby} from './packages/prompts/tests/fixtures/briefs.ts';
+    import pg from 'pg';
+    const p=new pg.Pool({connectionString:process.env.WANWU_DATABASE_URL});
+    const base='http://127.0.0.1:3100',headers={'x-forwarded-proto':'https'};
+    const csrf=await fetch(base+'/api/v1/auth/csrf',{headers});assert.equal(csrf.status,200);
+    const token=(await csrf.json()).csrfToken,cookie=csrf.headers.get('set-cookie').split(';')[0];
+    const response=await fetch(base+'/api/v1/backgrounds',{method:'POST',headers:{...headers,cookie,
+      origin:'https://voiceatalass.netlify.app','content-type':'application/json','x-csrf-token':token},
+      body:JSON.stringify({step:'notes-ai',brief:calmLullaby})});assert.equal(response.status,202);
+    const {jobId}=await response.json();
+    let state;
+    for(let i=0;i<100;i++){const r=await fetch(base+'/api/v1/backgrounds/'+jobId,{headers:{...headers,cookie}});
+      assert.equal(r.status,200);state=await r.json();if(state.status!=='pending')break;await new Promise(r=>setTimeout(r,100));}
+    assert.equal(state.status,'unavailable');assert.equal(state.reason,'not-open');
+    assert.equal((await fetch(base+'/api/v1/backgrounds/'+jobId,{headers})).status,404);
+    assert.equal((await p.query("SELECT count(*)::int AS n FROM runtime_status WHERE component='ai-worker' AND seen_at>now()-interval '90 seconds'")).rows[0].n,1);
+    assert.equal((await p.query("SELECT count(*)::int AS n FROM ai_background_jobs WHERE status='done' AND result->>'reason'='not-open'")).rows[0].n,1);
+    await p.end();console.log('session-ai-wiring-pass');`;
+  assert.equal(
+    await call(['exec', await apiId(), 'node', '--input-type=module', '-e', runtimeProbe]),
+    'session-ai-wiring-pass',
+  );
+  await compose(['restart', '--no-deps', 'api']);
+  await up();
+  assert.equal(
+    await query(
+      `console.log((await p.query("SELECT count(*)::int AS n FROM ai_background_jobs WHERE status='done' AND result->>'reason'='not-open'")).rows[0].n)`,
+    ),
+    '1',
+  );
+  await writeFile(apiEnvFile, disabledEnv, { mode: 0o600 });
+  await up();
   await health();
   for (let attempt = 0; ; attempt++) {
     try {
@@ -313,6 +364,29 @@ try {
     ),
     '1',
   );
+  stage = 'database-container-replacement';
+  const databaseBefore = await compose(['ps', '--quiet', 'database']);
+  await compose(['stop', 'api', 'media', 'database']);
+  await compose(['rm', '--force', 'database']); // Retain this UUID-scoped named volume.
+  await compose([
+    'up',
+    '--detach',
+    '--wait',
+    '--wait-timeout',
+    '60',
+    '--pull',
+    'never',
+    'database',
+  ]);
+  assert.notEqual(await compose(['ps', '--quiet', 'database']), databaseBefore);
+  assert.equal(
+    await query(
+      `console.log((await p.query("SELECT count(*)::int AS n FROM maintenance_runs WHERE id='${id}'")).rows[0].n)`,
+    ),
+    '1',
+  );
+  await up();
+  await health();
   await compose(['stop', 'api', 'media']);
   await oldHealth();
   assert.equal(await call(['inspect', sentinel, '--format', '{{.Id}}']), sentinelId);
@@ -330,6 +404,10 @@ try {
     rollbackScope: 'label-only successor; not historical application/schema compatibility',
     oldSiteSentinelUnchanged: true,
     databaseMarkerSurvived: true,
+    databaseContainerReplacementVerified: true,
+    imageSourceIdentityVerified: true,
+    realSessionAiQueueWired: true,
+    aiResultSurvivedApiRestart: true,
     realCloudAcceptance: false,
   };
   console.log('Local release, isolation and rollback smoke checks passed.');

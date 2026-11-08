@@ -8,6 +8,9 @@ import { Library } from './library.ts';
 import { Shares } from './shares.ts';
 import { ContentAdmin } from './admin.ts';
 import { ApiError } from '../errors.ts';
+import { resourceLimits, resourceUsage } from './quotas.ts';
+import { transaction } from '../db/transaction.ts';
+import { lockActor } from './context.ts';
 
 type Params = { id: string };
 type Query = { state?: string; owner?: string; scope?: string; cursor?: string; revision?: string };
@@ -37,6 +40,14 @@ export function cloudRoutes(
     if (!uuid(id)) throw new ApiError(400, 'invalid-request');
     return id;
   };
+  app.get('/api/v1/account/usage', async (request) => {
+    const user = await actor(request);
+    return transaction(context.pool, async (tx) => {
+      await lockActor(tx, user);
+      const { globalPending: _global, ...usage } = await resourceUsage(tx, user.id);
+      return { ...usage, limits: resourceLimits(), accounting: 'conservative-reservations' };
+    });
+  });
   const version = (value: unknown) => {
     if (value === undefined) return null;
     if (
@@ -84,6 +95,18 @@ export function cloudRoutes(
     reply.header('ETag', workEtag(work.id, work.revision));
     return work;
   });
+  app.get<{ Params: Params; Querystring: Query }>(
+    '/api/v1/works/:id/facts',
+    async (request, reply) => {
+      const { work, facts } = await works.facts(
+        await actor(request),
+        workId(request.params.id),
+        version(request.query.revision),
+      );
+      reply.header('ETag', workEtag(work.id, work.revision));
+      return facts;
+    },
+  );
   for (const kind of ['arrangement', 'compose-settings'] as const)
     app.put<{ Params: Params }>(`/api/v1/works/:id/${kind}`, async (request, reply) => {
       const work = await works.edit(

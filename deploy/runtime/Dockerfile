@@ -13,6 +13,11 @@ COPY packages/music-features/package.json ./packages/music-features/package.json
 RUN npm ci --omit=dev --ignore-scripts --workspace=@wanwu-v2/api --include-workspace-root=false --no-audit --no-fund
 
 FROM api-deps AS api
+ARG WANWU_BUILD_COMMIT=unknown
+ARG WANWU_BUILD_SOURCE_DIGEST=unknown
+ARG WANWU_BUILD_DIRTY=true
+ENV WANWU_BUILD_COMMIT=$WANWU_BUILD_COMMIT WANWU_BUILD_SOURCE_DIGEST=$WANWU_BUILD_SOURCE_DIGEST WANWU_BUILD_DIRTY=$WANWU_BUILD_DIRTY
+LABEL ink.proterm.wanwu.source=$WANWU_BUILD_SOURCE_DIGEST org.opencontainers.image.revision=$WANWU_BUILD_COMMIT
 COPY apps/api/src ./apps/api/src
 COPY apps/api/migrations ./apps/api/migrations
 COPY data/catalogue ./data/catalogue
@@ -35,6 +40,11 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates
 RUN npx --yes --package=playwright@1.64.1 playwright install --with-deps --no-shell chromium
 FROM media-tools AS worker
+ARG WANWU_BUILD_COMMIT=unknown
+ARG WANWU_BUILD_SOURCE_DIGEST=unknown
+ARG WANWU_BUILD_DIRTY=true
+ENV WANWU_BUILD_COMMIT=$WANWU_BUILD_COMMIT WANWU_BUILD_SOURCE_DIGEST=$WANWU_BUILD_SOURCE_DIGEST WANWU_BUILD_DIRTY=$WANWU_BUILD_DIRTY
+LABEL ink.proterm.wanwu.source=$WANWU_BUILD_SOURCE_DIGEST org.opencontainers.image.revision=$WANWU_BUILD_COMMIT
 ENV NODE_ENV=production WANWU_CONTAINER_TEST=""
 COPY --from=worker-deps /app/node_modules ./node_modules
 COPY --from=worker-deps /app/package.json ./package.json
@@ -51,6 +61,11 @@ USER 1000:1000
 CMD ["node","--expose-gc","apps/worker/src/main.ts"]
 
 FROM postgres@sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27 AS ops
+ARG WANWU_BUILD_COMMIT=unknown
+ARG WANWU_BUILD_SOURCE_DIGEST=unknown
+ARG WANWU_BUILD_DIRTY=true
+ENV WANWU_BUILD_COMMIT=$WANWU_BUILD_COMMIT WANWU_BUILD_SOURCE_DIGEST=$WANWU_BUILD_SOURCE_DIGEST WANWU_BUILD_DIRTY=$WANWU_BUILD_DIRTY
+LABEL ink.proterm.wanwu.source=$WANWU_BUILD_SOURCE_DIGEST org.opencontainers.image.revision=$WANWU_BUILD_COMMIT
 WORKDIR /app
 ENV NODE_ENV=production NODE_OPTIONS=--max-old-space-size=128
 COPY --from=api /usr/local/bin/node /usr/local/bin/node

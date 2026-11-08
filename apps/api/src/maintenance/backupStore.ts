@@ -1,6 +1,7 @@
 import OSS from 'ali-oss';
 import { randomUUID } from 'node:crypto';
 import { ossConfig } from '../storage/ossStore.ts';
+import { BACKUP_RETENTION_DAYS } from './backupProtection.ts';
 
 export class BackupStore {
   private readonly client: OSS;
@@ -11,7 +12,8 @@ export class BackupStore {
     this.client = new OSS({ ...config, secure: true, authorizationV4: true, timeout: 60_000 });
   }
   async upload(file: string, bytes: number, checksum: string) {
-    const key = `${this.prefix}/${Date.now()}-${randomUUID()}.wwb`;
+    const uploadedAt = new Date();
+    const key = `${this.prefix}/${uploadedAt.getTime()}-${randomUUID()}.wwb`;
     await this.client.put(key, file, {
       mime: 'application/octet-stream',
       headers: {
@@ -24,6 +26,7 @@ export class BackupStore {
       headers = head.res.headers as Record<string, string>;
     if (Number(headers['content-length']) !== bytes || headers['x-oss-meta-sha256'] !== checksum)
       throw new Error('backup-upload-check-failed');
+    return { uploadedAt };
   }
   async prune() {
     type Version = { name: string; versionId: string };
@@ -52,7 +55,7 @@ export class BackupStore {
         if (
           item.name !== `${this.prefix}/${name}` ||
           !match ||
-          Number(match[1]) >= Date.now() - 30 * 86400_000
+          Number(match[1]) >= Date.now() - BACKUP_RETENTION_DAYS * 86400_000
         )
           continue;
         const options = { versionId: item.versionId, timeout: 20_000 };

@@ -13,6 +13,10 @@ import { firstAdmin } from '../../src/accounts.ts';
 import { Passwords, randomToken, tokenDigest } from '../../src/security.ts';
 import { PgSessionStore } from '../../src/session-store.ts';
 import { parseApiFailure } from '@wanwu-v2/contracts/api';
+import { DEFAULT_COMPOSE_SETTINGS } from '@wanwu-v2/contracts/work';
+import { LocalObjectStore } from '../helpers/localStore.ts';
+import { mediaBoss } from '../../src/jobs/mediaQueue.ts';
+import { auditFoundation } from '../../src/maintenance/foundationAudit.ts';
 
 const origin = 'https://voiceatalass.netlify.app',
   password = 'a disposable teacher test passphrase';
@@ -28,12 +32,20 @@ const config = {
   trustedProxyAddresses: ['127.0.0.1', '::1'],
 };
 let postgresVersion = '';
+let objects: LocalObjectStore;
+const application = () =>
+  buildApp(config, database, true, {
+    pool: database.pool,
+    boss: mediaBoss(database.pool),
+    store: objects,
+    origin,
+  });
 
 class Client {
   cookie = '';
   csrf = '';
   async send(
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     url: string,
     payload?: Record<string, unknown>,
     expected = 200,
@@ -120,7 +132,8 @@ before(async () => {
   const passwords = new Passwords();
   await passwords.ready();
   await firstAdmin(owner.db, passwords, 'administrator', adminPassword);
-  app = await buildApp(config, database, true);
+  objects = await LocalObjectStore.create();
+  app = await application();
   admin = await new Client().start();
   await admin.send('POST', '/api/v1/auth/login', {
     username: 'administrator',
@@ -131,6 +144,79 @@ after(async () => {
   await app?.close();
   await database?.close();
   await owner?.close();
+  await objects?.close();
+});
+
+test('foundation audit is read-only and real sessions survive API/pool replacement', async () => {
+  const { client, id } = await teacher();
+  const cookie = client.cookie;
+  const before = await auditFoundation(owner.pool);
+  assert.equal(before.status, 'pass');
+  assert.equal(before.activeAdministrators, 1);
+  await app.close();
+  await database.close();
+  database = openDatabase(process.env.WANWU_TEST_DATABASE_URL!);
+  app = await application();
+  client.cookie = cookie;
+  assert.equal((await client.send('GET', '/api/v1/auth/me')).body.account.id, id);
+  assert.equal((await auditFoundation(owner.pool)).status, 'pass');
+});
+
+test('public version is available without a session and never returns runtime secrets', async () => {
+  const response = await app.inject({ url: '/api/v1/version' });
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(Object.keys(response.json()).sort(), [
+    'commit',
+    'contractVersion',
+    'dirty',
+    'sourceDigest',
+  ]);
+  assert.equal(response.headers['cache-control'], 'no-store');
+});
+
+test('cloud drafts are account-owned, readable on another device, and reject stale revisions', async () => {
+  const a = await teacher(),
+    b = await teacher(),
+    id = `work:${randomUUID()}`;
+  const content = {
+    id,
+    title: '草稿甲',
+    arrangement: {
+      version: 'arrangement-v1',
+      id,
+      units: [],
+      events: [],
+      rows: 3,
+      spanSeconds: 30,
+      mood: null,
+      origin: 'child',
+      updatedAt: new Date().toISOString(),
+    },
+    settings: DEFAULT_COMPOSE_SETTINGS,
+  };
+  await a.client.send('POST', '/api/v1/works', content, 201);
+  await b.client.send('GET', `/api/v1/works/${id}`, undefined, 404);
+  await b.client.send('GET', `/api/v1/works/${id}/facts`, undefined, 404);
+  const derived = await a.client.send('GET', `/api/v1/works/${id}/facts`);
+  assert.equal(derived.body.provenance, 'server-work');
+  assert.equal(derived.body.revision, 1);
+  assert.equal(derived.body.seconds, 30);
+  assert.equal(
+    (await a.client.send('GET', '/api/v1/account/usage')).body.accounting,
+    'conservative-reservations',
+  );
+  const secondDevice = await new Client().start();
+  await secondDevice.send('POST', '/api/v1/auth/login', { username: a.username, password });
+  const opened = await secondDevice.send('GET', `/api/v1/works/${id}`);
+  assert.equal(opened.body.title, content.title);
+  const etag = String(opened.result.headers.etag);
+  await a.client.send('PATCH', `/api/v1/works/${id}`, { title: '草稿乙' }, 200, {
+    'if-match': etag,
+  });
+  await secondDevice.send('PATCH', `/api/v1/works/${id}`, { title: '过期修改' }, 412, {
+    'if-match': etag,
+  });
+  assert.equal((await secondDevice.send('GET', `/api/v1/works/${id}`)).body.title, '草稿乙');
 });
 
 test('registration establishes a real PostgreSQL session, secure host-only cookie, and a minimal account view', async () => {
@@ -483,6 +569,10 @@ test('migrations are repeatable and the app role cannot modify roles, audit hist
       '0003_excerpts.sql',
       '0004_maintenance.sql',
       '0005_renderer_runtime.sql',
+      '0006_backup_pins.sql',
+      '0007_ai_runtime.sql',
+      '0008_storage_checks.sql',
+      '0009_source_admission.sql',
     ],
   );
   await assert.rejects(
@@ -493,6 +583,7 @@ test('migrations are repeatable and the app role cannot modify roles, audit hist
     'CREATE TABLE should_not_exist(id int)',
     'DELETE FROM admin_audit',
     'SELECT * FROM _wanwu_migrations',
+    'DELETE FROM backup_object_pins',
   ]) {
     await assert.rejects(
       database.pool.query(statement),

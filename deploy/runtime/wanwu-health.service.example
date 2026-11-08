@@ -2,8 +2,9 @@
 Description=Wanwu isolated queue, backup and storage health
 [Service]
 Type=oneshot
-User=wudaizii
-WorkingDirectory=/srv/wudaizii/wanwu-sound
-ExecStart=/usr/bin/node operate.mjs status
+User=root
+WorkingDirectory=/etc/wanwu-sound/maintenance
+ExecStart=/usr/local/sbin/wanwu-maintenance status
 UMask=0077
 NoNewPrivileges=true
+TimeoutStartSec=10min

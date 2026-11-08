@@ -1,0 +1,16 @@
+# Reference only: merge the API include into the EXISTING Wanwu H5 host after review.
+# Do not replace another site's server block, TLS certificate, SPA assets or routing.
+server {
+    listen 443 ssl;
+    server_name wanwu.proterm.ink;
+    ssl_certificate /etc/letsencrypt/live/wanwu.proterm.ink/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/wanwu.proterm.ink/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    access_log /var/log/nginx/wanwu-h5-access.log wanwu_minimal;
+    error_log /dev/null;
+    add_header Referrer-Policy no-referrer always;
+    add_header X-Content-Type-Options nosniff always;
+    include /etc/nginx/wanwu/wanwu-api-routes.conf;
+    root /var/www/wanwu-frontend;
+    location / { try_files $uri $uri/ /index.html; }
+}

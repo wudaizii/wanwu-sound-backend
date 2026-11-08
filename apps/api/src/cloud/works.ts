@@ -13,6 +13,8 @@ import { enqueueMedia } from '../jobs/mediaQueue.ts';
 import type { Actor, CloudContext, WorkRow } from './context.ts';
 import { digest, lockActor, ownedWork } from './context.ts';
 import { canonicalSources } from './sources.ts';
+import { quotaLock, admit, RENDER_RESERVATION } from './quotas.ts';
+import { workFacts } from './workFacts.ts';
 
 const record = (row: WorkRow): WorkRecord => ({
   id: row.id,
@@ -125,6 +127,27 @@ export class Works {
       } as WorkRecord;
     });
   }
+  async facts(actor: Actor, id: string, revision: number | null = null) {
+    const work = await this.get(actor, id, revision);
+    const frozen =
+      revision ??
+      (work.state === 'saved' && work.savedRevision === work.revision ? work.revision : null);
+    if (frozen !== null) {
+      const snapshot = (
+        await this.context.pool.query(
+          'SELECT rules,renderer_version FROM work_snapshots WHERE work_id=$1 AND revision=$2',
+          [id, frozen],
+        )
+      ).rows[0];
+      if (
+        !snapshot ||
+        digest(snapshot.rules) !== digest(RULE_VERSIONS) ||
+        snapshot.renderer_version !== RENDERER_VERSION
+      )
+        throw new ApiError(409, 'version-conflict'); // Never silently describe old rendered music using new timing rules.
+    }
+    return { work, facts: workFacts(work) };
+  }
   async list(actor: Actor, state: 'draft' | 'saved', cursor: string | null) {
     if (cursor !== null && !/^\d+$/.test(cursor)) throw new ApiError(400, 'invalid-request');
     const offset = Number(cursor ?? 0);
@@ -203,6 +226,7 @@ export class Works {
     settingsAllowed(input.settings);
     return transaction(this.context.pool, async (tx) => {
       await lockActor(tx, actor);
+      await quotaLock(tx, actor.id);
       const row = await ownedWork(tx, actor, id);
       matched(row, etag);
       const checked = await canonicalSources(tx, actor, input.arrangement);
@@ -241,6 +265,7 @@ export class Works {
           work: { ...record(row), ...(content.rendering ? { rendering: content.rendering } : {}) },
           render: await this.renderRow(tx, id, row.revision),
         };
+      await admit(tx, actor.id, 'render', RENDER_RESERVATION);
       const revision = row.revision + 1;
       const updated = (
         await tx.query<WorkRow>(
@@ -323,11 +348,13 @@ export class Works {
   async render(actor: Actor, id: string, revision: number | null, retry = false) {
     return transaction(this.context.pool, async (tx) => {
       await lockActor(tx, actor);
+      if (retry) await quotaLock(tx, actor.id);
       const work = await ownedWork(tx, actor, id),
         wanted = revision ?? work.saved_revision;
       if (!wanted || wanted > work.revision) throw new ApiError(404, 'not-found');
       const row = await this.renderRow(tx, id, wanted);
       if (retry && row.status === 'failed' && row.failure !== 'source-disabled') {
+        await admit(tx, actor.id, 'render', RENDER_RESERVATION);
         const result = (
           await tx.query(
             "UPDATE render_artifacts SET status='queued',failure=NULL,updated_at=now() WHERE work_id=$1 AND revision=$2 RETURNING id",

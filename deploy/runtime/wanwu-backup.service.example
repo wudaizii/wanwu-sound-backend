@@ -2,8 +2,9 @@
 Description=Wanwu isolated encrypted database backup
 [Service]
 Type=oneshot
-User=wudaizii
-WorkingDirectory=/srv/wudaizii/wanwu-sound
-ExecStart=/usr/bin/node operate.mjs backup --apply
+User=root
+WorkingDirectory=/etc/wanwu-sound/maintenance
+ExecStart=/usr/local/sbin/wanwu-maintenance backup
 UMask=0077
 NoNewPrivileges=true
+TimeoutStartSec=10min

@@ -8,7 +8,7 @@
 | --- | --- |
 | `WANWU_DATABASE_URL` | 独立 `wanwu_app` 角色、`wanwu_sound` 数据库；不用旧 Supabase URL |
 | `WANWU_SESSION_SECRET` | 新项目独立随机秘密，至少 32 字符，不进前端 |
-| `WANWU_APP_ORIGIN` | 精确 HTTPS Origin，当前目标为 `https://voiceatalass.netlify.app` |
+| `WANWU_APP_ORIGIN` | 精确 HTTPS Origin，当前正式目标为 `https://wanwu.proterm.ink` |
 | `WANWU_CLOUD_AUTH_MODE` | 初始 `disabled`；由后端维护者获准联调后设为 `session` |
 | `WANWU_TRUSTED_PROXY_ADDRESSES` | 实测最后代理的精确 IP，不能填 true、跳数、域名或整个 CIDR |
 | `WANWU_API_HOST`／`PORT` | 容器内监听 0.0.0.0:3100，宿主只映射 127.0.0.1:3100；旧 3000 不动 |
@@ -33,9 +33,15 @@
 
 Argon2 是本地原生依赖；如果 npm 安装时跳过脚本，在部分平台需要运行 `npm rebuild argon2`，缺少预编译包时还需要本机编译工具。开发媒体测试需要 FFmpeg／ffprobe，可使用项目开发依赖，或显式设置 `FFMPEG_PATH`／`FFPROBE_PATH`；生产镜像使用 Linux 系统工具。
 
-## Netlify 与 OSS
+## 模型与资源限制
 
-Netlify：工作区根、Node 24.21、`npm run build`、`apps/web/dist`；使用前端仓库根的 `netlify.toml`（由接入补丁合入）。前端不配置任何持久云密钥。
+API 的 Compose 明确加载 `.env.api` 和 `.env.models`；后者只允许模型字段，空文件合法，缺文件则停止配置检查。不要把 `.env.models` 中的密钥传给 media、database 或前端，也不要用它覆盖数据库／认证设置。已有环境升级须由管理员审核后创建这个独立私有文件，不能重跑 `config:prepare` 旋转原密钥。模板默认全部模型关闭，具体模型由现有配置决定。
+
+账号默认预留 1 GiB 媒体额度、最多 5 个待处理音源、3 个待处理渲染，全站最多 50 个媒体任务。`WANWU_ACCOUNT_STORAGE_BYTES`、`WANWU_ACCOUNT_PENDING_SOURCES`、`WANWU_ACCOUNT_PENDING_RENDERS`、`WANWU_MEDIA_MAX_PENDING` 只在 API 配置中调整。播放件按 12 MiB、未完成成品按 2 MiB 保守预留，未真正回收的文件仍计入；不是实际账单或已压测容量承诺。细节见 [P1 修复记录](P1_HARDENING.md)。
+
+## 正式 H5 与 OSS
+
+正式 H5 为 ECS 上的静态构建（前端仓库的 `apps/web/dist`），`/api/v1/` 由 Nginx 同源代理。历史 Netlify 不是当前必配项；前端始终不配置持久云密钥。Nginx 两入口必须包含同一组路由限制文件，参考 [运维说明](OPERATIONS.md)。
 
 OSS：保持私有、阻止公共访问；精确允许目标 H5 的 GET／HEAD／PUT 和实际签名上传头。已有当前 Origin 的规则与权限验证记录，不要因为尚未启用登录就重买资源或放开全桶权限。后续新增 Origin 必须前后端共同确认，不能用 `*` 解决带凭据请求。
 

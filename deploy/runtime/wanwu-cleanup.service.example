@@ -2,8 +2,9 @@
 Description=Wanwu scoped expired object collection
 [Service]
 Type=oneshot
-User=wudaizii
-WorkingDirectory=/srv/wudaizii/wanwu-sound
-ExecStart=/usr/bin/node operate.mjs cleanup --apply
+User=root
+WorkingDirectory=/etc/wanwu-sound/maintenance
+ExecStart=/usr/local/sbin/wanwu-maintenance cleanup
 UMask=0077
 NoNewPrivileges=true
+TimeoutStartSec=10min

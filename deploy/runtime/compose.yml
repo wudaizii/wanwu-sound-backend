@@ -28,7 +28,7 @@ services:
     <<: *hardening
     image: ${WANWU_API_IMAGE:?Set a verified digest-pinned Wanwu API image}
     user: "1000:1000"
-    env_file: .env.api
+    env_file: [.env.api, .env.models]
     environment: {WANWU_API_HOST: 0.0.0.0, WANWU_API_PORT: "3100", WANWU_SOURCE_DIGEST: "${WANWU_SOURCE_DIGEST:?Set the release source digest}"}
     ports: ["127.0.0.1:3100:3100"]
     networks: [database, egress]

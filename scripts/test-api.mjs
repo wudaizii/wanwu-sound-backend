@@ -9,9 +9,10 @@ import { rendererSeccompProfile } from '../deploy/media-prototype/seccomp-policy
 const root = fileURLToPath(new URL('../', import.meta.url));
 const operations = process.argv[2] === 'operations';
 const runtime = process.argv[2] === 'media-runtime';
-if (process.argv[2] && !operations && !runtime) throw new Error('Unknown local test target');
+const p1 = process.argv[2] === 'p1';
+if (process.argv[2] && !operations && !runtime && !p1) throw new Error('Unknown local test target');
 const id = randomUUID(),
-  name = `wanwu-${operations ? 'operations' : runtime ? 'runtime' : 'auth'}-test-${id}`,
+  name = `wanwu-${operations ? 'operations' : runtime ? 'runtime' : p1 ? 'p1' : 'auth'}-test-${id}`,
   api = `${name}-api`,
   databaseName = `wanwu_sound_test_${id.replaceAll('-', '').slice(0, 8)}`;
 const reportFile = path.join(root, 'artifacts', `${name}.json`);
@@ -225,6 +226,9 @@ try {
       '--env',
       'WANWU_TEST_PG_HOST',
       api,
+      ...(p1
+        ? ['node', '--test', '--test-reporter=tap', 'apps/api/tests/integration/p1.test.ts']
+        : []),
     ],
     runtime ? 660_000 : 180_000,
   );
@@ -233,7 +237,9 @@ try {
       ? /^(?:#\s*)?WANWU_OPERATIONS_PROOF (.+)$/m
       : runtime
         ? /^(?:#\s*)?WANWU_RUNTIME_PROOF (.+)$/m
-        : /^(?:#\s*)?WANWU_AUTH_TEST_PROOF (.+)$/m,
+        : p1
+          ? /^(?:#\s*)?WANWU_P1_PROOF (.+)$/m
+          : /^(?:#\s*)?WANWU_AUTH_TEST_PROOF (.+)$/m,
   );
   if (!match) throw new Error('Kernel-backed API test evidence is missing');
   const proof = JSON.parse(match[1]);
@@ -258,7 +264,7 @@ try {
     { flag: 'wx', mode: 0o600 },
   );
   console.log(
-    `${operations ? 'Operations' : runtime ? 'Media runtime' : 'Authentication'} evidence: ${reportFile}`,
+    `${operations ? 'Operations' : runtime ? 'Media runtime' : p1 ? 'P1' : 'Authentication'} evidence: ${reportFile}`,
   );
 } catch (error) {
   const inspected = raw([...prefix, 'inspect', api, '--format', '{{json .State}}']);
@@ -293,7 +299,7 @@ try {
     { flag: 'wx', mode: 0o600 },
   );
   console.error(
-    `${operations ? 'Operations' : runtime ? 'Media runtime' : 'Authentication'} tests blocked. Evidence: ${reportFile}`,
+    `${operations ? 'Operations' : runtime ? 'Media runtime' : p1 ? 'P1' : 'Authentication'} tests blocked. Evidence: ${reportFile}`,
   );
   process.exitCode = 1;
 } finally {

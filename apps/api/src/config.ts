@@ -31,7 +31,7 @@ export function dedicatedDatabaseUrl(value: string | undefined, role: 'app' | 'o
 export function readConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   if (env.WANWU_MIGRATION_DATABASE_URL || env.WANWU_APP_DB_PASSWORD)
     throw new Error('Do not launch the API with database management credentials');
-  const origin = env.WANWU_APP_ORIGIN ?? 'https://voiceatalass.netlify.app';
+  const origin = env.WANWU_APP_ORIGIN ?? 'https://wanwu.proterm.ink';
   let parsed: URL;
   try {
     parsed = new URL(origin);

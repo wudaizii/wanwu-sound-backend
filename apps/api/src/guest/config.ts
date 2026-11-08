@@ -1,4 +1,4 @@
-// Built-in model settings, read from their own file (/etc/wanwu-sound/.env.models on the server, filled in by the
+// Built-in model settings, loaded by Compose API env_file (.env.api, then .env.models), filled in by the
 // product owner). The language model is required for the text tasks and AI composing; the music model may be left empty,
 // which closes the AI audio step; the audio-understanding model (WANWU_AUDIO_MODEL, the AI voice step) is optional too. Settings that are
 // present but malformed close the module and are reported once.

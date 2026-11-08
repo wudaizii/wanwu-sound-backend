@@ -11,6 +11,15 @@ type ObjectRow = {
 };
 /** Every new reference obtains this same source lock. Recheck under it before deleting exact registered keys. */
 async function needed(tx: PoolClient, object: ObjectRow) {
+  if (
+    (
+      await tx.query(
+        'SELECT 1 FROM backup_object_pins WHERE object_key=$1 AND protected_until>now() LIMIT 1',
+        [object.object_key],
+      )
+    ).rowCount
+  )
+    return true;
   const sources = (
     await tx.query(
       `SELECT id,catalogue,status FROM sources WHERE original_key=$1 OR playback_key=$1 OR id=$2 ORDER BY id FOR UPDATE`,

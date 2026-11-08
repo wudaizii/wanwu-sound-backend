@@ -10,7 +10,7 @@ try {
     pool: database.pool,
     boss,
     store: new OssStore(ossConfig()),
-    origin: process.env.WANWU_APP_ORIGIN ?? 'https://voiceatalass.netlify.app',
+    origin: process.env.WANWU_APP_ORIGIN ?? 'https://wanwu.proterm.ink',
   });
   console.log(JSON.stringify({ kind: 'garbage-collection', ...counts }));
   if (counts.failures) process.exitCode = 1;

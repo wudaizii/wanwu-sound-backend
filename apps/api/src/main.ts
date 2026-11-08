@@ -5,6 +5,12 @@ import { mediaBoss } from './jobs/mediaQueue.ts';
 import { OssStore, ossConfig } from './storage/ossStore.ts';
 import { CLOSED, readGuestConfig } from './guest/config.ts';
 import { guestContext } from './guest/routes.ts';
+import { verifyBuildSource } from './version.ts';
+import { PgBackgroundJobs } from './guest/pgJobs.ts';
+import { resourceLimits } from './cloud/quotas.ts';
+
+verifyBuildSource();
+resourceLimits();
 
 const config = readConfig(),
   database = openDatabase(process.env.WANWU_DATABASE_URL ?? '');
@@ -33,13 +39,13 @@ try {
   } catch {
     guestProblem = true;
   }
-  const app = await buildApp(
-    config,
-    database,
-    true,
-    cloud,
-    boss ? guestContext(guestConfig) : undefined,
-  );
+  const guest = boss
+    ? guestContext(guestConfig, undefined, { pool: database.pool, boss })
+    : undefined;
+  const app = await buildApp(config, database, true, cloud, guest);
+  if (guest?.jobs instanceof PgBackgroundJobs) {
+    await guest.jobs.listen();
+  }
   if (guestProblem)
     app.log.error(
       { reason: 'guest-ai-config-invalid' },

@@ -36,21 +36,24 @@ await write(path.join(deployment, '.env.database'), [
 await write(path.join(deployment, '.env.api'), [
   `WANWU_DATABASE_URL=${url('app', app)}`,
   `WANWU_SESSION_SECRET=${session}`,
-  'WANWU_APP_ORIGIN=https://voiceatalass.netlify.app',
+  'WANWU_APP_ORIGIN=https://wanwu.proterm.ink',
   'WANWU_CLOUD_AUTH_MODE=disabled',
   'WANWU_TRUSTED_PROXY_ADDRESSES=',
   ...oss,
 ]);
+await write(path.join(deployment, '.env.models'), [
+  '# Optional AI settings; empty means built-in AI is closed.',
+]);
 await write(path.join(deployment, '.env.worker'), [
   `WANWU_DATABASE_URL=${url('app', app)}`,
-  'WANWU_APP_ORIGIN=https://voiceatalass.netlify.app',
+  'WANWU_APP_ORIGIN=https://wanwu.proterm.ink',
   ...oss,
 ]);
 await write(path.join(deployment, '.env.ops'), [
   `WANWU_MIGRATION_DATABASE_URL=${url('owner', owner)}`,
   `WANWU_APP_DB_PASSWORD=${app}`,
   `WANWU_DATABASE_URL=${url('app', app)}`,
-  'WANWU_APP_ORIGIN=https://voiceatalass.netlify.app',
+  'WANWU_APP_ORIGIN=https://wanwu.proterm.ink',
   'WANWU_BACKUP_PUBLIC_KEY_FILE=/run/wanwu/backup-public.pem',
   ...oss,
 ]);
@@ -76,7 +79,7 @@ console.log(
     remaining: [
       'dedicated OSS runtime/ops credentials',
       'observed exact proxy IP',
-      'DNS/TLS/Netlify authorization',
+      'same-origin H5 gateway and DNS/TLS authorization',
     ],
     neverUpload: ['backup-private.pem', 'admin-password.txt'],
   }),

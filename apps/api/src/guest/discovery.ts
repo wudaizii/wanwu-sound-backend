@@ -7,12 +7,14 @@ import { readPcm16Wave } from '@wanwu-v2/audio-engine/pcm';
 import type { Post } from './net.ts';
 import type { Provider } from './config.ts';
 import { chatWithAudio } from './providers/audio.ts';
+import type { CallControl } from './control.ts';
 
 /** Audio observations are never accepted from the browser as if the server produced them. */
 export async function observeDiscovery(
   brief: DiscoveryBrief,
   post: Post,
   provider: Provider | null,
+  control?: CallControl,
 ): Promise<{ brief: DiscoveryBrief; status: string }> {
   const { audio, observations, ...facts } = brief;
   const data: DiscoveryBrief = { ...facts, mode: 'data', observations: [] };
@@ -21,13 +23,15 @@ export async function observeDiscovery(
   if (Math.abs(pcm.channels[0]!.length / pcm.sampleRate - brief.seconds) > 0.1)
     throw new Error('audio-duration-mismatch');
   try {
-    const reply = await chatWithAudio(
-      post,
-      provider,
-      buildObservation(data),
-      audio,
-      DISCOVERY_RULES.analysis.listenMs,
-    );
+    const call = () =>
+      chatWithAudio(
+        post,
+        provider,
+        buildObservation(data),
+        audio,
+        DISCOVERY_RULES.analysis.listenMs,
+      );
+    const reply = await (control ? control.run(provider, call) : call());
     const parsed = readReply(reply);
     const raw = parsed.value as { observations?: unknown } | null;
     const valid = Array.isArray(raw?.observations)

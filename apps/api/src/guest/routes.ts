@@ -3,19 +3,13 @@
 // sites cannot spend this budget through a visitor's browser. Facts and numbers come from the page's anonymous briefs;
 // the model only rewords, chooses or writes a motif, and @wanwu-v2/prompts checks every reply as the page would.
 import type { FastifyInstance, FastifyRequest } from 'fastify';
+import { createHash } from 'node:crypto';
+import type { Pool } from 'pg';
+import type { PgBoss } from 'pg-boss';
 import { exactObject } from '@wanwu-v2/contracts/account';
 import { MOODS } from '@wanwu-v2/contracts/arrangement';
-import {
-  AI_BACKGROUND_STEPS,
-  isBackgroundBrief,
-  parseBackgroundResult,
-} from '@wanwu-v2/contracts/background';
-import type {
-  AiBackgroundStep,
-  BackgroundBrief,
-  BackgroundResult,
-  BackgroundUnavailable,
-} from '@wanwu-v2/contracts/background';
+import { AI_BACKGROUND_STEPS, isBackgroundBrief } from '@wanwu-v2/contracts/background';
+import type { AiBackgroundStep } from '@wanwu-v2/contracts/background';
 import {
   isTextbookTalk,
   isTextbookTalkBrief,
@@ -23,11 +17,10 @@ import {
   isWorkTalkReply,
 } from '@wanwu-v2/contracts/talk';
 import { isDiscoveryBrief } from '@wanwu-v2/contracts/discovery';
-import { buildDiscovery, buildDiscoveryRepair, readDiscovery } from '@wanwu-v2/prompts/tasks';
+import { buildDiscovery, buildDiscoveryRepair } from '@wanwu-v2/prompts/tasks';
+import { checkedDiscovery, consistentDiscovery } from './factPolicy.ts';
 import {
-  buildBackgroundCompose,
   buildMoodWords,
-  readBackgroundCompose,
   buildTextbookFeatures,
   buildTextbookTalk,
   buildWorkTalk,
@@ -40,9 +33,13 @@ import {
 } from '@wanwu-v2/prompts/tasks';
 import type { BuiltPrompt } from '@wanwu-v2/prompts/tasks';
 import { ApiError } from '../errors.ts';
-import { composeNotes } from '@wanwu-v2/sound-rules/ai-compose';
 import type { GuestConfig, Provider } from './config.ts';
 import { BackgroundJobs } from './jobs.ts';
+import type { JobStore } from './jobs.ts';
+import { MemoryCallControl, PgCallControl } from './control.ts';
+import type { CallControl } from './control.ts';
+import { PgBackgroundJobs } from './pgJobs.ts';
+import { runBackground, boundedBackground } from './background.ts';
 import { DailyBudget, GUEST_RATE_LIMIT } from './limits.ts';
 import { GuestFailure, postJson } from './net.ts';
 import type { Post } from './net.ts';
@@ -50,8 +47,7 @@ import { OVERRIDE_HEADER, parseOverride } from './override.ts';
 import { chat } from './providers/language.ts';
 import { DISCOVERY_RULES } from '@wanwu-v2/sound-rules/discovery';
 import { observeDiscovery } from './discovery.ts';
-import { chatVoice, chatWithAudio } from './providers/audio.ts';
-import { generateAudio } from './providers/music.ts';
+import { chatWithAudio } from './providers/audio.ts';
 
 /**
  * Server waits a little less than the page (talk 10 s, AI composing 20 s per model, AI audio 60 s), so the page hears
@@ -76,14 +72,28 @@ export type GuestContext = {
   config: GuestConfig;
   post: Post;
   budget: DailyBudget;
-  jobs: BackgroundJobs;
+  jobs: JobStore;
+  control: CallControl;
+  durable: boolean;
 };
-export const guestContext = (config: GuestConfig, post: Post = postJson): GuestContext => ({
-  config,
-  post,
-  budget: new DailyBudget(config.dailyLimit),
-  jobs: new BackgroundJobs(),
-});
+export function guestContext(
+  config: GuestConfig,
+  post: Post = postJson,
+  database?: { pool: Pool; boss: PgBoss },
+): GuestContext {
+  if (process.env.NODE_ENV === 'production' && !database)
+    throw new Error('Production AI requires PostgreSQL controls');
+  const budget = new DailyBudget(config.dailyLimit);
+  const control = database
+    ? new PgCallControl(database.pool, config.dailyLimit)
+    : new MemoryCallControl(budget);
+  const jobs = database
+    ? new PgBackgroundJobs(database.pool, database.boss, config, (task) =>
+        runBackground(task, post, control),
+      )
+    : new BackgroundJobs();
+  return { config, post, budget, jobs, control, durable: !!database };
+}
 
 export function guestRoutes(app: FastifyInstance, context: GuestContext) {
   const providers = (request: FastifyRequest) => {
@@ -94,8 +104,11 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
       music: override?.music ?? context.config.music,
     };
   };
-  /** Built-in settings spend the daily budget; a visitor's own do not. */
-  const spend = (provider: Provider) => provider.builtIn && !context.budget.take();
+  const owner = (request: FastifyRequest) => {
+    const session = request.session?.sessionId;
+    if (!session && context.durable) throw new ApiError(503, 'temporarily-unavailable');
+    return session ? createHash('sha256').update(session).digest('hex') : 'local-preview';
+  };
   const outcome = (
     request: FastifyRequest,
     task: string,
@@ -127,13 +140,11 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
       outcome(request, task, started, 'not-open', null);
       throw new ApiError(503, 'not-open');
     }
-    if (spend(language)) {
-      outcome(request, task, started, 'quota', language);
-      throw new ApiError(429, 'rate-limited', context.budget.retryAfter());
-    }
     const prompt = built(language);
     try {
-      const reply = await chat(context.post, language, prompt, timeoutMs);
+      const reply = await context.control.run(language, () =>
+        chat(context.post, language, prompt, timeoutMs),
+      );
       outcome(request, task, started, 'ok', language);
       return { reply, model: language.model, promptVersion: prompt.version };
     } catch (error) {
@@ -152,7 +163,7 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
     { config: { rateLimit: { max: 60, timeWindow: 60_000 } } },
     async () => ({
       language: !!context.config.language,
-      music: !!context.config.music,
+      music: false, // The audio-generation adapter is not implemented; configuration is not capability.
       audio: !!context.config.audio,
     }),
   );
@@ -216,7 +227,8 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
     { ...GUEST_RATE_LIMIT, bodyLimit: 5_200_000 },
     async (request) => {
       const incoming = request.body;
-      if (!isDiscoveryBrief(incoming)) throw new ApiError(400, 'invalid-request');
+      if (!isDiscoveryBrief(incoming) || !consistentDiscovery(incoming))
+        throw new ApiError(400, 'invalid-request');
       const started = Date.now();
       providers(request);
       // Reserve the text phase even when listening fails; audio is not stored or logged.
@@ -226,7 +238,8 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
         observed = await observeDiscovery(
           incoming,
           context.post,
-          incoming.audio && listener && !spend(listener) ? listener : null,
+          incoming.audio ? listener : null,
+          context.control,
         );
       } catch {
         throw new ApiError(400, 'invalid-request');
@@ -247,7 +260,7 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
         () => buildDiscovery(brief),
         DISCOVERY_RULES.analysis.textMs,
       );
-      let acceptance = readDiscovery(first.reply, brief).acceptance;
+      let acceptance = checkedDiscovery(first.reply, brief);
       const left = DISCOVERY_BUDGET_MS - (Date.now() - started);
       if (acceptance.notes.length && left >= DISCOVERY_REPAIR_MIN_MS) {
         try {
@@ -257,7 +270,7 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
             () => buildDiscoveryRepair(brief, first.reply, acceptance.notes),
             left,
           );
-          const repaired = readDiscovery(again.reply, brief).acceptance;
+          const repaired = checkedDiscovery(again.reply, brief);
           if (repaired.set) {
             const kept = acceptance.set?.points ?? [];
             const extra = repaired.set.points.filter(
@@ -358,12 +371,11 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
         throw new ApiError(503, 'not-open');
       }
       for (const attempt of tries) {
-        if (spend(attempt.provider)) {
-          outcome(request, 'textbook-features', started, 'quota', attempt.provider);
-          continue;
-        }
         try {
-          const read = readTextbookFeatures(await attempt.run(attempt.provider), attempt.brief);
+          const read = readTextbookFeatures(
+            await context.control.run(attempt.provider, () => attempt.run(attempt.provider)),
+            attempt.brief,
+          );
           if (read.acceptance.value) {
             outcome(
               request,
@@ -402,63 +414,27 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
     },
   );
 
-  const unavailable = (reason: BackgroundUnavailable): BackgroundResult => ({
-    status: 'unavailable',
-    reason,
-  });
-  const runStep = async (
-    step: AiBackgroundStep,
-    brief: BackgroundBrief,
-    language: Provider | null,
-    music: Provider | null,
-  ): Promise<BackgroundResult> => {
-    // The music model makes audio; the voice model (built in only) and the text model compose a plan the program plays.
-    const provider =
-      step === 'audio-ai' ? music : step === 'voice-ai' ? context.config.audio : language;
-    if (!provider) return unavailable('not-open');
-    if (spend(provider)) return unavailable('quota');
-    try {
-      if (step === 'audio-ai')
-        return (
-          parseBackgroundResult(await generateAudio(provider, brief), brief.seconds) ??
-          unavailable('failed')
-        );
-      const prompt = buildBackgroundCompose(brief);
-      const reply =
-        step === 'voice-ai'
-          ? await chatVoice(context.post, provider, prompt, GUEST_TIMEOUT_MS.compose)
-          : await chat(context.post, provider, prompt, GUEST_TIMEOUT_MS.compose);
-      const read = readBackgroundCompose(reply, brief).acceptance;
-      if (!read.value) return unavailable('failed');
-      const { plan } = read.value;
-      const result: BackgroundResult = {
-        status: 'ready',
-        source: step,
-        notes: composeNotes(brief, plan).notes,
-        plan,
-        model: provider.builtIn ? provider.model : 'visitor',
-        promptVersion: prompt.version,
-      };
-      return parseBackgroundResult(result, brief.seconds) ?? unavailable('failed');
-    } catch (error) {
-      return unavailable(error instanceof GuestFailure ? error.reason : 'failed');
-    }
-  };
-
   app.post('/api/v1/backgrounds', GUEST_RATE_LIMIT, async (request, reply) => {
     const body = request.body as { step?: unknown; brief?: unknown };
     if (
       !exactObject(body, ['brief', 'step']) ||
       !AI_BACKGROUND_STEPS.includes(body.step as AiBackgroundStep) ||
-      !isBackgroundBrief(body.brief)
+      !isBackgroundBrief(body.brief) ||
+      !boundedBackground(body.brief)
     )
       throw new ApiError(400, 'invalid-request');
     const step = body.step as AiBackgroundStep,
       brief = body.brief,
       started = Date.now(),
       { language, music } = providers(request);
-    const jobId = context.jobs.start(async () => {
-      const result = await runStep(step, brief, language, music);
+    const task = {
+      owner: owner(request),
+      step,
+      brief,
+      provider: step === 'audio-ai' ? music : step === 'voice-ai' ? context.config.audio : language,
+    };
+    const jobId = await context.jobs.start(async () => {
+      const result = await runBackground(task, context.post, context.control);
       outcome(
         request,
         step,
@@ -467,14 +443,14 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
         step === 'audio-ai' ? music : step === 'voice-ai' ? context.config.audio : language,
       );
       return result;
-    });
+    }, task);
     if (!jobId) throw new ApiError(503, 'busy');
     return reply.code(202).send({ jobId });
   });
 
   app.get<{ Params: { jobId: string } }>('/api/v1/backgrounds/:jobId', async (request) => {
     if (!/^[a-f0-9-]{36}$/.test(request.params.jobId)) throw new ApiError(400, 'invalid-request');
-    const state = context.jobs.get(request.params.jobId);
+    const state = await context.jobs.get(request.params.jobId, owner(request));
     if (!state) throw new ApiError(404, 'not-found');
     return state;
   });

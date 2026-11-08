@@ -3,14 +3,14 @@
 这是后端维护仓库，不是新的前端站点。前端由原作者维护，后端由 wudaizii 维护。
 
 - 前端仓库：[guohaha777/voice_atalas_v2](https://github.com/guohaha777/voice_atalas_v2)
-- 前端目标站点：[voiceatalass.netlify.app](https://voiceatalass.netlify.app)
+- 前端正式站点：[wanwu.proterm.ink](https://wanwu.proterm.ink)
 - 后端接口入口：[wanwu-api.proterm.ink/api/v1/health](https://wanwu-api.proterm.ink/api/v1/health)
 - 本仓库：[wudaizii/wanwu-sound-backend](https://github.com/wudaizii/wanwu-sound-backend)
 
 ## 明天接手先看这里
 
 1. 人先读 [交接总览](handoff/START_HERE.md)，分清谁负责哪些配置。
-2. 前端接入包已在前端提交 `2823401`（分支 `integrate/wanwu-backend-v1`）合入；前端的验证、Netlify 发布与联调见 [前端接入](handoff/FRONTEND.md)。
+2. 前端接入包已在前端提交 `2823401`（分支 `integrate/wanwu-backend-v1`）合入；正式域名、同源代理与联调见 [前端接入](handoff/FRONTEND.md)。
 3. 负责后端的开发者读 [配置表](docs/CONFIGURATION.md)、[运维边界](docs/OPERATIONS.md)、[验收状态](docs/STATUS.md)。
 
 需要查接口时先读 [接口速查](docs/API_QUICKSTART.md)，再按链接查完整协议与实际契约。
@@ -19,9 +19,13 @@
 
 ## 现在做到哪了
 
+P1 加固与职责分离见 [P1 修复记录](docs/P1_HARDENING.md) 和 [人／AI 对接说明](handoff/BACKEND_BOUNDARY.md)。本轮新增持久 AI 预算／任务、事实检查、统一网关配置、运行监测、存储对账和账号配额；保持前端接口兼容，未改前端源码，新事实／额度接口仍待前端以后接入。发布分支为 `codex/p0-backend-hardening`；本机验收和 ECS 部署门槛见 [2026-11-08 发布记录](docs/RELEASE_2026-11-08.md)。提交／推送不代表已部署。
+
+2026-11-08 的 P0 加固、验证方式和生产待办见 [P0 修复记录](docs/P0_HARDENING.md)。实施阶段按用户要求只改后端、只做本机验证。随后用户授权提交、推送和部署；本次核查发现现有 SSH 没有 Docker／sudo 管理权限，尚未更新 ECS、创建生产账号或启用生产定时任务。下面的 2026-10-29 状态为历史记录，不代表当前线上状态。
+
 截至 2026-10-29：核心业务代码已有，原单仓库的本机前后端闭环曾验证通过；ECS 已运行此前构建的 API、独立 PostgreSQL 和音频任务，真实 OSS 音源处理、单次备份／恢复也有记录。
 
-**真实 Netlify 全链路联调还没完成，生产登录仍关闭。** 本次独立仓库的容器镜像尚未部署到 ECS。推送本仓库不等于上线，也不会自动更新原前端站点。当前回归结果和未验证项见 [验收状态](docs/STATUS.md)。
+**截至该历史日期，真实前端全链路联调未完成、生产登录关闭。** 2026-11-08 的线上只读检查已看到正式站点同源 API 正常、未登录 `/auth/me` 返回 401，但这不证明生产管理员或登录创作全链路已经验收。当前 P0 加固构建尚未部署；推送也不等于上线。旧验收记录见 [验收状态](docs/STATUS.md)。
 
 ## 仓库里有什么
 
@@ -48,7 +52,7 @@ npm run build
 
 `build` 检查类型、内置素材和共享包指纹（`check:shared`）；Node 24 直接执行 TypeScript，不生成前端页面。运行 API 还需要独立 PostgreSQL、私密环境配置；不能直接拿生产库跑测试。新环境准备步骤见 [配置表](docs/CONFIGURATION.md)。
 
-可选检查：`npm run test:media`、`npm run test:api`、`npm run test:worker:runtime`、`npm run test:operations`。后几项需要本机 Linux Docker；缺环境时记录未验证，不去共享 ECS 压测。
+可选检查：`npm run test:media`、`npm run test:api`、`npm run test:worker:runtime`、`npm run test:operations`、`npm run test:p1`、`npm run test:gateway`。后几项需要本机 Linux Docker；缺环境时记录未验证，不去共享 ECS 压测。
 
 ## 前端对接不需要云密钥
 
@@ -60,7 +64,7 @@ npm run build
 node scripts/sync-shared.mjs /absolute/path/to/voice_atalas_v2
 ```
 
-同步只复制 `packages/` 下五个共用包并更新指纹，不提交、不推送、不发布。Netlify 发布与联调见 [前端接入](handoff/FRONTEND.md)。
+同步只复制 `packages/` 下五个共用包并更新指纹，不提交、不推送、不发布。正式 H5 发布与联调见 [前端接入](handoff/FRONTEND.md)。
 
 发布前端以后，可运行只读探测：
 
