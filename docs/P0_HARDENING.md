@@ -45,7 +45,7 @@ npm run ops:foundation
 未来管理员先审核受测发布包，再安装：
 
 1. root 私有目录 `/etc/wanwu-sound/maintenance`，不是执行普通用户可替换的发布脚本。
-2. 受审查的 Compose、seccomp、公钥，以及本项目现有 `.env.api`、`.env.worker`、`.env.database`、`.env.ops`、`.env.release`。普通文件 root:root 0600；不要读取／复制旧项目配置，不生成或旋转已有密码。
+2. 受审查的 Compose、seccomp、公钥，以及本项目现有 `.env.api`、`.env.worker`、`.env.database`、`.env.ops`、`.env.release`。配置和秘密文件 root:root 0600；公开加密公钥 `backup-public.pem` 为 root:root 0644（或 0444），只读挂载供非 root 备份进程读取，不包含私钥。不要读取／复制旧项目配置，不生成或旋转已有密码。
 3. 脚本安装为 root 持有的 `/usr/local/sbin/wanwu-maintenance`。先核实 `/usr/bin/docker` 和 Compose 实际路径。
 4. 审核三个 service/timer，以 `systemd-analyze verify` 检查；确认不与已有 Wanwu 任务重复后再安装。不能修改旧项目或 Docker daemon。
 5. 先执行 foundation 和一次受控 backup；用离线私钥在隔离环境恢复，再启用／观察 timer。`systemctl list-timers`、对应 journal、备份年龄检查三者都要核对。定时检查失败可在 systemd/journal 中发现；尚未配置外部推送告警，不宣称会自动通知手机。

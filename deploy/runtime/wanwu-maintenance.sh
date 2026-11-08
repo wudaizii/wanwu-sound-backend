@@ -14,14 +14,26 @@ private_root_file() {
   uid=$(stat -c %u "$file"); mode=$(stat -c %a "$file")
   [ "$uid" = 0 ] && (( (8#$mode & 077) == 0 ))
 }
+public_root_key() {
+  local file="$1" uid mode
+  [ -f "$file" ] && [ ! -L "$file" ] || return 1
+  uid=$(stat -c %u "$file"); mode=$(stat -c %a "$file")
+  # This is a public encryption key, not a secret. UID 1000 must read the
+  # read-only bind mount; only root may replace it in the protected directory.
+  [ "$uid" = 0 ] && { [ "$mode" = 644 ] || [ "$mode" = 444 ]; } || return 1
+  grep -Fqx -- '-----BEGIN PUBLIC KEY-----' "$file" &&
+    grep -Fqx -- '-----END PUBLIC KEY-----' "$file" &&
+    ! grep -q 'PRIVATE KEY' "$file"
+}
 for folder in /etc/wanwu-sound "$directory"; do
   [ -d "$folder" ] && [ ! -L "$folder" ] && [ "$(stat -c %u "$folder")" = 0 ] || { echo 'Unsafe maintenance directory.' >&2; exit 1; }
   mode=$(stat -c %a "$folder")
   (( (8#$mode & 022) == 0 )) || { echo 'Writable maintenance directory refused.' >&2; exit 1; }
 done
-for file in compose.yml .env.release .env.ops .env.api .env.models .env.worker .env.database backup-public.pem seccomp-profile.json; do
+for file in compose.yml .env.release .env.ops .env.api .env.models .env.worker .env.database seccomp-profile.json; do
   private_root_file "$directory/$file" || { echo 'Root-owned private maintenance configuration required.' >&2; exit 1; }
 done
+public_root_key "$directory/backup-public.pem" || { echo 'A root-owned, read-only mounted public backup key is required.' >&2; exit 1; }
 # Only the reviewed model namespace may override the API env_file. Never source/evaluate this file.
 while IFS= read -r line || [ -n "$line" ]; do
   case "$line" in ''|\#*) continue;; esac

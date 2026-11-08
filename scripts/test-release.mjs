@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { randomBytes, randomUUID, generateKeyPairSync } from 'node:crypto';
-import { mkdir, readFile, writeFile, copyFile, rm, realpath } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, copyFile, rm, realpath, chmod } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -104,6 +104,7 @@ try {
     privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
   });
   await write('backup-public.pem', key.publicKey); // Ephemeral private key is not persisted.
+  await chmod(path.join(folder, 'backup-public.pem'), 0o644);
   const releaseText = (api) =>
     Object.entries({
       API: api,
@@ -169,6 +170,12 @@ try {
     }
   }
   const sentinelId = await call(['inspect', sentinel, '--format', '{{.Id}}']);
+  stage = 'backup-public-key-readable';
+  const publicKeyCheck = JSON.parse(await compose([
+    'run', '--rm', '--no-deps', '--pull', 'never', 'ops', '--input-type=module', '-e',
+    "import {readFileSync} from 'node:fs';import {createPublicKey} from 'node:crypto';const k=createPublicKey(readFileSync('/run/wanwu/backup-public.pem'));console.log(JSON.stringify({uid:process.getuid(),rsa:k.asymmetricKeyType==='rsa',strong:(k.asymmetricKeyDetails?.modulusLength??0)>=3072}));",
+  ]));
+  assert.deepEqual(publicKeyCheck, { uid: 1000, rsa: true, strong: true });
   stage = 'database-bootstrap';
   stage = 'catalogue-originals';
   const verified = await compose([
@@ -398,6 +405,7 @@ try {
     authMode: 'disabled',
     databasePublished: false,
     resourceHardeningVerified: true,
+    backupPublicKeyReadableByNonRoot: true,
     catalogueOriginalsVerified: true,
     workerHeartbeat: true,
     rolloutAndImageRollback: true,

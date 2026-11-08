@@ -57,7 +57,7 @@ Nginx 只改独立新配置。不要打印可能包含旧秘密的完整 `nginx 
 
 目前只有单次真实备份、独立本机恢复和单次清理的历史通过记录。每日备份、定期清理和健康任务尚待真正安装、执行和验证，RPO 24 小时／RTO 4 小时仍是目标。
 
-`deploy/runtime/wanwu-*.service.example` 是待审核安装的模板：现在调用 root 持有的 `wanwu-maintenance.sh`，不依赖宿主 Node，也不提升普通 SSH 账号的 Docker／sudo 权限。维护配置限定在 `/etc/wanwu-sound/maintenance`，与应用的 `/srv/wudaizii/wanwu-sound` 发布目录分开；保留 Compose 项目 `wanwu-sound`。所有文件由管理员审核后以 root 私有副本安装，不能直接运行普通用户可替换的脚本。未实际安装、观察运行前，不能标为定时备份已生效。
+`deploy/runtime/wanwu-*.service.example` 是待审核安装的模板：现在调用 root 持有的 `wanwu-maintenance.sh`，不依赖宿主 Node，也不提升普通 SSH 账号的 Docker／sudo 权限。维护配置限定在 `/etc/wanwu-sound/maintenance`，与应用的 `/srv/wudaizii/wanwu-sound` 发布目录分开；保留 Compose 项目 `wanwu-sound`。所有文件由管理员审核后以 root 持有的副本安装，不能直接运行普通用户可替换的脚本。密码、环境和配置文件保持 0600；只有不含私钥的 `backup-public.pem` 使用 0644（或 0444），供 UID 1000 的备份容器通过只读挂载读取。公钥所在目录仍仅由 root 管理，私钥不上服务器。未实际安装、观察运行前，不能标为定时备份已生效。
 
 恢复只允许新建空的 `wanwu_sound_restore_<8位十六进制>` 数据库，不能指向生产或旧 Supabase，不使用 drop／clean。恢复检查现在还要求有只读媒体权限的 OSS 配置，逐个校验音频真实 SHA-256；库恢复成功但音频缺失／损坏会失败。私钥只在操作端，不上 ECS。
 
