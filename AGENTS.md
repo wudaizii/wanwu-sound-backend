@@ -9,6 +9,6 @@
 - 本仓库的提交／推送不等于部署授权。不自动改 Netlify、域名、OSS 权限或服务器配置，不自动启用认证。
 - 共享 ECS 保留旧 ProTerm／Supabase。万物声谱只使用 `/srv/wudaizii/wanwu-sound`、Compose `wanwu-sound`、独立网络／卷／环境，API 为 `127.0.0.1:3100`；旧 3000 端口不动。
 - 不读旧项目密钥，不接旧 Supabase，不改 Docker daemon、用户权限、旧 Compose／域名／证书，不重启共享 Docker／Nginx，不全局清理。
-- 镜像只在本机／CI 构建；本仓库新代码尚未部署，不能用旧镜像的验收替代新仓库的容器验收。
+- 镜像只在本机／CI 构建；当前部署事实先读 `docs/PRODUCTION_2026-11-09.md`，不能用历史镜像、本机测试或推送成功替代当前生产及完整 H5 验收。
 - 开发检查为 `npm test`、`npm run build`；媒体检查另跑 `npm run test:media`。Docker 不可用就记录阻塞，不降低隔离或改用共享 ECS 测试。
 - 不删除现有用户文件、重置工作区、强推分支或执行数据库破坏性迁移。文档提供步骤，不代表已得到所有外部写操作的授权。

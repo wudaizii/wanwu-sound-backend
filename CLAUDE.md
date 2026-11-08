@@ -8,6 +8,6 @@
 
 常用检查：`npm ci`、`npm test`、`npm run build`。`build` 是类型和文件完整性检查，Node 24 直接执行 TypeScript；容器构建是单独的 `npm run release:build`。
 
-最新加固与验证见 `docs/P0_HARDENING.md`、`docs/P1_HARDENING.md`，发布门槛见 `docs/RELEASE_2026-11-08.md`。明确区分代码实现、本机测试、ECS 旧部署与正式 H5 全链路验收；后两者不因为推送本仓库而自动完成。
+最新生产事实先读 `docs/PRODUCTION_2026-11-09.md`：本批后端、迁移与维护已部署，但管理员为 0、完整 H5 登录创作未验收。实现原理见 `docs/P0_HARDENING.md`、`docs/P1_HARDENING.md`，历史准备见 `docs/RELEASE_2026-11-08.md`。明确区分代码实现、本机测试、实际生产部署与完整业务验收；不要重新初始化生产数据库、猜测账号或把文档当作操作授权。
 
 不搜寻、输出或上传凭据；不替用户做未授权的部署／账号启用；不影响共享 ECS 旧项目。完成后报告实际改动、执行命令、结果和仍需人工处理的配置，不能把未验证项写成通过。
