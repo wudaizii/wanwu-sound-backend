@@ -79,13 +79,14 @@ try {
   }
   await write(
     'nginx.conf',
-    `pid /tmp/nginx.pid;\nerror_log /tmp/error.log;\nworker_processes 1;\nevents {worker_connections 128;}\nhttp {\nclient_body_temp_path /tmp/body;\nproxy_temp_path /tmp/proxy;\nfastcgi_temp_path /tmp/fastcgi;\nuwsgi_temp_path /tmp/uwsgi;\nscgi_temp_path /tmp/scgi;\ninclude /etc/nginx/wanwu/wanwu-http.conf;\n${servers}\n}\n`,
+    `pid /tmp/nginx.pid;\nerror_log /tmp/error.log;\nworker_processes 1;\nevents {worker_connections 128;}\nhttp {\ngzip on;\ngzip_min_length 1024;\ngzip_types application/json;\nclient_body_temp_path /tmp/body;\nproxy_temp_path /tmp/proxy;\nfastcgi_temp_path /tmp/fastcgi;\nuwsgi_temp_path /tmp/uwsgi;\nscgi_temp_path /tmp/scgi;\ninclude /etc/nginx/wanwu/wanwu-http.conf;\n${servers}\n}\n`,
   );
   await write(
     'upstream.mjs',
     `import http from 'node:http';http.createServer(async(req,res)=>{let bytes=0;for await(const c of req)bytes+=c.length;
  const respond=()=>{res.setHeader('content-type','application/json');res.setHeader('set-cookie','__Host-wanwu=test-only; Path=/; HttpOnly; Secure; SameSite=Lax');
- res.end(JSON.stringify({bytes,cookie:req.headers.cookie,csrf:req.headers['x-csrf-token'],origin:req.headers.origin,match:req.headers['if-match'],forwarded:req.headers['x-forwarded-for'],proto:req.headers['x-forwarded-proto']}));};
+ const tag='"work:test:r3"';if(req.headers['x-test-etag']){res.setHeader('etag',tag);if(req.headers['x-test-check-match']&&req.headers['if-match']!==tag)res.statusCode=412;}
+ res.end(JSON.stringify({bytes,cookie:req.headers.cookie,csrf:req.headers['x-csrf-token'],origin:req.headers.origin,match:req.headers['if-match'],forwarded:req.headers['x-forwarded-for'],proto:req.headers['x-forwarded-proto'],encoding:req.headers['accept-encoding']??null,...(req.headers['x-test-etag']?{padding:'x'.repeat(8192)}:{})}));};
  if(req.headers['x-test-delay'])setTimeout(respond,21000);else respond();}).listen(3100,'0.0.0.0');`,
   );
   // This test needs an ephemeral loopback-published HTTPS port; Docker's internal-only network suppresses it.
@@ -234,6 +235,26 @@ try {
         assert.ok(response.headers['set-cookie'][0].includes('HttpOnly; Secure; SameSite=Lax'));
       }
     }
+    // Inherit gzip from http/server, like the live H5. A large JSON response
+    // must keep its strong work revision so a subsequent If-Match can succeed.
+    const revision = await request(host, '/api/v1/works/work:test', 0, {
+      'accept-encoding': 'gzip',
+      'x-test-etag': 'true',
+    });
+    assert.equal(revision.status, 200);
+    assert.equal(revision.headers.etag, '"work:test:r3"');
+    assert.equal(revision.headers['content-encoding'], undefined);
+    assert.equal(revision.body.padding.length, 8192);
+    const saved = await request(host, '/api/v1/works/work:test', 0, {
+      'accept-encoding': 'gzip',
+      'x-test-etag': 'true',
+      'x-test-check-match': 'true',
+      'if-match': revision.headers.etag,
+    });
+    assert.equal(saved.status, 200);
+    assert.equal(saved.body.match, '"work:test:r3"');
+    assert.equal(saved.body.encoding, null);
+    checks += 2;
   }
   // Prove the former generic 20s read timeout no longer truncates this specific route.
   assert.equal(
@@ -248,6 +269,7 @@ try {
     nginxImage: nginx,
     twoHosts: true,
     cookieAndCSRFUnchanged: true,
+    strongRevisionEtagsPreserved: true,
     delayedDiscoverySeconds: 21,
     productionAcceptance: false,
   };
