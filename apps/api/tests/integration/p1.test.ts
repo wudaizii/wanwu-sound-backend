@@ -621,14 +621,18 @@ test(
               "UPDATE render_artifacts SET status='failed',failure='temporarily-unavailable' WHERE work_id=$1 AND revision=$2",
               [id, saved.work.revision],
             );
-            const usage = await transaction(database.pool, (tx) => resourceUsage(tx, actor.id));
             await settings.update(
               1,
               {
                 'media.mp3Kbps': 128,
                 'quota.renderReservation': 2 * 1024 ** 2,
-                'quota.storageBytes': usage.reservedBytes + Math.floor(2.5 * 1024 ** 2),
               },
+              actor.id,
+            );
+            const usage = await transaction(database.pool, (tx) => resourceUsage(tx, actor.id));
+            await settings.update(
+              2,
+              { 'quota.storageBytes': usage.reservedBytes + Math.floor(2.5 * 1024 ** 2) },
               actor.id,
             );
             await assert.rejects(
@@ -636,7 +640,7 @@ test(
               (error: unknown) => (error as { status: number }).status === 413,
             );
             assert.equal((await works.render(actor, id, saved.work.revision)).status, 'failed');
-            await settings.update(2, { 'quota.storageBytes': 1024 ** 3 }, actor.id);
+            await settings.update(3, { 'quota.storageBytes': 1024 ** 3 }, actor.id);
             assert.equal(
               (await works.render(actor, id, saved.work.revision, true)).status,
               'queued',

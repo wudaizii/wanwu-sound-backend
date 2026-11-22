@@ -8,6 +8,7 @@ import {
   mixProblems,
   textbookMatchProblems,
   musicTypesProblems,
+  MIX_RULES,
 } from '@wanwu-v2/sound-rules/rules';
 import { discoveryProblems } from '@wanwu-v2/sound-rules/discovery';
 import { aiComposeProblems } from '@wanwu-v2/sound-rules/ai-compose';
@@ -660,7 +661,7 @@ number(
   '协议发布草稿',
   'release.protocol.maxRenderSeconds',
   '成品渲染长度硬上限（秒）',
-  90,
+  45 + MIX_RULES.ending.overrunSeconds,
   45,
   180,
   '需同步时间线、浏览器传输和资源门禁。',

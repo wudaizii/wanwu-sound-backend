@@ -22,6 +22,7 @@ import { openRenderer } from '../../src/browser/runner.ts';
 import { probeAudio } from '../../src/media/probe.ts';
 import { assessMemory } from '../../src/resource-evidence.ts';
 import { reconcileMedia } from '../../../api/src/jobs/reconcile.ts';
+import { MIX_RULES } from '@wanwu-v2/sound-rules/rules';
 
 test(
   'real pg-boss worker completes maximum 12-source / 24-placement / long-tail mix under the Linux budget',
@@ -207,7 +208,15 @@ test(
       const probe = await probeAudio(file, tools.ffprobe);
       assert.equal(probe.codec, 'mp3');
       assert.equal(probe.sampleRate, 48000);
-      assert.ok(probe.duration! >= 89.9 && probe.duration! < 91);
+      const expectedSeconds = input.arrangement.spanSeconds + MIX_RULES.ending.overrunSeconds;
+      assert.ok(
+        expectedSeconds > input.arrangement.spanSeconds,
+        'maximum fixture must exercise the released tail allowance',
+      );
+      assert.ok(
+        probe.duration! >= expectedSeconds - 0.1 && probe.duration! < expectedSeconds + 0.1,
+        `actual=${probe.duration}, released-tail=${expectedSeconds}`,
+      );
       await database.pool.query("UPDATE render_artifacts SET status='processing' WHERE id=$1", [
         render.id,
       ]);
