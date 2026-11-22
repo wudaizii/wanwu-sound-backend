@@ -1,7 +1,7 @@
 import OSS from 'ali-oss';
 import { randomUUID } from 'node:crypto';
 import { ossConfig } from '../storage/ossStore.ts';
-import { BACKUP_RETENTION_DAYS } from './backupProtection.ts';
+import { settingNumber } from '../settings/store.ts';
 
 export class BackupStore {
   private readonly client: OSS;
@@ -55,7 +55,8 @@ export class BackupStore {
         if (
           item.name !== `${this.prefix}/${name}` ||
           !match ||
-          Number(match[1]) >= Date.now() - BACKUP_RETENTION_DAYS * 86400_000
+          Number(match[1]) >=
+            Date.now() - settingNumber('maintenance.backupRetentionDays') * 86400_000
         )
           continue;
         const options = { versionId: item.versionId, timeout: 20_000 };

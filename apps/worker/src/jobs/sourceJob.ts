@@ -55,7 +55,7 @@ export async function sourceJob(
     scratch,
     tools,
     source.checksum,
-    source.catalogue ? 60 : 45.5,
+    source.catalogue ? 60 : (source.upload_policy?.maxSeconds ?? 45.5),
   );
   try {
     let bytes = await readFile(canonical.path),

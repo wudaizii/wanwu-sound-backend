@@ -12,6 +12,7 @@ import { browserBundle } from '../browser/runner.ts';
 import { sourceJob } from './sourceJob.ts';
 import { renderJob } from './renderJob.ts';
 import { reconcileMedia } from '../../../api/src/jobs/reconcile.ts';
+import { settingsStore, settingNumber, inSettings } from '../../../api/src/settings/store.ts';
 
 const terminal = new Set([
   'invalid-media',
@@ -83,74 +84,77 @@ export async function startMediaWorker(
       MEDIA_QUEUE,
       { batchSize: 1, includeMetadata: true, pollingIntervalSeconds: 1 },
       async (jobs) => {
-        const job = jobs[0] as JobWithMetadata<MediaJob> | undefined;
-        if (!job || stopped) return;
-        const abort = new AbortController(),
-          lease = randomUUID();
-        active = abort;
-        const started = Date.now();
-        console.log(
-          JSON.stringify({
-            event: 'wanwu-media-start',
-            kind: job.data.kind,
-            attempt: job.retryCount + 1,
-          }),
-        );
-        const timer = setTimeout(() => abort.abort(), 180_000),
-          directory = await mkdtemp(join(scratchRoot, 'wanwu-job-'));
-        const tools = { ...baseTools, signal: abort.signal };
-        try {
-          const disk = await statfs(scratchRoot);
-          if (disk.bavail * disk.bsize < 8 * 1024 ** 3)
-            throw new Error('wanwu-scratch-disk-reserve');
-          if (job.data.kind === 'source')
-            await sourceJob(context, job.data.sourceId, directory, tools, catalogue, lease);
-          else if (job.data.kind === 'render')
-            await renderJob(
-              context,
-              job.data.renderId,
-              job.id,
-              directory,
-              tools,
-              bundle,
-              catalogue,
-              lease,
-            );
-          else throw new MediaError('invalid-media');
-        } catch (error) {
-          const reason =
-            error instanceof MediaError
-              ? error.reason
-              : abort.signal.aborted
-                ? 'media-timeout'
-                : 'temporarily-unavailable';
-          const fatal = terminal.has(reason) || job.retryCount >= job.retryLimit;
+        await settingsStore()?.refresh();
+        return inSettings(async () => {
+          const job = jobs[0] as JobWithMetadata<MediaJob> | undefined;
+          if (!job || stopped) return;
+          const abort = new AbortController(),
+            lease = randomUUID();
+          active = abort;
+          const started = Date.now();
           console.log(
             JSON.stringify({
-              event: 'wanwu-media-failed',
+              event: 'wanwu-media-start',
               kind: job.data.kind,
-              reason,
-              terminal: fatal,
-              elapsedMs: Date.now() - started,
+              attempt: job.retryCount + 1,
             }),
           );
-          if (job.data.kind === 'source')
-            await context.pool.query(
-              "UPDATE sources SET status=$2,failure=$3,lease_id=NULL,updated_at=now() WHERE id=$1 AND lease_id=$4 AND status='processing'",
-              [job.data.sourceId, fatal ? 'failed' : 'queued', reason, lease],
+          const timer = setTimeout(() => abort.abort(), settingNumber('media.timeoutMs')),
+            directory = await mkdtemp(join(scratchRoot, 'wanwu-job-'));
+          const tools = { ...baseTools, signal: abort.signal };
+          try {
+            const disk = await statfs(scratchRoot);
+            if (disk.bavail * disk.bsize < settingNumber('media.diskReserveBytes'))
+              throw new Error('wanwu-scratch-disk-reserve');
+            if (job.data.kind === 'source')
+              await sourceJob(context, job.data.sourceId, directory, tools, catalogue, lease);
+            else if (job.data.kind === 'render')
+              await renderJob(
+                context,
+                job.data.renderId,
+                job.id,
+                directory,
+                tools,
+                bundle,
+                catalogue,
+                lease,
+              );
+            else throw new MediaError('invalid-media');
+          } catch (error) {
+            const reason =
+              error instanceof MediaError
+                ? error.reason
+                : abort.signal.aborted
+                  ? 'media-timeout'
+                  : 'temporarily-unavailable';
+            const fatal = terminal.has(reason) || job.retryCount >= job.retryLimit;
+            console.log(
+              JSON.stringify({
+                event: 'wanwu-media-failed',
+                kind: job.data.kind,
+                reason,
+                terminal: fatal,
+                elapsedMs: Date.now() - started,
+              }),
             );
-          else
-            await context.pool.query(
-              "UPDATE render_artifacts SET status=$2,failure=$3,lease_id=NULL,updated_at=now() WHERE id=$1 AND job_id=$4 AND lease_id=$5 AND status='processing'",
-              [job.data.renderId, fatal ? 'failed' : 'queued', reason, job.id, lease],
-            );
-          if (!fatal) throw new Error('media-job-retry');
-        } finally {
-          clearTimeout(timer);
-          active = null;
-          await rm(directory, { recursive: true, force: true });
-          global.gc?.();
-        }
+            if (job.data.kind === 'source')
+              await context.pool.query(
+                "UPDATE sources SET status=$2,failure=$3,lease_id=NULL,updated_at=now() WHERE id=$1 AND lease_id=$4 AND status='processing'",
+                [job.data.sourceId, fatal ? 'failed' : 'queued', reason, lease],
+              );
+            else
+              await context.pool.query(
+                "UPDATE render_artifacts SET status=$2,failure=$3,lease_id=NULL,updated_at=now() WHERE id=$1 AND job_id=$4 AND lease_id=$5 AND status='processing'",
+                [job.data.renderId, fatal ? 'failed' : 'queued', reason, job.id, lease],
+              );
+            if (!fatal) throw new Error('media-job-retry');
+          } finally {
+            clearTimeout(timer);
+            active = null;
+            await rm(directory, { recursive: true, force: true });
+            global.gc?.();
+          }
+        });
       },
     );
     return { stop, boss };

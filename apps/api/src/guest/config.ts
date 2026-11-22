@@ -2,6 +2,7 @@
 // product owner). The language model is required for the text tasks and AI composing; the music model may be left empty,
 // which closes the AI audio step; the audio-understanding model (WANWU_AUDIO_MODEL, the AI voice step) is optional too. Settings that are
 // present but malformed close the module and are reported once.
+import { settingsEnvironment } from '../settings/store.ts';
 export type Provider = { baseUrl: string; model: string; apiKey: string; builtIn: boolean };
 export const MUSIC_PROVIDERS = ['fun-music'] as const;
 export type GuestConfig = {
@@ -49,6 +50,7 @@ function provider(env: NodeJS.ProcessEnv, prefix: 'LLM' | 'MUSIC'): Provider | n
 }
 
 export function readGuestConfig(env: NodeJS.ProcessEnv = process.env): GuestConfig {
+  env = settingsEnvironment(env);
   const language = provider(env, 'LLM');
   // The audio model (hears teaching-music excerpts) uses the language model's service and key, under its own model name.
   const audioModel = env.WANWU_AUDIO_MODEL ?? '';

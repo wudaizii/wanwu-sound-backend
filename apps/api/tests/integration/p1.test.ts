@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { randomUUID, createHash } from 'node:crypto';
+import { randomUUID, createHash, randomBytes } from 'node:crypto';
+import { SettingsStore, useSettings } from '../../src/settings/store.ts';
 import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -574,6 +575,75 @@ test(
             (error: unknown) => (error as { status: number }).status === 429,
           );
           delete process.env.WANWU_ACCOUNT_PENDING_RENDERS;
+        },
+      );
+      await scenario(
+        'a high-bitrate snapshot keeps its original retry reservation after the site bitrate is lowered',
+        async () => {
+          const settings = await new SettingsStore(
+            directory,
+            true,
+            randomBytes(32).toString('hex'),
+            {},
+          ).load();
+          useSettings(settings);
+          try {
+            await settings.update(
+              0,
+              { 'media.mp3Kbps': 320, 'quota.renderReservation': 4 * 1024 ** 2 },
+              actor.id,
+            );
+            const works = new Works(context),
+              id = (await database.pool.query('SELECT id FROM works WHERE owner_id=$1', [actor.id]))
+                .rows[0].id;
+            const current = await works.get(actor, id);
+            const saved = await works.save(
+              actor,
+              id,
+              {
+                id,
+                title: '高码率重试预算',
+                arrangement: current.arrangement,
+                settings: current.settings,
+              },
+              workEtag(id, current.revision),
+            );
+            assert.equal(
+              (
+                await database.pool.query(
+                  'SELECT encoding FROM work_snapshots WHERE work_id=$1 AND revision=$2',
+                  [id, saved.work.revision],
+                )
+              ).rows[0].encoding.mp3Kbps,
+              320,
+            );
+            await owner.pool.query(
+              "UPDATE render_artifacts SET status='failed',failure='temporarily-unavailable' WHERE work_id=$1 AND revision=$2",
+              [id, saved.work.revision],
+            );
+            const usage = await transaction(database.pool, (tx) => resourceUsage(tx, actor.id));
+            await settings.update(
+              1,
+              {
+                'media.mp3Kbps': 128,
+                'quota.renderReservation': 2 * 1024 ** 2,
+                'quota.storageBytes': usage.reservedBytes + Math.floor(2.5 * 1024 ** 2),
+              },
+              actor.id,
+            );
+            await assert.rejects(
+              works.render(actor, id, saved.work.revision, true),
+              (error: unknown) => (error as { status: number }).status === 413,
+            );
+            assert.equal((await works.render(actor, id, saved.work.revision)).status, 'failed');
+            await settings.update(2, { 'quota.storageBytes': 1024 ** 3 }, actor.id);
+            assert.equal(
+              (await works.render(actor, id, saved.work.revision, true)).status,
+              'queued',
+            );
+          } finally {
+            useSettings();
+          }
         },
       );
       const read = async (name: string) =>

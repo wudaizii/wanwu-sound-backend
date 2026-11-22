@@ -573,6 +573,7 @@ test('migrations are repeatable and the app role cannot modify roles, audit hist
       '0007_ai_runtime.sql',
       '0008_storage_checks.sql',
       '0009_source_admission.sql',
+      '0010_configuration_snapshots.sql',
     ],
   );
   await assert.rejects(

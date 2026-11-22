@@ -1,4 +1,5 @@
 import type { Pool, PoolClient } from 'pg';
+import { settingNumber } from '../settings/store.ts';
 
 export const BACKUP_RETENTION_DAYS = 30;
 export const MEDIA_RECOVERY_GRACE_DAYS = 7;
@@ -29,7 +30,10 @@ export async function withBackupLock<T>(pool: Pool, action: (lock: PoolClient) =
 export async function pinBackupObjects(lock: PoolClient, backupId: string, uploadedAt: Date) {
   if (!Number.isFinite(uploadedAt.getTime())) throw new Error('invalid-backup-time');
   const until = new Date(
-    uploadedAt.getTime() + (BACKUP_RETENTION_DAYS + MEDIA_RECOVERY_GRACE_DAYS) * 86400_000,
+    uploadedAt.getTime() +
+      (settingNumber('maintenance.backupRetentionDays') +
+        settingNumber('maintenance.mediaGraceDays')) *
+        86400_000,
   );
   const result = await lock.query(
     `INSERT INTO backup_object_pins(backup_id,object_key,protected_until)

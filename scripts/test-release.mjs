@@ -76,7 +76,39 @@ try {
   const template = await readFile(path.join(release, 'compose.yml'), 'utf8');
   assert.ok(template.includes('127.0.0.1:3100:3100'));
   // Host port is ephemeral only in this disposable copy. The shipped production port remains 3100.
-  await write('compose.yml', template.replace('127.0.0.1:3100:3100', '127.0.0.1::3100'));
+  await write(
+    'compose.yml',
+    template
+      .replace('127.0.0.1:3100:3100', '127.0.0.1::3100')
+      .replaceAll(
+        '${WANWU_CONFIG_HOST_DIRECTORY:-/srv/wudaizii/wanwu-sound/configuration}',
+        'configuration',
+      )
+      .replace('  media-scratch: {}', '  media-scratch: {}\n  configuration: {}'),
+  );
+  // Provision a private named test volume; no shared host path or privileged runtime.
+  await call(['volume', 'create', `${project}_configuration`]);
+  await call([
+    'run',
+    '--rm',
+    '--network',
+    'none',
+    '--user',
+    '0:0',
+    '--cap-drop',
+    'ALL',
+    '--cap-add',
+    'CHOWN',
+    '--security-opt',
+    'no-new-privileges:true',
+    '--mount',
+    `type=volume,source=${project}_configuration,target=/configuration`,
+    '--entrypoint',
+    'node',
+    manifest.images.api.id,
+    '-e',
+    "const f=require('node:fs');f.chmodSync('/configuration',0o700);f.chownSync('/configuration',1000,1000)",
+  ]);
   await copyFile(
     path.join(release, 'seccomp-profile.json'),
     path.join(folder, 'seccomp-profile.json'),
@@ -87,7 +119,10 @@ try {
   );
   await write(
     '.env.api',
-    appDb + origin + oss + `WANWU_SESSION_SECRET=${password()}\nWANWU_CLOUD_AUTH_MODE=disabled\n`,
+    appDb +
+      origin +
+      oss +
+      `WANWU_SESSION_SECRET=${password()}\nWANWU_CONFIG_ENCRYPTION_KEY=${randomBytes(32).toString('hex')}\nWANWU_CLOUD_AUTH_MODE=disabled\n`,
   );
   await write('.env.worker', appDb + origin + oss);
   await write('.env.models', '# No paid models in a release test.\n');
@@ -171,10 +206,19 @@ try {
   }
   const sentinelId = await call(['inspect', sentinel, '--format', '{{.Id}}']);
   stage = 'backup-public-key-readable';
-  const publicKeyCheck = JSON.parse(await compose([
-    'run', '--rm', '--no-deps', '--pull', 'never', 'ops', '--input-type=module', '-e',
-    "import {readFileSync} from 'node:fs';import {createPublicKey} from 'node:crypto';const k=createPublicKey(readFileSync('/run/wanwu/backup-public.pem'));console.log(JSON.stringify({uid:process.getuid(),rsa:k.asymmetricKeyType==='rsa',strong:(k.asymmetricKeyDetails?.modulusLength??0)>=3072}));",
-  ]));
+  const publicKeyCheck = JSON.parse(
+    await compose([
+      'run',
+      '--rm',
+      '--no-deps',
+      '--pull',
+      'never',
+      'ops',
+      '--input-type=module',
+      '-e',
+      "import {readFileSync} from 'node:fs';import {createPublicKey} from 'node:crypto';const k=createPublicKey(readFileSync('/run/wanwu/backup-public.pem'));console.log(JSON.stringify({uid:process.getuid(),rsa:k.asymmetricKeyType==='rsa',strong:(k.asymmetricKeyDetails?.modulusLength??0)>=3072}));",
+    ]),
+  );
   assert.deepEqual(publicKeyCheck, { uid: 1000, rsa: true, strong: true });
   stage = 'database-bootstrap';
   stage = 'catalogue-originals';

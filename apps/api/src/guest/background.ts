@@ -13,6 +13,7 @@ import type { Post } from './net.ts';
 import { chat } from './providers/language.ts';
 import { chatVoice } from './providers/audio.ts';
 import { generateAudio } from './providers/music.ts';
+import { settingNumber } from '../settings/store.ts';
 
 export type BackgroundTask = {
   owner: string;
@@ -50,8 +51,8 @@ export async function runBackground(
       const prompt = buildBackgroundCompose(brief);
       const reply =
         step === 'voice-ai'
-          ? await chatVoice(post, provider, prompt, 19_000)
-          : await chat(post, provider, prompt, 19_000);
+          ? await chatVoice(post, provider, prompt, settingNumber('ai.timeout.compose'))
+          : await chat(post, provider, prompt, settingNumber('ai.timeout.compose'));
       const value = readBackgroundCompose(reply, brief).acceptance.value;
       if (!value) return { status: 'unavailable', reason: 'failed' };
       return (

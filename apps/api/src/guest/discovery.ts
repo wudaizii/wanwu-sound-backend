@@ -1,5 +1,5 @@
 // Two-stage discovery orchestration. Audio is transient; only validated observations reach text.
-import { DISCOVERY_RULES } from '@wanwu-v2/sound-rules/discovery';
+import { settingNumber } from '../settings/store.ts';
 import { isAudioObservation } from '@wanwu-v2/contracts/discovery';
 import type { DiscoveryBrief } from '@wanwu-v2/contracts/discovery';
 import { buildObservation, readReply } from '@wanwu-v2/prompts/tasks';
@@ -15,6 +15,7 @@ export async function observeDiscovery(
   post: Post,
   provider: Provider | null,
   control?: CallControl,
+  remainingMs = settingNumber('ai.discoveryBudgetMs'),
 ): Promise<{ brief: DiscoveryBrief; status: string }> {
   const { audio, observations, ...facts } = brief;
   const data: DiscoveryBrief = { ...facts, mode: 'data', observations: [] };
@@ -29,7 +30,7 @@ export async function observeDiscovery(
         provider,
         buildObservation(data),
         audio,
-        DISCOVERY_RULES.analysis.listenMs,
+        Math.max(1, Math.min(settingNumber('ai.discoveryListenMs'), remainingMs)),
       );
     const reply = await (control ? control.run(provider, call) : call());
     const parsed = readReply(reply);

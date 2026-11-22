@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>万物声谱 · 全站配置</title><link rel="stylesheet" href="/api/v1/admin/settings/page.css"><script type="module" src="/api/v1/admin/settings/page.js"></script></head>
+<body><header><a href="/">万物声谱</a><span>管理员工作台</span></header><main>
+<div class="intro"><p class="eyebrow">SITE SETTINGS</p><h1>全站配置</h1><p>把运行参数集中管理。每次保存都会写入服务器配置文件，并记录修改版本。</p></div>
+<p id="message" role="status" aria-live="polite"></p>
+<form id="login" hidden><h2>管理员登录</h2><label>账号<input name="username" autocomplete="username" required></label><label>密码<input name="password" type="password" autocomplete="current-password" required></label><button>登录管理台</button></form>
+<section id="workspace" hidden>
+<div class="toolbar"><label class="search">查找配置<input id="search" type="search" placeholder="名称、配置键或说明"></label><label>生效方式<select id="effect"><option value="all">全部配置</option><option value="live">直接读取</option><option value="restart">重启后生效</option><option value="deployment">部署后生效</option><option value="release">前后端同步发版</option></select></label><button id="reload" type="button" class="secondary">重新读取</button><a href="/api/v1/admin/settings/release-plan" target="_blank" rel="noopener">查看发布草稿</a></div>
+<div class="summary"><span id="revision"></span><span id="pending"></span><span id="path"></span></div>
+<p class="notice">直接读取：新请求或新任务使用新值。重启／部署项：保存后点击下方应用按钮，由配置应用器检查并应用，可能短暂中断万物声谱服务。协议和音乐规则保存为发布草稿，须前后端同步发版。现有音频和已签发授权不会被追溯修改。</p>
+<div class="application"><div><strong>重启与部署设置</strong><p id="controller" role="status" aria-live="polite">正在读取应用器状态</p></div><button id="apply" type="button" class="secondary" disabled>应用重启与部署设置</button></div>
+<form id="settings"><div id="groups"></div><div class="savebar"><span id="dirty">没有未保存修改</span><button id="discard" type="button" class="secondary">放弃修改</button><button id="save" type="submit" disabled>保存配置</button></div></form>
+<details class="history"><summary>修改记录与恢复</summary><p>恢复配置文件的覆盖项并生成新版本；未覆盖项继承当前启动环境。密钥始终不会返回到页面。</p><div id="history"></div></details>
+<details class="history"><summary>协议、音乐规则与外部配置</summary><p>采样率 48 kHz、12 个声音单元、24 次放置、20／30／45 秒声场、用户名格式等受当前前后端契约约束。音乐算法来自版本化共享包。变更这些边界需要同步更新前端、后端和历史快照兼容策略，不能仅修改服务器数值。</p><p>DNS、证书、OSS 跨域及 RAM 权限在云侧管理；此页面的连接地址不替代这些设置。应用数据库／存储目标的切换需要先完成数据迁移。</p></details>
+</section></main><footer>配置文件独立于镜像保存 · 仅管理员可读取及修改</footer></body></html>

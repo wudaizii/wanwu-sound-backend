@@ -23,6 +23,8 @@ import type { CloudContext } from './cloud/context.ts';
 import { guestRoutes } from './guest/routes.ts';
 import type { GuestContext } from './guest/routes.ts';
 import { PgBackgroundJobs } from './guest/pgJobs.ts';
+import { settingNumber, settingsRequest } from './settings/store.ts';
+import { settingsRoutes } from './settings/routes.ts';
 import { buildIdentity } from './version.ts';
 
 /** Status and reason for an error: ours carry both; the framework's own (rate limit, body size, schema) are named. */
@@ -105,13 +107,21 @@ export async function buildApp(
   app.setNotFoundHandler((request, reply) =>
     reply.code(404).send({ status: 'error', reason: 'not-found', requestId: request.id }),
   );
+  app.addHook('onRequest', (_request, _reply, done) => {
+    settingsRequest(done);
+  });
   app.addHook('onRequest', async (request, reply) => {
+    request.session.cookie.maxAge = settingNumber('auth.idleSeconds') * 1000;
     reply
       .header('Cache-Control', 'no-store')
       .header('Referrer-Policy', 'no-referrer')
       .header('X-Content-Type-Options', 'nosniff');
     if (['/api/v1/health', '/api/v1/version'].includes(request.url.split('?')[0]!)) return;
-    if (config.cloudAuthMode !== 'session') throw new ApiError(503, 'not-open');
+    if (
+      config.cloudAuthMode !== 'session' &&
+      !/^\/api\/v1\/admin\/settings(?:\/|$)/.test(request.url.split('?')[0]!)
+    )
+      throw new ApiError(503, 'not-open');
     if (request.protocol !== 'https') throw new ApiError(400, 'https-required');
   });
   app.addHook('preHandler', async (request) => {
@@ -136,6 +146,7 @@ export async function buildApp(
   app.get('/api/v1/version', async () => buildIdentity());
   authRoutes(app, { accounts, authenticated });
   adminRoutes(app, { config, accounts, authenticated });
+  settingsRoutes(app, { accounts, authenticated });
   limitAttemptsByName(app);
   if (cloud) cloudRoutes(app, cloud, authenticated);
   if (guest) guestRoutes(app, guest);

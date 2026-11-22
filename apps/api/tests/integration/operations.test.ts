@@ -204,6 +204,15 @@ test(
             "UPDATE backup_object_pins SET protected_until=now()-interval '1 second'",
           );
           assert.equal(
+            (await collectGarbage(context)).deleted,
+            0,
+            'current retention still protects media even after a persisted pin expires',
+          );
+          await owner.pool.query(
+            "UPDATE maintenance_runs SET started_at=now()-interval '38 days',finished_at=now()-interval '38 days' WHERE id=$1",
+            [backupId],
+          );
+          assert.equal(
             (await collectGarbage(context)).marked,
             2,
             'a fresh grace period starts after the last backup pin expires',

@@ -1,13 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool } from 'pg';
 import type { ObjectStore } from '../storage/objectStore.ts';
+import { settingNumber } from '../settings/store.ts';
 
 /** Registry-led, bounded HEAD audit. Never lists/deletes a bucket, rewrites a work, or disables a source on a timeout. */
 export async function reconcileStorage(
   pool: Pool,
   store: ObjectStore,
-  limit = 20,
-  budgetMs = 45_000,
+  limit = settingNumber('maintenance.storageBatch'),
+  budgetMs = settingNumber('maintenance.storageBudgetMs'),
 ) {
   if (!Number.isInteger(limit) || limit < 1 || limit > 100 || budgetMs < 1 || budgetMs > 60_000)
     throw new Error('invalid-storage-audit-batch');

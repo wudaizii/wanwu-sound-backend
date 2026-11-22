@@ -1,5 +1,7 @@
 # 万物声谱 · 后端
 
+管理员全站设置的实现、配置文件位置、生效方式和运维步骤见 [管理员配置](docs/ADMIN_CONFIGURATION.md)。页面由独立后端提供，主 H5 继续由前端仓库维护。
+
 这是后端维护仓库，不是新的前端站点。前端由原作者维护，后端由 wudaizii 维护。
 
 - 前端仓库：[guohaha777/voice_atalas_v2](https://github.com/guohaha777/voice_atalas_v2)

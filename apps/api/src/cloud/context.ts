@@ -26,6 +26,7 @@ export type SourceRow = {
   failure: string | null;
   parent_id: string | null;
   selection: { startMs: number; endMs: number } | null;
+  upload_policy?: { maxBytes: number; maxSeconds: number };
 };
 export type WorkRow = {
   id: string;

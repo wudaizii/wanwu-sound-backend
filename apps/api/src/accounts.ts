@@ -4,7 +4,7 @@ import type { AccountView, AccountStatus } from '@wanwu-v2/contracts/account';
 import { loginUsername, validPassword } from '@wanwu-v2/contracts/account';
 import { accounts, adminAudit, invitations, passwordResets, sessions } from './db/schema.ts';
 import type { Database } from './db/client.ts';
-import { INVITATION_MS, RESET_MS } from './config.ts';
+import { settingNumber } from './settings/store.ts';
 import { ApiError } from './errors.ts';
 import { Passwords, randomToken, tokenDigest } from './security.ts';
 
@@ -96,7 +96,7 @@ export class Accounts {
           id,
           digest: tokenDigest(code),
           createdBy: actorId,
-          expiresAt: new Date(Date.now() + INVITATION_MS),
+          expiresAt: new Date(Date.now() + settingNumber('auth.invitationSeconds') * 1000),
         })
         .returning();
       await audit(tx, actorId, 'invitation.created', id);
@@ -161,7 +161,7 @@ export class Accounts {
   }
   async issueReset(actorId: string, id: string) {
     const token = randomToken(),
-      expiresAt = new Date(Date.now() + RESET_MS);
+      expiresAt = new Date(Date.now() + settingNumber('auth.resetSeconds') * 1000);
     return this.db.transaction(async (tx) => {
       await admin(tx, actorId);
       const [target] = await tx.select().from(accounts).where(eq(accounts.id, id)).for('update');

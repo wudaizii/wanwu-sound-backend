@@ -10,7 +10,9 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const operations = process.argv[2] === 'operations';
 const runtime = process.argv[2] === 'media-runtime';
 const p1 = process.argv[2] === 'p1';
-if (process.argv[2] && !operations && !runtime && !p1) throw new Error('Unknown local test target');
+const settings = process.argv[2] === 'settings';
+if (process.argv[2] && !operations && !runtime && !p1 && !settings)
+  throw new Error('Unknown local test target');
 const id = randomUUID(),
   name = `wanwu-${operations ? 'operations' : runtime ? 'runtime' : p1 ? 'p1' : 'auth'}-test-${id}`,
   api = `${name}-api`,
@@ -226,8 +228,13 @@ try {
       '--env',
       'WANWU_TEST_PG_HOST',
       api,
-      ...(p1
-        ? ['node', '--test', '--test-reporter=tap', 'apps/api/tests/integration/p1.test.ts']
+      ...(p1 || settings
+        ? [
+            'node',
+            '--test',
+            '--test-reporter=tap',
+            `apps/api/tests/integration/${settings ? 'settings' : 'p1'}.test.ts`,
+          ]
         : []),
     ],
     runtime ? 660_000 : 180_000,
@@ -239,7 +246,9 @@ try {
         ? /^(?:#\s*)?WANWU_RUNTIME_PROOF (.+)$/m
         : p1
           ? /^(?:#\s*)?WANWU_P1_PROOF (.+)$/m
-          : /^(?:#\s*)?WANWU_AUTH_TEST_PROOF (.+)$/m,
+          : settings
+            ? /^(?:#\s*)?WANWU_SETTINGS_PROOF (.+)$/m
+            : /^(?:#\s*)?WANWU_AUTH_TEST_PROOF (.+)$/m,
   );
   if (!match) throw new Error('Kernel-backed API test evidence is missing');
   const proof = JSON.parse(match[1]);

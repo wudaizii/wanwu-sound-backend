@@ -68,6 +68,11 @@ for image in "${images[@]}"; do
   [ "$("${docker[@]}" image inspect --format '{{index .Config.Labels "ink.proterm.wanwu.source"}}' "$image")" = "$source_digest" ] || { echo 'Maintenance image/source mismatch.' >&2; exit 1; }
 done
 compose=("${docker[@]}" compose --project-name wanwu-sound --project-directory "$directory" --env-file "$directory/.env.release" --file "$directory/compose.yml")
+if [ -e "$directory/site-configuration.compose.json" ]; then
+  private_root_file "$directory/site-configuration.compose.json"
+  for file in .env.site-api .env.site-media .env.site-ops; do private_root_file "$directory/$file"; done
+  compose+=(--file "$directory/site-configuration.compose.json")
+fi
 "${compose[@]}" config --quiet
 case "$action" in
   backup) entry=backup-cli.ts;; cleanup) entry=gc-cli.ts;; status) entry=health-cli.ts;; storage) entry=storage-cli.ts;;

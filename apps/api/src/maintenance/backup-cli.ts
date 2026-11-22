@@ -7,7 +7,9 @@ import { encryptBackup } from './backupCrypto.ts';
 import { BackupStore } from './backupStore.ts';
 import { pgCommand } from './pgTools.ts';
 import { pinBackupObjects, withBackupLock } from './backupProtection.ts';
+import { initializeSettings } from '../settings/store.ts';
 
+await initializeSettings();
 const database = openDatabase(process.env.WANWU_MIGRATION_DATABASE_URL ?? '', 'owner'),
   runId = randomUUID();
 let directory: string | undefined;

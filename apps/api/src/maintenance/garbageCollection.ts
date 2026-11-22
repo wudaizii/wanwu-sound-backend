@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import type { CloudContext } from '../cloud/context.ts';
 import { transaction } from '../db/transaction.ts';
+import { settingNumber } from '../settings/store.ts';
 
 type ObjectRow = {
   object_key: string;
@@ -14,8 +15,13 @@ async function needed(tx: PoolClient, object: ObjectRow) {
   if (
     (
       await tx.query(
-        'SELECT 1 FROM backup_object_pins WHERE object_key=$1 AND protected_until>now() LIMIT 1',
-        [object.object_key],
+        `SELECT 1 FROM backup_object_pins p LEFT JOIN maintenance_runs m ON m.id=p.backup_id
+         WHERE p.object_key=$1 AND (p.protected_until>now() OR COALESCE(m.finished_at,m.started_at)+($2::int*interval '1 day')>now()) LIMIT 1`,
+        [
+          object.object_key,
+          settingNumber('maintenance.backupRetentionDays') +
+            settingNumber('maintenance.mediaGraceDays'),
+        ],
       )
     ).rowCount
   )
@@ -56,7 +62,10 @@ async function needed(tx: PoolClient, object: ObjectRow) {
   return false;
 }
 
-export async function collectGarbage(context: CloudContext, limit = 100) {
+export async function collectGarbage(
+  context: CloudContext,
+  limit = settingNumber('maintenance.gcBatch'),
+) {
   if (!Number.isInteger(limit) || limit < 1 || limit > 1000) throw new Error('invalid-gc-batch');
   const lock = await context.pool.connect(),
     counts = { temporary: 0, marked: 0, recovered: 0, deleted: 0, failures: 0 };
@@ -70,8 +79,8 @@ export async function collectGarbage(context: CloudContext, limit = 100) {
     );
     const uploads = (
       await context.pool.query(
-        `SELECT id,source_id FROM uploads WHERE temporary_deleted_at IS NULL AND expires_at<now()-interval '24 hours' ORDER BY created_at LIMIT $1`,
-        [limit],
+        `SELECT id,source_id FROM uploads WHERE temporary_deleted_at IS NULL AND expires_at<now()-($2::int*interval '1 hour') ORDER BY created_at LIMIT $1`,
+        [limit, settingNumber('maintenance.temporaryGraceHours')],
       )
     ).rows;
     for (const upload of uploads) {
@@ -80,8 +89,8 @@ export async function collectGarbage(context: CloudContext, limit = 100) {
           await tx.query('SELECT id FROM sources WHERE id=$1 FOR UPDATE', [upload.source_id]);
           const current = (
             await tx.query(
-              `SELECT * FROM uploads WHERE id=$1 AND temporary_deleted_at IS NULL AND expires_at<now()-interval '24 hours' FOR UPDATE`,
-              [upload.id],
+              `SELECT * FROM uploads WHERE id=$1 AND temporary_deleted_at IS NULL AND expires_at<now()-($2::int*interval '1 hour') FOR UPDATE`,
+              [upload.id, settingNumber('maintenance.temporaryGraceHours')],
             )
           ).rows[0];
           if (!current) return;
@@ -136,8 +145,8 @@ export async function collectGarbage(context: CloudContext, limit = 100) {
           }
           if (!object.collect_after) {
             await tx.query(
-              "UPDATE stored_objects SET collect_after=now()+interval '7 days' WHERE object_key=$1",
-              [object.object_key],
+              "UPDATE stored_objects SET collect_after=now()+($2::int*interval '1 day') WHERE object_key=$1",
+              [object.object_key, settingNumber('maintenance.mediaGraceDays')],
             );
             counts.marked++;
             return;

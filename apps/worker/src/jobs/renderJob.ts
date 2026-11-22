@@ -59,7 +59,7 @@ export async function renderJob(
     }
     const row = (
       await tx.query(
-        `SELECT r.*,s.content,s.source_refs,s.rules,s.renderer_version,s.timbre_version FROM render_artifacts r
+        `SELECT r.*,s.content,s.source_refs,s.rules,s.renderer_version,s.timbre_version,s.encoding FROM render_artifacts r
    JOIN work_snapshots s ON s.work_id=r.work_id AND s.revision=r.revision WHERE r.id=$1`,
         [renderId],
       )
@@ -146,7 +146,7 @@ export async function renderJob(
   const wav = join(scratch, 'finished.wav'),
     mp3 = join(scratch, 'finished.mp3');
   await writeFile(wav, wave, { flag: 'wx', mode: 0o600 });
-  const result = await encodeMp3(wav, mp3, tools),
+  const result = await encodeMp3(wav, mp3, tools, snapshot.encoding?.mp3Kbps ?? 128),
     key = context.store.key('renders');
   phase('encoded');
   await context.pool.query(

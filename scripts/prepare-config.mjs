@@ -36,6 +36,7 @@ await write(path.join(deployment, '.env.database'), [
 await write(path.join(deployment, '.env.api'), [
   `WANWU_DATABASE_URL=${url('app', app)}`,
   `WANWU_SESSION_SECRET=${session}`,
+  `WANWU_CONFIG_ENCRYPTION_KEY=${randomBytes(32).toString('hex')}`,
   'WANWU_APP_ORIGIN=https://wanwu.proterm.ink',
   'WANWU_CLOUD_AUTH_MODE=disabled',
   'WANWU_TRUSTED_PROXY_ADDRESSES=',

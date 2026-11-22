@@ -7,6 +7,7 @@ import { lockActor, ownedWork, audit } from './context.ts';
 import { transaction } from '../db/transaction.ts';
 import { randomToken } from '../security.ts';
 import { ApiError } from '../errors.ts';
+import { settingNumber } from '../settings/store.ts';
 
 export class Shares {
   readonly context: CloudContext;
@@ -158,7 +159,10 @@ export class Shares {
         publishedAt: row.published_at.toISOString(),
         audio: {
           durationMs: row.duration_ms,
-          playback: await this.context.store.playback(row.object_key, 60),
+          playback: await this.context.store.playback(
+            row.object_key,
+            settingNumber('playback.publicSeconds'),
+          ),
         },
       };
     });

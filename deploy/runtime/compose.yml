@@ -29,7 +29,8 @@ services:
     image: ${WANWU_API_IMAGE:?Set a verified digest-pinned Wanwu API image}
     user: "1000:1000"
     env_file: [.env.api, .env.models]
-    environment: {WANWU_API_HOST: 0.0.0.0, WANWU_API_PORT: "3100", WANWU_SOURCE_DIGEST: "${WANWU_SOURCE_DIGEST:?Set the release source digest}"}
+    environment: {WANWU_API_HOST: 0.0.0.0, WANWU_API_PORT: "3100", WANWU_SOURCE_DIGEST: "${WANWU_SOURCE_DIGEST:?Set the release source digest}", WANWU_CONFIG_DIRECTORY: /run/wanwu-config}
+    volumes: ["${WANWU_CONFIG_HOST_DIRECTORY:-/srv/wudaizii/wanwu-sound/configuration}:/run/wanwu-config:rw"]
     ports: ["127.0.0.1:3100:3100"]
     networks: [database, egress]
     depends_on: {database: {condition: service_healthy}}
@@ -44,10 +45,10 @@ services:
     image: ${WANWU_WORKER_IMAGE:?Set a verified digest-pinned Wanwu worker image}
     user: "1000:1000"
     env_file: .env.worker
-    environment: {WANWU_RENDERER_IMAGE: "${WANWU_WORKER_IMAGE}", WANWU_SOURCE_DIGEST: "${WANWU_SOURCE_DIGEST}"}
+    environment: {WANWU_RENDERER_IMAGE: "${WANWU_WORKER_IMAGE}", WANWU_SOURCE_DIGEST: "${WANWU_SOURCE_DIGEST}", WANWU_CONFIG_DIRECTORY: /run/wanwu-config}
     networks: [database, egress]
     depends_on: {database: {condition: service_healthy}}
-    volumes: [media-scratch:/var/lib/wanwu-media]
+    volumes: [media-scratch:/var/lib/wanwu-media, "${WANWU_CONFIG_HOST_DIRECTORY:-/srv/wudaizii/wanwu-sound/configuration}:/run/wanwu-config:ro"]
     security_opt: [no-new-privileges:true, "seccomp=./seccomp-profile.json"]
     tmpfs: ["/tmp:rw,nosuid,noexec,size=256m,mode=1777", "/home/node:rw,nosuid,noexec,size=32m,uid=1000,gid=1000"]
     shm_size: 128m
@@ -63,7 +64,8 @@ services:
     restart: "no"
     user: "1000:1000"
     env_file: .env.ops
-    volumes: [./backup-public.pem:/run/wanwu/backup-public.pem:ro]
+    environment: {WANWU_CONFIG_DIRECTORY: /run/wanwu-config}
+    volumes: [./backup-public.pem:/run/wanwu/backup-public.pem:ro, "${WANWU_CONFIG_HOST_DIRECTORY:-/srv/wudaizii/wanwu-sound/configuration}:/run/wanwu-config:ro"]
     tmpfs: ["/tmp:rw,nosuid,noexec,size=128m,mode=1777"]
     networks: [database, egress]
     cpus: 0.25

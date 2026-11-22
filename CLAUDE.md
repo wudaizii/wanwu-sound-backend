@@ -2,6 +2,8 @@
 
 先完整阅读 `AGENTS.md`、`README.md`、`handoff/START_HERE.md`。
 
+管理员全站配置另读 `docs/ADMIN_CONFIGURATION.md`：`settings/schema.ts` 为目录，ECS JSON 为覆盖源。`live`、`restart`、`deployment`、`release` 生效方式不同；后两类不能保存后假称已应用。音乐及契约发布草稿仍须在前端更新共享包、同步后端并过音频门禁。应用部署参数只允许受控运维命令，不给 API root 或 Docker socket。
+
 如果你负责原前端仓库：再读 `handoff/FRONTEND.md`、`handoff/BACKEND_BOUNDARY.md`（正式 ECS H5、同源 API 与职责分离）。不要在本仓库重新实现页面。前端接入补丁已合入前端，不再需要应用；共用包在前端改，再用 `scripts/sync-shared.mjs` 同步，`npm run check:shared` 指纹不符就停。
 
 如果你负责后端：读 `docs/ARCHITECTURE.md`、`docs/CONFIGURATION.md`、`docs/OPERATIONS.md`、`docs/STATUS.md`，接口以 `docs/development/api-contract-v0.6.md` 和 `packages/contracts` 为准。

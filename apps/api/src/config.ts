@@ -1,4 +1,5 @@
 import { isIP } from 'node:net';
+import { settingsEnvironment } from './settings/store.ts';
 
 export const SESSION_IDLE_MS = 24 * 60 * 60 * 1000,
   SESSION_ABSOLUTE_MS = 7 * SESSION_IDLE_MS;
@@ -29,6 +30,7 @@ export function dedicatedDatabaseUrl(value: string | undefined, role: 'app' | 'o
   return value!;
 }
 export function readConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
+  env = settingsEnvironment(env);
   if (env.WANWU_MIGRATION_DATABASE_URL || env.WANWU_APP_DB_PASSWORD)
     throw new Error('Do not launch the API with database management credentials');
   const origin = env.WANWU_APP_ORIGIN ?? 'https://wanwu.proterm.ink';

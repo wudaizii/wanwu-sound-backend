@@ -1,7 +1,7 @@
 import type { Session } from 'fastify';
 import type { SessionStore } from '@fastify/session';
 import type { Pool } from 'pg';
-import { SESSION_ABSOLUTE_MS, SESSION_IDLE_MS } from './config.ts';
+import { settingNumber } from './settings/store.ts';
 import { tokenDigest } from './security.ts';
 import { ApiError } from './errors.ts';
 
@@ -38,10 +38,12 @@ export class PgSessionStore implements SessionStore {
   private async persist(id: string, session: Session) {
     session.firstSeenAt ??= new Date().toISOString();
     const created = new Date(session.firstSeenAt),
-      absolute = new Date(created.getTime() + SESSION_ABSOLUTE_MS);
+      absolute = new Date(created.getTime() + settingNumber('auth.absoluteSeconds') * 1000);
     if (!Number.isFinite(created.getTime()) || absolute.getTime() <= Date.now())
       throw new ApiError(401, 'needs-account');
-    const expires = new Date(Math.min(Date.now() + SESSION_IDLE_MS, absolute.getTime()));
+    const expires = new Date(
+      Math.min(Date.now() + settingNumber('auth.idleSeconds') * 1000, absolute.getTime()),
+    );
     const data = {
       cookie: JSON.parse(JSON.stringify(session.cookie)),
       firstSeenAt: session.firstSeenAt,
@@ -87,9 +89,10 @@ export class PgSessionStore implements SessionStore {
       .query<{ data: Session }>(
         `SELECT s.data FROM sessions s LEFT JOIN accounts a ON a.id=s.account_id
    WHERE s.digest=$1 AND s.expires_at>now() AND s.absolute_expires_at>now()
+    AND s.created_at+($2::int*interval '1 second')>now()
     AND NOT EXISTS(SELECT 1 FROM revoked_sessions WHERE digest=s.digest)
     AND (s.account_id IS NULL OR (a.status='active' AND a.auth_version=s.auth_version))`,
-        [tokenDigest(id)],
+        [tokenDigest(id), settingNumber('auth.absoluteSeconds')],
       )
       .then(
         (result) => callback(null, result.rows[0]?.data ?? null),

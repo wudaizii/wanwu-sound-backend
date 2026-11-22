@@ -8,7 +8,8 @@ import type { Actor, CloudContext, SourceRow } from './context.ts';
 import { lockActor, digest } from './context.ts';
 import { transaction } from '../db/transaction.ts';
 import { ApiError } from '../errors.ts';
-import { quotaLock, admit, PLAYBACK_RESERVATION } from './quotas.ts';
+import { settingNumber } from '../settings/store.ts';
+import { quotaLock, admit } from './quotas.ts';
 import { enqueueMedia } from '../jobs/mediaQueue.ts';
 
 /** New grants need an active entry; an older work can retain only its own existing grant. */
@@ -84,7 +85,10 @@ export class Sources {
       failure: row.failure,
       playback:
         row.status === 'ready' && row.playback_key
-          ? await this.context.store.playback(row.playback_key, 300)
+          ? await this.context.store.playback(
+              row.playback_key,
+              settingNumber('playback.privateSeconds'),
+            )
           : null,
     };
   }
@@ -122,10 +126,16 @@ export class Sources {
         ).rowCount;
         if (!live) await admit(tx, actor.id, 'source', 0); // Reactivation is a new pending slot, not new storage.
       } else {
-        await admit(tx, actor.id, 'source', input.bytes + PLAYBACK_RESERVATION);
+        if (input.bytes > settingNumber('upload.maxBytes')) throw new ApiError(413, 'too-large');
+        await admit(
+          tx,
+          actor.id,
+          'source',
+          input.bytes + settingNumber('quota.playbackReservation'),
+        );
         row = (
           await tx.query<SourceRow>(
-            'INSERT INTO sources(id,owner_id,metadata,checksum,bytes,selection) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+            'INSERT INTO sources(id,owner_id,metadata,checksum,bytes,selection,upload_policy) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *',
             [
               id,
               actor.id,
@@ -133,13 +143,17 @@ export class Sources {
               input.checksum,
               input.bytes,
               input.selection ? JSON.stringify(input.selection) : null,
+              JSON.stringify({
+                maxBytes: settingNumber('upload.maxBytes'),
+                maxSeconds: settingNumber('upload.maxSeconds'),
+              }),
             ],
           )
         ).rows[0]!;
         const final = store.key('originals');
         await tx.query(
-          "INSERT INTO uploads(id,source_id,temporary_key,final_key,expires_at) VALUES($1,$2,$3,$4,now()+interval '5 minutes')",
-          [randomUUID(), id, store.key('tmp'), final],
+          "INSERT INTO uploads(id,source_id,temporary_key,final_key,expires_at) VALUES($1,$2,$3,$4,now()+($5::int*interval '1 second'))",
+          [randomUUID(), id, store.key('tmp'), final, settingNumber('upload.urlSeconds')],
         );
         await tx.query(
           "INSERT INTO stored_objects(object_key,kind,source_id) VALUES($1,'original',$2)",
@@ -148,8 +162,8 @@ export class Sources {
       }
       const upload = (
         await tx.query<{ id: string; temporary_key: string }>(
-          "UPDATE uploads SET expires_at=now()+interval '5 minutes' WHERE source_id=$1 RETURNING id,temporary_key",
-          [id],
+          "UPDATE uploads SET expires_at=now()+($2::int*interval '1 second') WHERE source_id=$1 RETURNING id,temporary_key",
+          [id, settingNumber('upload.urlSeconds')],
         )
       ).rows[0]!;
       return { row, upload };
@@ -190,7 +204,7 @@ export class Sources {
       let row = (await tx.query<SourceRow>('SELECT * FROM sources WHERE id=$1 FOR UPDATE', [id]))
         .rows[0];
       if (!row) {
-        await admit(tx, actor.id, 'source', PLAYBACK_RESERVATION);
+        await admit(tx, actor.id, 'source', settingNumber('quota.playbackReservation'));
         const metadata = {
           ...parent.metadata,
           id,

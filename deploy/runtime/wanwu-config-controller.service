@@ -1,0 +1,24 @@
+[Unit]
+Description=Wanwu bounded configuration controller
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=root
+UMask=0077
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /etc/wanwu-sound/configuration-controller.py
+Restart=on-failure
+RestartSec=10
+KillMode=process
+TimeoutStopSec=700
+NoNewPrivileges=true
+CPUQuota=25%
+MemoryMax=256M
+TasksMax=128
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

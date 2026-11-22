@@ -3,10 +3,12 @@ import { OssStore, ossConfig } from '../../api/src/storage/ossStore.ts';
 import { mediaBoss } from '../../api/src/jobs/mediaQueue.ts';
 import { startMediaWorker } from './jobs/mediaWorker.ts';
 import { toolVersions } from './media/tools.ts';
+import { initializeSettings, settingsEnvironment } from '../../api/src/settings/store.ts';
 
+await initializeSettings();
 if (process.env.WANWU_MIGRATION_DATABASE_URL || process.env.WANWU_APP_DB_PASSWORD)
   throw new Error('The worker must not receive management credentials');
-const database = openDatabase(process.env.WANWU_DATABASE_URL ?? ''),
+const database = openDatabase(settingsEnvironment().WANWU_DATABASE_URL ?? ''),
   boss = mediaBoss(database.pool);
 let worker: Awaited<ReturnType<typeof startMediaWorker>> | undefined,
   closing = false;
@@ -18,7 +20,7 @@ const stop = async () => {
   await database.close();
 };
 try {
-  const origin = process.env.WANWU_APP_ORIGIN ?? 'https://voiceatalass.netlify.app';
+  const origin = settingsEnvironment().WANWU_APP_ORIGIN ?? 'https://wanwu.proterm.ink';
   if (new URL(origin).origin !== origin || !origin.startsWith('https://'))
     throw new Error('Invalid app origin');
   const store = new OssStore(ossConfig()),

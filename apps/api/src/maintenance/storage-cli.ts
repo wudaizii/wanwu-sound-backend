@@ -1,6 +1,8 @@
 import { openDatabase } from '../db/client.ts';
 import { OssStore, ossConfig } from '../storage/ossStore.ts';
 import { reconcileStorage } from './storageReconcile.ts';
+import { initializeSettings } from '../settings/store.ts';
+await initializeSettings();
 const database = openDatabase(process.env.WANWU_DATABASE_URL ?? '');
 try {
   const counts = await reconcileStorage(database.pool, new OssStore(ossConfig()));

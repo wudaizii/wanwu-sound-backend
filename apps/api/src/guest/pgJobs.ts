@@ -9,6 +9,7 @@ import { sqlAdapter } from '../jobs/mediaQueue.ts';
 import type { BackgroundTask } from './background.ts';
 import type { GuestConfig, Provider } from './config.ts';
 import type { JobState, JobStore } from './jobs.ts';
+import { settingNumber, settingsStore, inSettings } from '../settings/store.ts';
 
 export const AI_QUEUE = 'ai-background';
 const failed: BackgroundResult = { status: 'unavailable', reason: 'failed' };
@@ -78,17 +79,20 @@ export class PgBackgroundJobs implements JobStore {
   private timer?: ReturnType<typeof setInterval>;
   readonly pool: Pool;
   readonly boss: PgBoss;
-  readonly config: GuestConfig;
+  readonly configuration: GuestConfig | (() => GuestConfig);
+  get config() {
+    return typeof this.configuration === 'function' ? this.configuration() : this.configuration;
+  }
   readonly execute: (task: BackgroundTask) => Promise<BackgroundResult>;
   constructor(
     pool: Pool,
     boss: PgBoss,
-    config: GuestConfig,
+    config: GuestConfig | (() => GuestConfig),
     execute: (task: BackgroundTask) => Promise<BackgroundResult>,
   ) {
     this.pool = pool;
     this.boss = boss;
-    this.config = config;
+    this.configuration = config;
     this.execute = execute;
   }
 
@@ -112,11 +116,11 @@ export class PgBackgroundJobs implements JobStore {
           "SELECT count(*)::int AS n FROM ai_background_jobs WHERE status<>'done' AND expires_at>now()",
         )
       ).rows[0]!.n;
-      if (pending >= 100) return null;
+      if (pending >= settingNumber('ai.pendingJobs')) return null;
       const id = randomUUID();
       await tx.query(
-        `INSERT INTO ai_background_jobs(id,owner_hash,input_digest,step,mode,brief,provider_digest)
-         VALUES($1,$2,$3,$4,$5,$6,$7)`,
+        `INSERT INTO ai_background_jobs(id,owner_hash,input_digest,step,mode,brief,provider_digest,expires_at)
+         VALUES($1,$2,$3,$4,$5,$6,$7,now()+($8::int*interval '1 second'))`,
         [
           id,
           task.owner,
@@ -125,6 +129,7 @@ export class PgBackgroundJobs implements JobStore {
           builtin ? 'builtin' : 'ephemeral',
           builtin ? JSON.stringify(brief) : null,
           fingerprint,
+          settingNumber('ai.resultTtlSeconds'),
         ],
       );
       if (builtin) {
@@ -145,37 +150,40 @@ export class PgBackgroundJobs implements JobStore {
     return result?.id ?? null;
   }
   private async run(id: string, operation?: () => Promise<BackgroundResult>) {
-    const lease = randomUUID();
-    const row = (
-      await this.pool.query(
-        `UPDATE ai_background_jobs SET status='running',lease_id=$2,deadline=now()+interval '75 seconds'
+    await settingsStore()?.refresh();
+    return inSettings(async () => {
+      const lease = randomUUID();
+      const row = (
+        await this.pool.query(
+          `UPDATE ai_background_jobs SET status='running',lease_id=$2,deadline=now()+interval '75 seconds'
        WHERE id=$1 AND status='queued' AND expires_at>now() RETURNING *`,
-        [id, lease],
-      )
-    ).rows[0];
-    if (!row) return;
-    let result: BackgroundResult = failed;
-    if (operation) result = await operation().catch(() => failed);
-    else if (row.mode === 'builtin') {
-      const provider =
-        row.step === 'audio-ai'
-          ? this.config.music
-          : row.step === 'voice-ai'
-            ? this.config.audio
-            : this.config.language;
-      if (providerDigest(provider) === row.provider_digest)
-        result = await this.execute({
-          owner: row.owner_hash,
-          step: row.step,
-          brief: row.brief,
-          provider,
-        }).catch(() => failed);
-    }
-    await this.pool.query(
-      `UPDATE ai_background_jobs SET status='done',result=$3,brief=NULL,lease_id=NULL
+          [id, lease],
+        )
+      ).rows[0];
+      if (!row) return;
+      let result: BackgroundResult = failed;
+      if (operation) result = await operation().catch(() => failed);
+      else if (row.mode === 'builtin') {
+        const provider =
+          row.step === 'audio-ai'
+            ? this.config.music
+            : row.step === 'voice-ai'
+              ? this.config.audio
+              : this.config.language;
+        if (providerDigest(provider) === row.provider_digest)
+          result = await this.execute({
+            owner: row.owner_hash,
+            step: row.step,
+            brief: row.brief,
+            provider,
+          }).catch(() => failed);
+      }
+      await this.pool.query(
+        `UPDATE ai_background_jobs SET status='done',result=$3,brief=NULL,lease_id=NULL
        WHERE id=$1 AND lease_id=$2 AND status='running' AND deadline>now() AND expires_at>now()`,
-      [id, lease, JSON.stringify(result)],
-    );
+        [id, lease, JSON.stringify(result)],
+      );
+    });
   }
   async get(id: string, owner: string): Promise<JobState | null> {
     await this.reconcile();
@@ -199,7 +207,8 @@ export class PgBackgroundJobs implements JobStore {
     // Keep only short-lived job results; aggregate daily usage has a separate 60-day retention.
     await this.pool.query('DELETE FROM ai_background_jobs WHERE expires_at<now()');
     await this.pool.query(
-      "DELETE FROM ai_daily_usage WHERE day<(now() AT TIME ZONE 'Asia/Shanghai')::date-60",
+      "DELETE FROM ai_daily_usage WHERE day<(now() AT TIME ZONE 'Asia/Shanghai')::date-$1::int",
+      [settingNumber('ai.usageRetentionDays')],
     );
   }
   async listen() {

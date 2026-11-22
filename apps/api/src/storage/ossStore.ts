@@ -1,4 +1,5 @@
 import OSS from 'ali-oss';
+import { settingsEnvironment, settingNumber } from '../settings/store.ts';
 import { randomUUID } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
 import { Transform } from 'node:stream';
@@ -13,6 +14,7 @@ export type OssConfig = {
   accessKeySecret: string;
 };
 export function ossConfig(env: NodeJS.ProcessEnv = process.env): OssConfig {
+  env = settingsEnvironment(env);
   const bucket = env.WANWU_OSS_BUCKET ?? '',
     region = env.WANWU_OSS_REGION ?? '',
     prefix = env.WANWU_OSS_PREFIX ?? '';
@@ -58,7 +60,7 @@ export class OssStore implements ObjectStore {
     // The browser supplies Content-Length from the Blob itself, not setRequestHeader.
     const uploadUrl = await this.client.signatureUrlV4(
       'PUT',
-      300,
+      settingNumber('upload.urlSeconds'),
       { headers: { ...requiredHeaders, 'Content-Length': String(bytes) } },
       key,
       ['content-length'],
@@ -67,7 +69,7 @@ export class OssStore implements ObjectStore {
       method: 'PUT' as const,
       uploadUrl,
       requiredHeaders,
-      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+      expiresAt: new Date(Date.now() + settingNumber('upload.urlSeconds') * 1000).toISOString(),
     };
   }
   async head(key: string): Promise<ObjectHead> {

@@ -8,12 +8,14 @@ import { guestContext } from './guest/routes.ts';
 import { verifyBuildSource } from './version.ts';
 import { PgBackgroundJobs } from './guest/pgJobs.ts';
 import { resourceLimits } from './cloud/quotas.ts';
+import { initializeSettings, settingsEnvironment } from './settings/store.ts';
 
+await initializeSettings(true);
 verifyBuildSource();
 resourceLimits();
 
 const config = readConfig(),
-  database = openDatabase(process.env.WANWU_DATABASE_URL ?? '');
+  database = openDatabase(settingsEnvironment().WANWU_DATABASE_URL ?? '');
 const host = process.env.WANWU_API_HOST ?? '127.0.0.1',
   port = Number(process.env.WANWU_API_PORT ?? 3100);
 if (

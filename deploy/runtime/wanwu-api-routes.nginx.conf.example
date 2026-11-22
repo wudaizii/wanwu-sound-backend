@@ -1,5 +1,10 @@
 # Install reviewed snippets in /etc/nginx/wanwu/. Include this file inside BOTH Wanwu HTTPS server{} blocks.
 # Exact limits follow Fastify route bodies. Browsers upload audio directly to OSS, not to this proxy.
+location = /admin/settings {
+    rewrite ^ /api/v1/admin/settings/page break;
+    proxy_read_timeout 20s;
+    include /etc/nginx/wanwu/wanwu-api-proxy.conf;
+}
 location = /api/v1/discovery/work {
     client_max_body_size 5200000;
     proxy_read_timeout 52s;

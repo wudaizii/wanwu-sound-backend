@@ -1,5 +1,7 @@
 import { openDatabase } from '../db/client.ts';
 import { operationalHealth } from './operationalHealth.ts';
+import { initializeSettings, settingNumber } from '../settings/store.ts';
+await initializeSettings();
 const database = openDatabase(process.env.WANWU_DATABASE_URL ?? '');
 try {
   if (process.argv.includes('--worker-only')) {
@@ -8,7 +10,7 @@ try {
         "SELECT extract(epoch FROM now()-seen_at)::int AS age FROM runtime_status WHERE component='media-worker'",
       )
     ).rows[0];
-    const pass = !!row && row.age < 90;
+    const pass = !!row && row.age < settingNumber('health.heartbeatSeconds');
     console.log(
       JSON.stringify({ status: pass ? 'pass' : 'attention', workerAgeSeconds: row?.age ?? null }),
     );

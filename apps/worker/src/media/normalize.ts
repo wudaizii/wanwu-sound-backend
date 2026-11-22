@@ -38,7 +38,7 @@ export async function normalizeSource(
   expectedChecksum?: string,
   trustedLimit = MAX_SOURCE_SECONDS,
 ): Promise<NormalizedSource> {
-  if (!Number.isFinite(trustedLimit) || trustedLimit < MAX_SOURCE_SECONDS || trustedLimit > 60)
+  if (!Number.isFinite(trustedLimit) || trustedLimit < 1 || trustedLimit > 60)
     throw new MediaError('invalid-source-limit');
   const original = resolve(input),
     info = await stat(original);
@@ -118,7 +118,8 @@ export async function normalizeSource(
 }
 
 /** Caller supplies a new destination; -n prevents replacing an existing result or any original. */
-export async function encodeMp3(wave: string, destination: string, tools: MediaTools) {
+export async function encodeMp3(wave: string, destination: string, tools: MediaTools, kbps = 128) {
+  if (!Number.isInteger(kbps) || kbps < 64 || kbps > 320) throw new MediaError('invalid-media');
   if (resolve(wave) === resolve(destination)) throw new MediaError('output-conflict');
   try {
     await stat(destination);
@@ -154,7 +155,7 @@ export async function encodeMp3(wave: string, destination: string, tools: MediaT
       '-c:a',
       'libmp3lame',
       '-b:a',
-      '128k',
+      `${kbps}k`,
       resolve(destination),
     ],
     60_000,

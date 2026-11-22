@@ -1,5 +1,6 @@
 import { PgBoss } from 'pg-boss';
 import type { Pool, PoolClient } from 'pg';
+import { settingNumber } from '../settings/store.ts';
 
 export const MEDIA_QUEUE = 'media';
 export type MediaJob = { kind: 'source'; sourceId: string } | { kind: 'render'; renderId: string };
@@ -58,8 +59,8 @@ export async function installMediaQueue(pool: Pool) {
 export async function enqueueMedia(boss: PgBoss, tx: PoolClient, data: MediaJob) {
   const id = await boss.send(MEDIA_QUEUE, data, {
     priority: data.kind === 'source' ? 100 : 0,
-    retryLimit: 2,
-    retryDelay: 5,
+    retryLimit: settingNumber('media.retries'),
+    retryDelay: settingNumber('media.retryDelaySeconds'),
     expireInSeconds: 240,
     db: sqlAdapter(tx),
   });

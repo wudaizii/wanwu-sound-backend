@@ -1,10 +1,18 @@
 import type { PoolClient } from 'pg';
 import { ApiError } from '../errors.ts';
+import { settingNumber, settingsStore } from '../settings/store.ts';
 
 // Conservative admission reservations, not a claim about OSS billing or tested capacity.
 export const PLAYBACK_RESERVATION = 12 * 1024 ** 2;
 export const RENDER_RESERVATION = 2 * 1024 ** 2;
 export function resourceLimits(env: NodeJS.ProcessEnv = process.env) {
+  if (env === process.env && settingsStore())
+    return {
+      storageBytes: settingNumber('quota.storageBytes'),
+      pendingSources: settingNumber('quota.pendingSources'),
+      pendingRenders: settingNumber('quota.pendingRenders'),
+      globalPending: settingNumber('quota.globalPending'),
+    };
   const read = (name: string, fallback: number, max: number) => {
     const value = Number(env[name] ?? fallback);
     if (!Number.isSafeInteger(value) || value < 1 || value > max)
@@ -29,13 +37,15 @@ export async function resourceUsage(tx: PoolClient, owner: string) {
       `SELECT
       (SELECT COALESCE(sum(CASE o.kind WHEN 'original' THEN s.bytes+
           CASE WHEN EXISTS(SELECT 1 FROM stored_objects p WHERE p.source_id=s.id AND p.kind='playback' AND p.deleted_at IS NULL) THEN 0 ELSE $2 END
-        WHEN 'playback' THEN $2 ELSE COALESCE(r.bytes,$3) END),0)
+        WHEN 'playback' THEN $2 ELSE COALESCE(r.bytes,GREATEST($3,ceil(COALESCE((snap.encoding->>'mp3Kbps')::numeric,128)*90*1000/8+65536))) END),0)
        FROM stored_objects o LEFT JOIN sources s ON s.id=o.source_id
        LEFT JOIN render_artifacts r ON r.id=o.render_id LEFT JOIN works w ON w.id=r.work_id
+       LEFT JOIN work_snapshots snap ON snap.work_id=r.work_id AND snap.revision=r.revision
        WHERE o.deleted_at IS NULL AND (COALESCE(s.owner_id,s.requested_by)=$1 OR w.owner_id=$1))
        + (SELECT count(*)*$2 FROM sources s WHERE s.requested_by=$1 AND s.catalogue AND s.status IN ('queued','processing')
           AND NOT EXISTS(SELECT 1 FROM stored_objects o WHERE o.source_id=s.id AND o.kind='playback' AND o.deleted_at IS NULL))
-       + (SELECT count(*)*$3 FROM render_artifacts r JOIN works w ON w.id=r.work_id
+       + (SELECT COALESCE(sum(GREATEST($3,ceil(COALESCE((snap.encoding->>'mp3Kbps')::numeric,128)*90*1000/8+65536))),0) FROM render_artifacts r JOIN works w ON w.id=r.work_id
+          JOIN work_snapshots snap ON snap.work_id=r.work_id AND snap.revision=r.revision
           WHERE w.owner_id=$1 AND r.status IN ('queued','processing') AND NOT EXISTS
           (SELECT 1 FROM stored_objects o WHERE o.render_id=r.id AND o.deleted_at IS NULL)) AS bytes,
       (SELECT count(*)::int FROM sources s WHERE COALESCE(owner_id,requested_by)=$1 AND
@@ -44,7 +54,7 @@ export async function resourceUsage(tx: PoolClient, owner: string) {
       (SELECT count(*) FROM sources s WHERE status IN ('queued','processing') OR
        (status='uploading' AND EXISTS(SELECT 1 FROM uploads u WHERE u.source_id=s.id AND u.expires_at>now())))+
       (SELECT count(*) FROM render_artifacts WHERE status IN ('queued','processing')) AS global_pending`,
-      [owner, PLAYBACK_RESERVATION, RENDER_RESERVATION],
+      [owner, settingNumber('quota.playbackReservation'), settingNumber('quota.renderReservation')],
     )
   ).rows[0]!;
   return {

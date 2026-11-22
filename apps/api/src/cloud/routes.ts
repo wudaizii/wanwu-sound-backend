@@ -11,6 +11,8 @@ import { ApiError } from '../errors.ts';
 import { resourceLimits, resourceUsage } from './quotas.ts';
 import { transaction } from '../db/transaction.ts';
 import { lockActor } from './context.ts';
+import { WindowLimiter } from '../settings/rate.ts';
+import { settingNumber } from '../settings/store.ts';
 
 type Params = { id: string };
 type Query = { state?: string; owner?: string; scope?: string; cursor?: string; revision?: string };
@@ -59,15 +61,26 @@ export function cloudRoutes(
       throw new ApiError(400, 'invalid-request');
     return Number(value);
   };
-  const limited = {
-    config: {
-      rateLimit: {
-        max: 30,
-        timeWindow: 10 * 60_000,
-        keyGenerator: (request: FastifyRequest) => request.session.accountId ?? request.ip,
-      },
-    },
-  };
+  const limited = {},
+    limiter = new WindowLimiter();
+  app.addHook('preHandler', async (request) => {
+    const route = request.routeOptions.url ?? '';
+    if (request.method === 'GET' && route === '/api/v1/shares/:token')
+      limiter.take(
+        `public:${request.ip}`,
+        settingNumber('playback.publicRateMax'),
+        settingNumber('playback.publicWindowSeconds'),
+      );
+    if (
+      ['POST', 'PUT'].includes(request.method) &&
+      (/\/works\/:id(?:\/render)?$/.test(route) || /\/sources\/:id(?:\/complete)?$/.test(route))
+    )
+      limiter.take(
+        `${route}:${request.session.accountId ?? request.ip}`,
+        settingNumber('operations.rateMax'),
+        settingNumber('operations.rateWindowSeconds'),
+      );
+  });
   app.post('/api/v1/works', async (request, reply) => {
     const work = await works.create(await actor(request), request.body);
     reply.header('ETag', workEtag(work.id, work.revision));
@@ -222,10 +235,8 @@ export function cloudRoutes(
     await shares.revoke(await actor(request), workId(request.params.id));
     return reply.code(204).send();
   });
-  app.get<{ Params: { token: string } }>(
-    '/api/v1/shares/:token',
-    { config: { rateLimit: { max: 60, timeWindow: 60_000 } } },
-    async (request) => shares.publicView(request.params.token),
+  app.get<{ Params: { token: string } }>('/api/v1/shares/:token', {}, async (request) =>
+    shares.publicView(request.params.token),
   );
   app.get<{ Querystring: Query }>('/api/v1/admin/accounts', async (request) =>
     admin.accounts(await actor(request), request.query.cursor ?? null),

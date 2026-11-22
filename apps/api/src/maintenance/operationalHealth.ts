@@ -1,4 +1,5 @@
 import type { Pool, PoolClient } from 'pg';
+import { settingNumber } from '../settings/store.ts';
 type Queryable = Pick<Pool | PoolClient, 'query'>;
 
 /** Private aggregate only. Public liveness never exposes operational/account data. */
@@ -26,10 +27,11 @@ export async function operationalHealth(db: Queryable) {
     await db.query(
       `SELECT count(*) FILTER(WHERE c.status IN ('missing','invalid'))::int AS broken,
       count(*) FILTER(WHERE c.status='unavailable')::int AS unavailable,
-      count(*) FILTER(WHERE c.checked_at IS NULL OR c.checked_at<now()-interval '24 hours')::int AS stale
+      count(*) FILTER(WHERE c.checked_at IS NULL OR c.checked_at<now()-($1::int*interval '1 second'))::int AS stale
      FROM stored_objects o LEFT JOIN storage_checks c USING(object_key) WHERE o.deleted_at IS NULL
       AND (EXISTS(SELECT 1 FROM sources s WHERE s.status='ready' AND (s.original_key=o.object_key OR s.playback_key=o.object_key))
        OR EXISTS(SELECT 1 FROM render_artifacts r WHERE r.status='ready' AND r.object_key=o.object_key))`,
+      [settingNumber('health.objectCheckAgeSeconds')],
     )
   ).rows[0]!;
   const ai = (
@@ -43,12 +45,16 @@ export async function operationalHealth(db: Queryable) {
   ).rows[0]!;
   const reasons: string[] = [];
   for (const component of ['media-worker', 'ai-worker'])
-    if (!heartbeats.some((h) => h.component === component && h.age < 90))
+    if (
+      !heartbeats.some(
+        (h) => h.component === component && h.age < settingNumber('health.heartbeatSeconds'),
+      )
+    )
       reasons.push(`${component}-stale`);
   for (const [kind, max] of [
-    ['backup', 26 * 3600],
-    ['garbage-collection', 2 * 3600],
-    ['storage-reconcile', 3600],
+    ['backup', settingNumber('health.backupAgeSeconds')],
+    ['garbage-collection', settingNumber('health.cleanupAgeSeconds')],
+    ['storage-reconcile', settingNumber('health.storageAgeSeconds')],
   ] as const)
     if (!maintenance.some((m) => m.kind === kind && m.status === 'pass' && m.age < max))
       reasons.push(`${kind}-overdue-or-failed`);
@@ -56,8 +62,8 @@ export async function operationalHealth(db: Queryable) {
     const rows = queues.filter((q) => q.name === name);
     if (
       rows.filter((q) => ['created', 'retry'].includes(q.state)).reduce((n, q) => n + q.count, 0) >=
-        50 ||
-      rows.some((q) => q.oldest > 600)
+        settingNumber('health.queueCount') ||
+      rows.some((q) => q.oldest > settingNumber('health.queueAgeSeconds'))
     )
       reasons.push(`${name}-backlog`);
     if (rows.some((q) => q.state === 'failed' && q.count > 0))

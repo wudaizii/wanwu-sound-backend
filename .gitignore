@@ -15,4 +15,5 @@ dist/
 *.p12
 *.pfx
 *.tsbuildinfo
+__pycache__/
 CLAUDE.local.md

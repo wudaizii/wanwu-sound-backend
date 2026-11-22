@@ -13,8 +13,9 @@ import { enqueueMedia } from '../jobs/mediaQueue.ts';
 import type { Actor, CloudContext, WorkRow } from './context.ts';
 import { digest, lockActor, ownedWork } from './context.ts';
 import { canonicalSources } from './sources.ts';
-import { quotaLock, admit, RENDER_RESERVATION } from './quotas.ts';
+import { quotaLock, admit } from './quotas.ts';
 import { workFacts } from './workFacts.ts';
+import { settingNumber } from '../settings/store.ts';
 
 const record = (row: WorkRow): WorkRecord => ({
   id: row.id,
@@ -250,6 +251,7 @@ export class Works {
         rules: RULE_VERSIONS,
         renderer: RENDERER_VERSION,
         timbre: TIMBRE_VERSION,
+        encoding: { mp3Kbps: settingNumber('media.mp3Kbps') },
       });
       // An unchanged piece keeps its render only while the rules and renderer that made it are still current.
       const current =
@@ -265,7 +267,7 @@ export class Works {
           work: { ...record(row), ...(content.rendering ? { rendering: content.rendering } : {}) },
           render: await this.renderRow(tx, id, row.revision),
         };
-      await admit(tx, actor.id, 'render', RENDER_RESERVATION);
+      await admit(tx, actor.id, 'render', settingNumber('quota.renderReservation'));
       const revision = row.revision + 1;
       const updated = (
         await tx.query<WorkRow>(
@@ -280,7 +282,7 @@ export class Works {
         )
       ).rows[0]!;
       await tx.query(
-        'INSERT INTO work_snapshots(work_id,revision,content,source_refs,rules,renderer_version,timbre_version,input_digest) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+        'INSERT INTO work_snapshots(work_id,revision,content,source_refs,rules,renderer_version,timbre_version,input_digest,encoding) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
         [
           id,
           revision,
@@ -290,6 +292,7 @@ export class Works {
           RENDERER_VERSION,
           TIMBRE_VERSION,
           inputDigest,
+          JSON.stringify({ mp3Kbps: settingNumber('media.mp3Kbps') }),
         ],
       );
       const renderId = randomUUID();
@@ -339,7 +342,12 @@ export class Works {
       status: row.status,
       audioAssetId: row.status === 'ready' ? row.id : null,
       playback:
-        row.status === 'ready' ? await this.context.store.playback(row.object_key, 300) : null,
+        row.status === 'ready'
+          ? await this.context.store.playback(
+              row.object_key,
+              settingNumber('playback.privateSeconds'),
+            )
+          : null,
       durationMs: row.duration_ms,
       failure: row.failure,
       retryAfterSeconds: 3,
@@ -354,7 +362,17 @@ export class Works {
       if (!wanted || wanted > work.revision) throw new ApiError(404, 'not-found');
       const row = await this.renderRow(tx, id, wanted);
       if (retry && row.status === 'failed' && row.failure !== 'source-disabled') {
-        await admit(tx, actor.id, 'render', RENDER_RESERVATION);
+        const snapshot = (
+          await tx.query('SELECT encoding FROM work_snapshots WHERE work_id=$1 AND revision=$2', [
+            id,
+            wanted,
+          ])
+        ).rows[0]!;
+        const reservation = Math.max(
+          settingNumber('quota.renderReservation'),
+          Math.ceil((Number(snapshot.encoding.mp3Kbps ?? 128) * 90 * 1000) / 8) + 65536,
+        );
+        await admit(tx, actor.id, 'render', reservation);
         const result = (
           await tx.query(
             "UPDATE render_artifacts SET status='queued',failure=NULL,updated_at=now() WHERE work_id=$1 AND revision=$2 RETURNING id",

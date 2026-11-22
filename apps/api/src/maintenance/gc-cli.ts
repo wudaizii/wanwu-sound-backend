@@ -2,7 +2,9 @@ import { openDatabase } from '../db/client.ts';
 import { OssStore, ossConfig } from '../storage/ossStore.ts';
 import { mediaBoss } from '../jobs/mediaQueue.ts';
 import { collectGarbage } from './garbageCollection.ts';
+import { initializeSettings } from '../settings/store.ts';
 
+await initializeSettings();
 const database = openDatabase(process.env.WANWU_DATABASE_URL ?? ''),
   boss = mediaBoss(database.pool);
 try {

@@ -12,6 +12,8 @@ import type { Accounts } from '../accounts.ts';
 import { ApiError } from '../errors.ts';
 import { randomToken, tokenDigest } from '../security.ts';
 import { clearSessionCookie } from './cookie.ts';
+import { settingNumber } from '../settings/store.ts';
+import { WindowLimiter } from '../settings/rate.ts';
 
 export type Account = Awaited<ReturnType<Accounts['authenticated']>>;
 export type Authenticated = (request: FastifyRequest) => Promise<Account>;
@@ -21,7 +23,11 @@ export type AuthContext = { accounts: Accounts; authenticated: Authenticated };
 const token = (value: unknown): value is string =>
   typeof value === 'string' && /^[A-Za-z0-9_-]{43}$/.test(value);
 /** Routes that take a password or a reset token: limited per address here and per name in limitAttemptsByName. */
-export const sensitive = { config: { rateLimit: { max: 30, timeWindow: 10 * 60_000 } } };
+export const sensitive = {};
+const passwordAllowed = (value: unknown): value is string =>
+  validPassword(value) &&
+  [...value].length >= settingNumber('auth.passwordMin') &&
+  [...value].length <= settingNumber('auth.passwordMax');
 
 export function authRoutes(app: FastifyInstance, { accounts, authenticated }: AuthContext) {
   const establish = async (
@@ -36,17 +42,13 @@ export function authRoutes(app: FastifyInstance, { accounts, authenticated }: Au
     request.session.csrfToken = randomToken();
     return { account: accountView(account), csrfToken: request.session.csrfToken };
   };
-  app.get(
-    '/api/v1/auth/csrf',
-    { config: { rateLimit: { max: 60, timeWindow: 60_000 } } },
-    async (request) => {
-      request.session.csrfToken ??= randomToken();
-      return { csrfToken: request.session.csrfToken };
-    },
-  );
+  app.get('/api/v1/auth/csrf', {}, async (request) => {
+    request.session.csrfToken ??= randomToken();
+    return { csrfToken: request.session.csrfToken };
+  });
   app.post('/api/v1/auth/register', sensitive, async (request, reply) => {
     const body = parseRegistration(request.body);
-    if (!body) throw new ApiError(400, 'invalid-request');
+    if (!body || !passwordAllowed(body.password)) throw new ApiError(400, 'invalid-request');
     return reply.code(201).send(await establish(request, await accounts.register(body)));
   });
   app.post('/api/v1/auth/login', sensitive, async (request) => {
@@ -70,7 +72,7 @@ export function authRoutes(app: FastifyInstance, { accounts, authenticated }: Au
       !exactObject(body, ['oldPassword', 'password']) ||
       typeof body.oldPassword !== 'string' ||
       body.oldPassword.length > 512 ||
-      !validPassword(body.password)
+      !passwordAllowed(body.password)
     )
       throw new ApiError(400, 'invalid-request');
     await accounts.changePassword(target, body.oldPassword, body.password);
@@ -83,7 +85,7 @@ export function authRoutes(app: FastifyInstance, { accounts, authenticated }: Au
     if (
       !exactObject(body, ['token', 'password']) ||
       !token(body.token) ||
-      !validPassword(body.password)
+      !passwordAllowed(body.password)
     )
       throw new ApiError(400, 'invalid-request');
     await accounts.resetPassword(body.token, body.password);
@@ -93,24 +95,38 @@ export function authRoutes(app: FastifyInstance, { accounts, authenticated }: Au
   });
 }
 
-const NAME_LIMITED = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/reset-password'];
+const NAME_LIMITED = [
+  '/api/v1/auth/login',
+  '/api/v1/auth/register',
+  '/api/v1/auth/reset-password',
+  '/api/v1/admin/settings/login',
+];
 /**
  * Ten tries per username (or reset token) in ten minutes. The username limiter is independent of the remote address
  * and does not trust forwarded identity headers. Keys are hashed rather than logged names.
  */
 export function limitAttemptsByName(app: FastifyInstance) {
-  const attempts = new Map<string, { count: number; expires: number }>();
+  const attempts = new WindowLimiter(),
+    addresses = new WindowLimiter();
   app.addHook('preHandler', async (request) => {
-    if (!NAME_LIMITED.includes(request.url.split('?')[0]!)) return;
+    const path = request.url.split('?')[0]!;
+    if (
+      request.method === 'GET' &&
+      ['/api/v1/auth/csrf', '/api/v1/admin/settings/csrf'].includes(path)
+    ) {
+      addresses.take(
+        `csrf:${request.ip}`,
+        settingNumber('auth.csrfRateMax'),
+        settingNumber('auth.csrfWindowSeconds'),
+      );
+      return;
+    }
+    if (![...NAME_LIMITED, '/api/v1/auth/change-password'].includes(path)) return;
+    const seconds = settingNumber('auth.rateWindowSeconds');
+    addresses.take(`${path}:${request.ip}`, settingNumber('auth.rateMax'), seconds);
+    if (!NAME_LIMITED.includes(path)) return;
     const body = request.body as Record<string, unknown> | undefined;
     const key = tokenDigest(String(body?.username ?? body?.token ?? 'invalid').toLowerCase());
-    const now = Date.now();
-    for (const [id, state] of attempts) if (state.expires <= now) attempts.delete(id);
-    const state = attempts.get(key) ?? { count: 0, expires: now + 10 * 60_000 };
-    if (state.count >= 10)
-      throw new ApiError(429, 'rate-limited', Math.max(1, Math.ceil((state.expires - now) / 1000)));
-    if (!attempts.has(key) && attempts.size >= 10_000) throw new ApiError(429, 'rate-limited', 60);
-    state.count++;
-    attempts.set(key, state);
+    attempts.take(key, settingNumber('auth.nameRateMax'), seconds);
   });
 }

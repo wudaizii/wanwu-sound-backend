@@ -4,6 +4,7 @@ import { lockActor, audit } from './context.ts';
 import { transaction } from '../db/transaction.ts';
 import { ApiError } from '../errors.ts';
 import { operationalHealth } from '../maintenance/operationalHealth.ts';
+import { settingNumber } from '../settings/store.ts';
 
 export class ContentAdmin {
   readonly context: CloudContext;
@@ -97,7 +98,9 @@ export class ContentAdmin {
         maintenance,
         worker: {
           seenAt: worker?.seen_at?.toISOString() ?? null,
-          healthy: !!worker && Date.now() - worker.seen_at.getTime() < 90_000,
+          healthy:
+            !!worker &&
+            Date.now() - worker.seen_at.getTime() < settingNumber('health.heartbeatSeconds') * 1000,
         },
       };
     });

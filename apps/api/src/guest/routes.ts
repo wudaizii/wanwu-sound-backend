@@ -33,6 +33,7 @@ import {
 } from '@wanwu-v2/prompts/tasks';
 import type { BuiltPrompt } from '@wanwu-v2/prompts/tasks';
 import { ApiError } from '../errors.ts';
+import { readGuestConfig } from './config.ts';
 import type { GuestConfig, Provider } from './config.ts';
 import { BackgroundJobs } from './jobs.ts';
 import type { JobStore } from './jobs.ts';
@@ -45,9 +46,10 @@ import { GuestFailure, postJson } from './net.ts';
 import type { Post } from './net.ts';
 import { OVERRIDE_HEADER, parseOverride } from './override.ts';
 import { chat } from './providers/language.ts';
-import { DISCOVERY_RULES } from '@wanwu-v2/sound-rules/discovery';
 import { observeDiscovery } from './discovery.ts';
 import { chatWithAudio } from './providers/audio.ts';
+import { settingNumber, settingsStore } from '../settings/store.ts';
+import { WindowLimiter } from '../settings/rate.ts';
 
 /**
  * Server waits a little less than the page (talk 10 s, AI composing 20 s per model, AI audio 60 s), so the page hears
@@ -55,17 +57,29 @@ import { chatWithAudio } from './providers/audio.ts';
  * corpus shows; a composition plan is longer and asks the model to think.
  */
 export const GUEST_TIMEOUT_MS = {
-  mood: 5_500,
-  talk: 9_500,
-  compose: 19_000,
-  audio: 55_000,
-  listen: 7_500,
-  features: 4_500,
-  discovery: 17_000,
+  get mood() {
+    return settingNumber('ai.timeout.mood');
+  },
+  get talk() {
+    return settingNumber('ai.timeout.talk');
+  },
+  get compose() {
+    return settingNumber('ai.timeout.compose');
+  },
+  get audio() {
+    return settingNumber('ai.timeout.audio');
+  },
+  get listen() {
+    return settingNumber('ai.timeout.listen');
+  },
+  get features() {
+    return settingNumber('ai.timeout.features');
+  },
+  get discovery() {
+    return settingNumber('ai.timeout.discovery');
+  },
 } as const;
 // Listening, text generation and one optional repair share the configured total budget.
-const DISCOVERY_BUDGET_MS = DISCOVERY_RULES.analysis.budgetMs;
-const DISCOVERY_REPAIR_MIN_MS = DISCOVERY_RULES.analysis.repairMinMs;
 /** A teaching-music excerpt: about 30 s of low-bitrate mono mp3 (≈ 180 KB); the request may carry up to 1.2 MB of base64. */
 const EXCERPT_MAX_CHARS = 1_200_000;
 export type GuestContext = {
@@ -83,19 +97,49 @@ export function guestContext(
 ): GuestContext {
   if (process.env.NODE_ENV === 'production' && !database)
     throw new Error('Production AI requires PostgreSQL controls');
-  const budget = new DailyBudget(config.dailyLimit);
+  const currentConfig = () => (settingsStore() ? readGuestConfig() : config);
+  const budget = new DailyBudget(() => currentConfig().dailyLimit);
   const control = database
-    ? new PgCallControl(database.pool, config.dailyLimit)
+    ? new PgCallControl(database.pool, () => currentConfig().dailyLimit)
     : new MemoryCallControl(budget);
   const jobs = database
-    ? new PgBackgroundJobs(database.pool, database.boss, config, (task) =>
+    ? new PgBackgroundJobs(database.pool, database.boss, currentConfig, (task) =>
         runBackground(task, post, control),
       )
     : new BackgroundJobs();
-  return { config, post, budget, jobs, control, durable: !!database };
+  return {
+    get config() {
+      return currentConfig();
+    },
+    post,
+    budget,
+    jobs,
+    control,
+    durable: !!database,
+  };
 }
 
 export function guestRoutes(app: FastifyInstance, context: GuestContext) {
+  const limiter = new WindowLimiter();
+  app.addHook('preHandler', async (request) => {
+    if (request.method === 'GET' && request.url.split('?')[0] === '/api/v1/guest/status')
+      limiter.take(
+        `status:${request.ip}`,
+        settingNumber('ai.statusRateMax'),
+        settingNumber('ai.statusWindowSeconds'),
+      );
+    if (
+      request.method === 'POST' &&
+      /^\/api\/v1\/(moods\/interpret|talk\/(work|textbook)|discovery\/work|textbook\/features|backgrounds)$/.test(
+        request.url.split('?')[0]!,
+      )
+    )
+      limiter.take(
+        `${request.url.split('?')[0]}:${request.ip}`,
+        settingNumber('ai.rateMax'),
+        settingNumber('ai.rateWindowSeconds'),
+      );
+  });
   const providers = (request: FastifyRequest) => {
     const override = parseOverride(request.headers[OVERRIDE_HEADER]);
     if (override === 'invalid') throw new ApiError(400, 'invalid-request');
@@ -158,15 +202,11 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
 
   // Which built-in models are set up, so the page shows the AI choices only when they can work (a visitor's own
   // settings open a kind on the page side too). No secrets, no model names.
-  app.get(
-    '/api/v1/guest/status',
-    { config: { rateLimit: { max: 60, timeWindow: 60_000 } } },
-    async () => ({
-      language: !!context.config.language,
-      music: false, // The audio-generation adapter is not implemented; configuration is not capability.
-      audio: !!context.config.audio,
-    }),
-  );
+  app.get('/api/v1/guest/status', {}, async () => ({
+    language: !!context.config.language,
+    music: false, // The audio-generation adapter is not implemented; configuration is not capability.
+    audio: !!context.config.audio,
+  }));
 
   app.post('/api/v1/moods/interpret', GUEST_RATE_LIMIT, async (request) => {
     const body = request.body as { text?: unknown };
@@ -258,11 +298,17 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
         request,
         'music-discovery',
         () => buildDiscovery(brief),
-        DISCOVERY_RULES.analysis.textMs,
+        Math.max(
+          1,
+          Math.min(
+            GUEST_TIMEOUT_MS.discovery,
+            settingNumber('ai.discoveryBudgetMs') - (Date.now() - started),
+          ),
+        ),
       );
       let acceptance = checkedDiscovery(first.reply, brief);
-      const left = DISCOVERY_BUDGET_MS - (Date.now() - started);
-      if (acceptance.notes.length && left >= DISCOVERY_REPAIR_MIN_MS) {
+      const left = settingNumber('ai.discoveryBudgetMs') - (Date.now() - started);
+      if (acceptance.notes.length && left >= settingNumber('ai.discoveryRepairMinMs')) {
         try {
           const again = await text(
             request,

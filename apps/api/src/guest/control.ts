@@ -4,6 +4,7 @@ import { transaction } from '../db/transaction.ts';
 import type { Provider } from './config.ts';
 import { DailyBudget } from './limits.ts';
 import { GuestFailure } from './net.ts';
+import { settingNumber } from '../settings/store.ts';
 
 export interface CallControl {
   run<T>(provider: Provider, call: () => Promise<T>): Promise<T>;
@@ -13,13 +14,20 @@ export interface CallControl {
 export class MemoryCallControl implements CallControl {
   private active = 0;
   readonly budget: DailyBudget;
-  readonly concurrency: number;
-  constructor(budget: DailyBudget, concurrency = 2) {
+  readonly concurrency: number | (() => number);
+  constructor(
+    budget: DailyBudget,
+    concurrency: number | (() => number) = () => settingNumber('ai.concurrency'),
+  ) {
     this.budget = budget;
     this.concurrency = concurrency;
   }
   async run<T>(provider: Provider, call: () => Promise<T>) {
-    if (this.active >= this.concurrency || (provider.builtIn && !this.budget.take()))
+    if (
+      this.active >=
+        (typeof this.concurrency === 'function' ? this.concurrency() : this.concurrency) ||
+      (provider.builtIn && !this.budget.take())
+    )
       throw new GuestFailure('quota');
     this.active++;
     try {
@@ -33,28 +41,35 @@ export class MemoryCallControl implements CallControl {
 /** Short transactions only; never hold a database connection across a model HTTP call. */
 export class PgCallControl implements CallControl {
   readonly pool: Pool;
-  readonly dailyLimit: number;
-  readonly concurrency: number;
-  constructor(pool: Pool, dailyLimit: number, concurrency = 2) {
+  readonly dailyLimit: number | (() => number);
+  readonly concurrency: number | (() => number);
+  constructor(
+    pool: Pool,
+    dailyLimit: number | (() => number),
+    concurrency: number | (() => number) = () => settingNumber('ai.concurrency'),
+  ) {
     this.pool = pool;
     this.dailyLimit = dailyLimit;
     this.concurrency = concurrency;
   }
   async run<T>(provider: Provider, call: () => Promise<T>) {
     const lease = randomUUID();
+    const concurrency =
+      typeof this.concurrency === 'function' ? this.concurrency() : this.concurrency;
+    const dailyLimit = typeof this.dailyLimit === 'function' ? this.dailyLimit() : this.dailyLimit;
     await transaction(this.pool, async (tx) => {
       // Serialize admission across API replicas, not the network operations themselves.
       await tx.query('SELECT pg_advisory_xact_lock(728091,7)');
       await tx.query('DELETE FROM ai_call_leases WHERE expires_at<=now()');
       const count = (await tx.query('SELECT count(*)::int AS n FROM ai_call_leases')).rows[0]!.n;
-      if (count >= this.concurrency) throw new GuestFailure('quota');
+      if (count >= concurrency) throw new GuestFailure('quota');
       if (provider.builtIn) {
-        if (this.dailyLimit < 1) throw new GuestFailure('quota');
+        if (dailyLimit < 1) throw new GuestFailure('quota');
         const usage = await tx.query(
           `INSERT INTO ai_daily_usage(day,calls) VALUES((now() AT TIME ZONE 'Asia/Shanghai')::date,1)
            ON CONFLICT(day) DO UPDATE SET calls=ai_daily_usage.calls+1,updated_at=now()
            WHERE ai_daily_usage.calls<$1 RETURNING calls`,
-          [this.dailyLimit],
+          [dailyLimit],
         );
         if (!usage.rowCount) throw new GuestFailure('quota');
       }
