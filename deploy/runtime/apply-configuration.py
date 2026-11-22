@@ -202,7 +202,9 @@ def main():
         if path.exists(): shutil.copy2(path, rollback/str(index))
     # Serialize against scheduled maintenance and against concurrent web saves.
     with open(maintenance/'.maintenance.lock','a') as lock:
-        os.chmod(lock.name,0o600); fcntl.flock(lock, fcntl.LOCK_EX)
+        os.chmod(lock.name,0o600)
+        try: fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError: raise RuntimeError('Wanwu scheduled maintenance is running; try again after it completes')
         file_lock = CONFIG/'.write-lock'; file_lock.mkdir(mode=0o700)
         try:
             if json.loads((CONFIG/'config.json').read_text())['revision'] != snapshot['revision']:

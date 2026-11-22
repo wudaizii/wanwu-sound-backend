@@ -68,6 +68,7 @@ def main():
                     'Requested memory would consume the shared-host reserve':'申请的内存会占用共享 ECS 必须保留的余量，未应用。',
                     'CPU allocation would exceed the shared-host budget':'CPU 配额超过共享 ECS 的预算，未应用。',
                     'Wait for active Wanwu media / model tasks before applying':'有正在执行的媒体或模型任务，请等任务完成后重新应用。',
+                    'Wanwu scheduled maintenance is running; try again after it completes':'备份或巡检任务正在执行，请完成后重新应用。',
                     'Storage target or Origin change requires a separately verified migration / DNS-TLS-CORS procedure':'域名或存储目标切换需要先完成迁移、DNS、证书和跨域配置，未应用。',
                     'Changing the database target requires an explicit migration procedure':'数据库目标切换需要先完成迁移，未应用。',
                     'Configuration revision changed before application':'配置版本已经变化，请重新读取并核对后应用。',
