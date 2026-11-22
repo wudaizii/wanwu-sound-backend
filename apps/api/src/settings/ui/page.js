@@ -333,6 +333,8 @@ $('login').addEventListener('submit', async (event) => {
   const form = event.currentTarget;
   const data = new FormData(form);
   try {
+    // An unauthenticated read clears its anonymous session; never reuse its stale CSRF token.
+    csrf = (await request(`${base}/csrf`)).csrfToken;
     const result = await request(`${base}/login`, 'POST', {
       username: data.get('username'),
       password: data.get('password'),

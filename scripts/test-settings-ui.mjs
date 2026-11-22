@@ -54,6 +54,7 @@ try {
   });
   await app.register(cookie);
   await app.register(session, {
+    cookieName: '__Host-wanwu',
     secret: randomBytes(32).toString('hex'),
     saveUninitialized: false,
     cookie: { secure: true, httpOnly: true, sameSite: 'lax' },
@@ -70,9 +71,19 @@ try {
     )
       throw new ApiError(403, 'csrf-failed');
   });
-  app.setErrorHandler((error, _request, reply) =>
-    reply.code(error.status ?? 500).send({ reason: error.reason ?? 'internal-error' }),
-  );
+  app.setErrorHandler((error, request, reply) => {
+    // Match the actual application's session-clearing behaviour on a protected anonymous read.
+    if (error.reason === 'needs-account') {
+      Reflect.set(request, 'session', null);
+      reply.clearCookie('__Host-wanwu', {
+        path: '/',
+        secure: true,
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+    }
+    reply.code(error.status ?? 500).send({ reason: error.reason ?? 'internal-error' });
+  });
   settingsRoutes(app, {
     accounts: {
       async login(username, password) {
@@ -109,6 +120,7 @@ try {
   await page.getByRole('button', { name: '登录管理台', exact: true }).click();
   await page.locator('#workspace:not([hidden])').waitFor();
   checks.push('browser-session-login');
+  checks.push('login-renews-csrf-after-anonymous-cookie-clearing');
   const daily = page.locator('[id="field-ai.dailyLimit"]');
   await daily.fill('1234');
   await page.getByRole('button', { name: '保存配置', exact: true }).click();

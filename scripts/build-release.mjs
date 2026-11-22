@@ -103,16 +103,20 @@ const build = (args) =>
     );
   });
 const images = {};
-for (const target of ['api', 'worker', 'ops', 'catalogue']) {
-  const tag = `wanwu-${target}:${id}`,
-    iid = path.join(output, `${target}.iid`),
-    metadata = path.join(output, `${target}.metadata.json`);
-  await build(['--target', target, '--tag', tag, '--iidfile', iid, '--metadata-file', metadata]);
-  const image = await readFile(iid, 'utf8'),
-    configDigest = JSON.parse(await readFile(metadata, 'utf8'))['containerimage.config.digest'];
-  if (!/^sha256:[a-f0-9]{64}$/.test(image.trim())) throw new Error('Image digest missing');
-  images[target] = { tag, id: image.trim(), configDigest };
-}
+// BuildKit shares the pinned base/dependency vertices; resolve them in one concurrent batch.
+// Each target has its own output files. This remains local/CI-only and runs no ECS work.
+await Promise.all(
+  ['api', 'worker', 'ops', 'catalogue'].map(async (target) => {
+    const tag = `wanwu-${target}:${id}`,
+      iid = path.join(output, `${target}.iid`),
+      metadata = path.join(output, `${target}.metadata.json`);
+    await build(['--target', target, '--tag', tag, '--iidfile', iid, '--metadata-file', metadata]);
+    const image = await readFile(iid, 'utf8'),
+      configDigest = JSON.parse(await readFile(metadata, 'utf8'))['containerimage.config.digest'];
+    if (!/^sha256:[a-f0-9]{64}$/.test(image.trim())) throw new Error('Image digest missing');
+    images[target] = { tag, id: image.trim(), configDigest };
+  }),
+);
 const keepArchive = process.argv.includes('--archive'),
   archive = path.join(output, keepArchive ? 'images.tar' : '.config-digests.tar');
 // Index builds may omit config.digest from BuildKit metadata. Read the actual Docker export, never guess from the image ID.
