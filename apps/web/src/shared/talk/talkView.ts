@@ -3,7 +3,8 @@
 // 2. `polishTalk`: asks the polisher (if open) with anonymous briefs and keeps only the lines that pass the checks;
 // 3. `mergeTalk`: each accepted line replaces its corpus line, with the child's names put back.
 import type {Arrangement} from '@wanwu-v2/contracts/arrangement';
-import type {Discovery,TalkOrigin,TextbookTalk} from '@wanwu-v2/contracts/talk';
+import {isSoundToken} from '@wanwu-v2/contracts/talk';
+import type {Discovery,TalkOrigin,TextbookTalk,WorkTalkBrief} from '@wanwu-v2/contracts/talk';
 import type {Inspiration} from '@wanwu-v2/contracts/work';
 import type {TextbookTrack} from '@wanwu-v2/contracts/textbook';
 import {backgroundMeeting} from '@wanwu-v2/sound-rules/background';
@@ -32,14 +33,14 @@ export type TalkView={
 export type LocalTalk=ReturnType<typeof localTalk>;
 export type Polished={work:WorkTalkLines|null;textbook:TextbookTalkLines|null};
 
-export function localTalk(arrangement:Arrangement|null,track:TextbookTrack|null,inspiration:Inspiration,plan:BackgroundPlan|null){
- const facts=arrangement?findDiscoveries(arrangement):[];
+export function localTalk(arrangement:Arrangement|null,track:TextbookTrack|null,inspiration:Inspiration,plan:BackgroundPlan|null,basis?:{brief:WorkTalkBrief;names:string[]}|null){
+ const facts:Discovery[]=basis?basis.brief.facts.map(fact=>Object.fromEntries(Object.entries(fact).map(([key,value])=>[key,isSoundToken(value)?basis.names[Number(value.slice(2))-1]!:value])) as Discovery):arrangement?findDiscoveries(arrangement):[];
  const textbook=arrangement&&track&&inspiration.kind==='textbook'&&plan&&arrangement.events.length?(()=>{
   const timed=timedEvents(arrangement),meeting=backgroundMeeting(plan,timed.map(({start,end})=>({start,end})));
   const name=meeting.example===null?null:timed[meeting.example]?.unit.name??null,variation=inspiration.variation??'original';
   return {talk:textbookTalk(track,variation,meeting,name),briefed:textbookTalkBrief(track,variation,meeting.kind,name)};
  })():null;
- const work=arrangement?workTalkBrief(facts,arrangement.spanSeconds,presetMood(arrangement.mood),textbook?track!.title:null):null;
+ const work=basis??(arrangement?workTalkBrief(facts,arrangement.spanSeconds,presetMood(arrangement.mood),textbook?track!.title:null):null);
  return {facts,discoveries:facts.map(fact=>discoveryText(fact)),tryThis:localTryThis(facts),textbook,work};
 }
 /** What would be sent; a new key asks again. */
@@ -60,8 +61,8 @@ export async function polishTalk(local:LocalTalk,polisher:TalkPolisher,signal:Ab
  const {work,textbook}=local;
  if(!polisher.open||(!work&&!textbook))return null;
  const [workReply,textbookReply]=await Promise.all([
-  work?ask(inner=>polisher.workTalk(work.brief,inner),signal,timeoutMs):null,
-  textbook?ask(inner=>polisher.textbookTalk(textbook.briefed.brief,inner),signal,timeoutMs):null,
+  work?ask(inner=>polisher.workTalk(work.brief,inner),signal,polisher.timeoutMs??timeoutMs):null,
+  textbook?ask(inner=>polisher.textbookTalk(textbook.briefed.brief,inner),signal,polisher.timeoutMs??timeoutMs):null,
  ]);
  return {
   work:work&&workReply?acceptWorkTalk(workReply,work.brief).value:null,

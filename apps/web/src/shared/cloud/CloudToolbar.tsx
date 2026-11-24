@@ -5,6 +5,7 @@ import {useCloud} from './CloudProvider';
 import {cloudError} from './cloudTypes';
 import {ShareDialog} from './ShareDialog';
 import {LibraryManager} from './LibraryManager';
+import {CloudInsightsPanel} from './CloudInsightsPanel';
 import styles from './CloudControls.module.css';
 
 export function CloudToolbar({onNavigate}:{onNavigate:(path:string)=>void}){
@@ -35,6 +36,7 @@ export function CloudToolbar({onNavigate}:{onNavigate:(path:string)=>void}){
     <button type="button" className={styles.button} disabled={cloud.busy} onClick={()=>choose('重新加载云端','这会丢弃本页尚未保存的修改。若要保留，请先选择另存副本。',()=>workspace.open((cloud.workId??cloud.conflictId)!))}>重新加载</button>
     <button type="button" className={styles.button} disabled={cloud.busy} onClick={()=>void act(()=>workspace.attach(true))}>另存独立副本</button>
    </div>}
+   <CloudInsightsPanel key={cloud.accountId}/>
    {error&&<p className={styles.error} role="alert">{error}</p>}
   </aside>
   {confirm&&<WorkSheet title={confirm.title} onClose={()=>setConfirm(null)}><p>{confirm.message}</p><div className={styles.actions}>

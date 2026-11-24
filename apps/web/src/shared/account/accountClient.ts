@@ -3,7 +3,7 @@ import type {AccountView} from '@wanwu-v2/contracts/account';
 import {parseApiFailure} from '@wanwu-v2/contracts/api';
 import type {ApiErrorReason} from '@wanwu-v2/contracts/api';
 
-type ClientReason=ApiErrorReason|'network'|'timeout'|'bad-response';
+type ClientReason=ApiErrorReason|'network'|'timeout'|'bad-response'|'cancelled';
 export class AccountError extends Error{
  readonly reason:ClientReason;readonly status:number;readonly retryAfter:number|null;
  constructor(reason:ClientReason,status=0,retryAfter:number|null=null){super(reason);this.name='AccountError';this.reason=reason;this.status=status;this.retryAfter=retryAfter;}
@@ -34,16 +34,20 @@ export class CookieAccountClient implements AccountClient{
  constructor(fetcher:Fetcher=(input,init)=>fetch(input,init),timeoutMs=20_000){this.fetcher=fetcher;this.timeoutMs=timeoutMs;}
  setBusinessAccount(id:string|null){this.businessAccount=id;}
  onSessionInvalidation(listener:()=>void){this.invalidation.add(listener);return()=>{this.invalidation.delete(listener);};}
- private async wire(path:string,method:ApiMethod,body:unknown,csrf?:string,etag?:string,expectedAccount?:string):Promise<ApiResult>{
+ private async wire(path:string,method:ApiMethod,body:unknown,csrf?:string,etag?:string,expectedAccount?:string,signal?:AbortSignal):Promise<ApiResult>{
   const previous=this.lane;let release!:()=>void;this.lane=new Promise<void>(done=>{release=done;});await previous;
-  const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),this.timeoutMs);
+  const abort=new AbortController(),stop=()=>abort.abort(),timer=setTimeout(()=>abort.abort(),this.timeoutMs);
+  signal?.addEventListener('abort',stop,{once:true});
   try{
+   if(signal?.aborted)throw new AccountError('cancelled');
    if(expectedAccount&&this.businessAccount!==expectedAccount)throw new AccountError('needs-account');
    const response=await this.fetcher(path,{method,credentials:'same-origin',
     cache:'no-store',redirect:'error',signal:abort.signal,headers:{Accept:'application/json',
      ...(method==='GET'?{}:{'X-CSRF-Token':csrf??''}),...(expectedAccount?{'If-Account-Match':expectedAccount}:{}),...(etag?{'If-Match':etag}:{}),...(body===undefined?{}:{'Content-Type':'application/json'})},
     ...(body===undefined?{}:{body:JSON.stringify(body)})});
+   if(signal?.aborted)throw new AccountError('cancelled');
    let data:unknown;
+   if(abort.signal.aborted)throw new AccountError('timeout');
    if(response.status!==204){try{data=await response.json();}catch{throw new AccountError('bad-response',response.status);}}
    if(!response.ok){
     const failure=parseApiFailure(data);
@@ -55,20 +59,21 @@ export class CookieAccountClient implements AccountClient{
    return {data,status:response.status,etag:response.headers.get('ETag')};
   }catch(error){
    if(error instanceof AccountError)throw error;
-   throw new AccountError(abort.signal.aborted?'timeout':'network');
-  }finally{clearTimeout(timer);release();}
+   throw new AccountError(signal?.aborted?'cancelled':abort.signal.aborted?'timeout':'network');
+  }finally{clearTimeout(timer);signal?.removeEventListener('abort',stop);release();}
  }
  private async request(path:string,body?:Record<string,unknown>,csrf?:string,empty=false):Promise<unknown>{
   const result=await this.wire(`/api/v1/auth/${path}`,body===undefined?'GET':'POST',body,csrf);
   if(result.status!==(empty?204:path==='register'?201:200))throw new AccountError('bad-response',result.status);return result.data;
  }
  /** Business calls share the same serialized Cookie lane with login/logout and refresh. */
- async business<T=unknown>(path:string,method:ApiMethod='GET',body?:unknown,etag?:string):Promise<ApiResult<T>>{
+ async business<T=unknown>(path:string,method:ApiMethod='GET',body?:unknown,etag?:string,signal?:AbortSignal):Promise<ApiResult<T>>{
+  if(signal?.aborted)throw new AccountError('cancelled');
   if(!path.startsWith('/api/v1/')||path.includes('..')||path.includes('#')||path.startsWith('/api/v1/auth/'))throw new AccountError('invalid-request');
   const account=this.businessAccount;if(!account)throw new AccountError('needs-account');
   const csrf=method==='GET'?undefined:await this.csrfToken();
-  try{return await this.wire(path,method,body,csrf,etag,account) as ApiResult<T>;}
-  catch(error){if(error instanceof AccountError&&['needs-account','account-disabled','account-changed'].includes(error.reason))for(const listener of this.invalidation)queueMicrotask(listener);throw error;}
+  try{return await this.wire(path,method,body,csrf,etag,account,signal) as ApiResult<T>;}
+  catch(error){if(this.businessAccount===account&&error instanceof AccountError&&['needs-account','account-disabled','account-changed'].includes(error.reason))for(const listener of this.invalidation)queueMicrotask(listener);throw error;}
  }
  private csrfToken():Promise<string>{
   if(this.csrf)return Promise.resolve(this.csrf);

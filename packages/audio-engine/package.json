@@ -6,6 +6,7 @@
   "./version": "./src/version.ts",
     "./shaping": "./src/shaping.ts", "./grains": "./src/grains.ts", "./background": "./src/background.ts",
     "./instruments": "./src/instruments.ts", "./timeline": "./src/timeline.ts",
+    "./discoveries": "./src/discoveries.ts",
     "./render": "./src/render.ts", "./pcm": "./src/pcm.ts"
   }
 }

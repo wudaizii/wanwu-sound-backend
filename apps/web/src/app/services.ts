@@ -13,7 +13,7 @@ import type {BackgroundLibrary} from '../shared/background/library';
 import type {InspirationCatalog} from '../shared/inspiration/catalog';
 import {offlineTeachingMusicService} from '../shared/inspiration/teachingMusic';
 import type {TeachingMusicService} from '../shared/inspiration/teachingMusic';
-import {offlineTalkPolisher} from '../shared/talk/polisher';
+import {cloudTalkPolisher} from '../shared/cloud/cloudTalk';
 import {bundledSoundLibrary} from '../shared/creation/soundLibrary';
 import type {SoundLibraryService} from '../shared/creation/soundLibrary';
 import type {TalkPolisher} from '../shared/talk/polisher';
@@ -50,7 +50,7 @@ export const services:Services={
  soundHints:presetHintProvider,
  moodInterpreter:offlineMoodInterpreter,
  backgroundGenerator:offlineBackgroundGenerator,
- talkPolisher:offlineTalkPolisher,
+ talkPolisher:cloudTalkPolisher(cloud),
  teachingMusic:offlineTeachingMusicService,
  // Real content, not a mock: the example sounds shipped with the page.
 };

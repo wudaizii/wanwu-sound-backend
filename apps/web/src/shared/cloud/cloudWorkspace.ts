@@ -14,23 +14,27 @@ import {initialCloudState,cloudError} from './cloudTypes';
 import type {CloudState} from './cloudTypes';
 import {attachCurrent,flushCurrent,checkedWork,requestContent,localContent,sameContent} from './workspacePersistence';
 import {setAuthorizedSourceLoader} from '../audio/authorizedSource';
+import {CloudInsights} from './cloudInsights';
 
 type Parked={record:WorkRecord|null;arrangement:Arrangement;settings:ComposeSettings;title:string;sources:SoundSource[]};
 export class CloudWorkspace{
- readonly api:CookieAccountClient;readonly media:CloudMedia;
+ readonly api:CookieAccountClient;readonly media:CloudMedia;readonly insights:CloudInsights;
  state:CloudState={...initialCloudState};record:WorkRecord|null=null;suppress=false;
  private listeners=new Set<()=>void>();private timer:ReturnType<typeof setTimeout>|undefined;
  private serial:Promise<unknown>=Promise.resolve();private generation=0;private parked=new Map<string,Parked>();
  private pendingFlush:Promise<WorkRecord>|null=null;
+ private stopSession:()=>void;
  constructor(api:CookieAccountClient){
-  this.api=api;this.media=new CloudMedia(api);workSession.subscribe(()=>{if(!this.suppress)this.schedule();});
+  this.api=api;this.media=new CloudMedia(api);this.insights=new CloudInsights(this);this.stopSession=workSession.subscribe(()=>{if(!this.suppress)this.schedule();});
   setAuthorizedSourceLoader(id=>this.state.accountId?this.media.load(id).then(result=>result.buffer):null);
  }
  getSnapshot=()=>this.state;
+ dispose(){clearTimeout(this.timer);this.generation++;this.insights.reset();this.stopSession();this.record=null;this.listeners.clear();}
  subscribe=(listener:()=>void)=>{this.listeners.add(listener);return()=>{this.listeners.delete(listener);};};
- update(change:Partial<CloudState>){this.state={...this.state,...change};for(const listener of this.listeners)listener();}
+ update(change:Partial<CloudState>){this.state={...this.state,...change};for(const listener of this.listeners)listener();if(change.phase==='saved')this.insights.saved();}
  setAccount(account:AccountView|null){
   const id=account?.id??null;if(id===this.state.accountId)return;
+  this.insights.reset();
   const generation=++this.generation;clearTimeout(this.timer);this.pendingFlush=null;
   const current=workSession.current(),previous=this.state.accountId;
   const privateReset=!!previous&&(!!this.record||sessionArchive.ownedBy(previous));
@@ -41,7 +45,7 @@ export class CloudWorkspace{
   this.record=null;this.api.setBusinessAccount(id);this.media.setAccount(id);sessionArchive.setAccount(id);
   this.update({...initialCloudState,accountId:id,epoch:this.state.epoch+(privateReset?1:0),recoverable:!!id&&this.parked.has(id),
    message:previous?'上一账号作品已暂停在本页内存，重新登录原账号可恢复；请勿刷新。':id?'当前本地创作尚未导入账号，请主动确认云端保存。':initialCloudState.message});
-  if(id)void this.refreshDrafts().catch(error=>{if(generation===this.generation)this.failure(error);});
+  if(id){void this.refreshDrafts().catch(error=>{if(generation===this.generation)this.failure(error);});void this.insights.refreshUsage();}
  }
  private failure(error:unknown){const conflict=error instanceof AccountError&&error.reason==='version-conflict';this.update({phase:conflict?'conflict':'error',conflictId:conflict?this.record?.id??workSession.current()?.id??null:null,message:cloudError(error)});}
  async run<T>(action:(guard:()=>void)=>Promise<T>){
@@ -52,6 +56,8 @@ export class CloudWorkspace{
  }
  schedule(){
   if(!this.record||!this.state.accountId||this.state.phase==='conflict'||this.suppress)return;
+  if(this.state.phase==='saved'&&sameContent(localContent(this.state.title),this.record))return;
+  this.insights.invalidate();
   clearTimeout(this.timer);this.update({phase:'saving',message:'改动待保存…'});
   this.timer=setTimeout(()=>{void this.flush().catch(()=>{});},1000);
  }

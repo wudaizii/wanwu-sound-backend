@@ -1,9 +1,11 @@
 # 万物声谱 · 正式 H5 前端
 
-正式项目根目录，与比赛 demo、旧 `wanwu-shengpu` 工程分开。现在完成：首页、声音诞生、万物声场、万物成曲、作品书架（前端 + mock），以及声音规则、提示词和语料。仓库 `guohaha777/voice_atalas_v2`，推送到 `v2` 会更新 Netlify 线上。
+正式 H5 前端，与比赛 demo、旧 `wanwu-shengpu` 工程分开。本分支在已有本地账号／云端创作适配器上，补充账号用量、服务端作品事实与绑定修订的 AI 讲解。后端独立维护于 [wudaizii/wanwu-sound-backend](https://github.com/wudaizii/wanwu-sound-backend)。
+
+**本分支是待合并的本地基线增量，尚未部署。** 前端原仓库为 [guohaha777/voice_atalas_v2](https://github.com/guohaha777/voice_atalas_v2)；交付分支暂存于个人仓库，不会自动发布线上。先读 [本次合并与联调说明](docs/development/CLOUD_INTEGRATION_HANDOFF.md)，特别是它与线上较新 AI 页面源码的区别。
 
 - 协作约定：[AGENTS.md](AGENTS.md)
-- 新对话接续：[当前交接 HANDOFF5](../万物声谱_视觉过程稿/handoff/HANDOFF5.md)（项目外）
+- 人与 Claude Code 接续：[本次交接](docs/development/CLOUD_INTEGRATION_HANDOFF.md)
 - 谁控制什么（规则 · 语料 · 提示词 · 模型）：[control-map](docs/development/control-map.md)
 - 模块边界和以后怎么接后端：[architecture](docs/development/architecture.md)
 
@@ -23,11 +25,12 @@ npm run dev
 | 目录 | 内容 | 进入网页构建 |
 | --- | --- | --- |
 | `apps/web/src/` | React + TypeScript 前端：页面、组件、交互、端口（`app/services.ts` 选择每个接口的实现） | 是 |
-| `apps/web/src/mocks/` | 接后端前的内存替身，接后端时整体删除 | 是（临时） |
+| `apps/web/src/shared/account/`、`shared/cloud/` | Cookie 账号、上传、草稿、素材、分享及服务端事实适配器 | 是 |
 | `apps/web/public/media/` | 首页图、声音标记、首页短音效、声音库示例录音的压缩衍生件 | 是 |
 | `apps/web/public/legal/` | 公开的声音来源与许可 | 是 |
 | `packages/contracts/` | 前后端共用的数据契约 | 是，按需 |
 | `packages/sound-rules/` | 声音体检、塑形、本地背景、混音、课本匹配；数值在 `rules/*.json` | 是，按需 |
+| `packages/audio-engine/` | 前后端共用时序、声音处理与发现计数算法 | 是，按需 |
 | `packages/prompts/` | 语料 `corpus/`（网页用）和提示词 `prompts/`（服务端用，不进网页） | 语料是 |
 | `assets-source/` | 首页、声音标记的透明 PNG 原件，原始授权录音，测试声音集 | 否 |
 | `scripts/` | 资源重建、预算、样式结构检查 | 否 |
@@ -43,6 +46,7 @@ npm run dev
 ```sh
 npm test                # 全部测试，必须全过
 npm run build           # 类型检查 + 资源检查 + 样式结构检查（单文件 ≤ 220 行）+ 构建
+npm run test:ui         # 构建后检查 30 个路由／响应式宽度组合；需 Playwright Chromium
 # 仅在替换原件、修改压缩配方后执行：
 npm run assets:build
 # 只更新声音库示例声音（新增 / 替换原件后；需要 ffmpeg）：

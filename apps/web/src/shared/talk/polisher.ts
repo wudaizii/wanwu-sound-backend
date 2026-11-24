@@ -1,18 +1,16 @@
 // 讲解润色 port (作品讲解 / 音乐小发现 and 课本讲解). The page always shows the corpus sentences first, written from facts
 // the program counted; this port asks the server for an AI rewording and the page uses only the lines that pass the same
-// checks the server runs (@wanwu-v2/prompts/accept). No model is connected yet: the offline polisher says so and sends
-// nothing.
-//
-// Intended server endpoints (protocol v0.4; not implemented; the key and the prompts stay on the server, which also
-// logs the checks; open to visitors, limited per IP and device — over the limit is reason 'quota'):
-//   POST /api/v1/talk/work      ← WorkTalkBrief     → {...WorkTalkReply, model, promptVersion}
-//   POST /api/v1/talk/textbook  ← TextbookTalkBrief → {...TextbookTalk, model, promptVersion}
-// `model` and `promptVersion` sit beside the reply's own fields, as in BackgroundResult.
-// Only anonymous briefs are sent: facts with numbered sounds (「声音1」), never the names a child typed, recordings,
-// people or places.
+// checks the server runs (@wanwu-v2/prompts/accept). The cloud adapter opens work talk only when the saved revision
+// has server facts. It sends references to POST /api/v1/works/:id/talk; the server builds the anonymous brief.
+// Textbook talk stays on the existing local corpus until its newer contract is integrated by the frontend owner.
+// Keys and prompts stay on the server. Child names are restored locally and are never sent for AI rewording.
 import type {TextbookTalkBrief,WorkTalkBrief} from '@wanwu-v2/contracts/talk';
 
 export type TalkPolisher={
+ readonly subscribe?:(listener:()=>void)=>()=>void;
+ readonly basis?:{brief:WorkTalkBrief;names:string[];binding:string}|null;
+ readonly revisionKey?:string;
+ readonly timeoutMs?:number;
  /** Whether an AI rewording can be asked for now; false while no model is connected. */
  readonly open:boolean;
  workTalk(brief:WorkTalkBrief,signal:AbortSignal):Promise<unknown>;

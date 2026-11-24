@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "npm run dev --workspace=@wanwu-v2/web",
     "typecheck": "npm run typecheck --workspace=@wanwu-v2/web",
-    "test": "node --experimental-strip-types --test apps/web/tests/*.test.ts packages/sound-rules/tests/*.test.ts packages/prompts/tests/*.test.ts packages/audio-engine/tests/*.test.ts",
+    "test": "node --experimental-strip-types --test apps/web/tests/*.test.ts packages/sound-rules/tests/*.test.ts packages/prompts/tests/*.test.ts packages/audio-engine/tests/*.test.ts && node scripts/test-cloud-insights.mjs",
+    "test:ui": "node --test apps/web/tests/browser/ui-smoke.test.ts",
     "check:assets": "node scripts/check-assets.mjs",
     "check:styles": "node scripts/check-styles.mjs",
     "assets:build": "node scripts/build-assets.mjs && node scripts/build-title-assets.mjs && node scripts/build-art-assets.mjs docs/assets/marker-recipe.json docs/assets/marker-hero-recipe.json && node scripts/build-library-audio.mjs",

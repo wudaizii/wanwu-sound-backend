@@ -9,6 +9,7 @@
   "./account": "./src/account.ts",
   "./api": "./src/api.ts",
   "./cloud": "./src/cloud.ts",
+  "./cloud-status": "./src/cloudStatus.ts",
   "./arrangement": "./src/arrangement.ts",
   "./work": "./src/work.ts",
   "./textbook": "./src/textbook.ts",

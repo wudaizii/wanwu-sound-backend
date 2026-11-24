@@ -3,10 +3,14 @@ import type {WorkRecord,WorkSummary,RenderView,ShareView} from '@wanwu-v2/contra
 import type {SavedWork} from '@wanwu-v2/contracts/work';
 import {AccountError} from '../account/accountClient';
 import {accountErrorText} from '../account/copy';
+import type {AccountUsage,WorkFacts} from '@wanwu-v2/contracts/cloud-status';
 
 export type CloudState={accountId:string|null;workId:string|null;title:string;phase:'local'|'uploading'|'saving'|'saved'|'conflict'|'error';
- message:string;busy:boolean;epoch:number;conflictId:string|null;drafts:WorkSummary[];render:RenderView|null;share:ShareView|null;recoverable:boolean;dialog:'drafts'|'library'|'share'|null};
-export const initialCloudState:CloudState={accountId:null,workId:null,title:'未命名草稿',phase:'local',message:'访客创作仅保留在本次页面中。',busy:false,epoch:0,conflictId:null,drafts:[],render:null,share:null,recoverable:false,dialog:null};
+ message:string;busy:boolean;epoch:number;conflictId:string|null;drafts:WorkSummary[];render:RenderView|null;share:ShareView|null;recoverable:boolean;dialog:'drafts'|'library'|'share'|null;
+ usage:AccountUsage|null;usagePhase:'idle'|'loading'|'ready'|'error';usageMessage:string;
+ facts:WorkFacts|null;factsPhase:'idle'|'loading'|'ready'|'stale'|'error';factsMessage:string;languageAvailable:boolean;talkMessage:string};
+export const initialCloudState:CloudState={accountId:null,workId:null,title:'未命名草稿',phase:'local',message:'访客创作仅保留在本次页面中。',busy:false,epoch:0,conflictId:null,drafts:[],render:null,share:null,recoverable:false,dialog:null,
+ usage:null,usagePhase:'idle',usageMessage:'',facts:null,factsPhase:'idle',factsMessage:'',languageAvailable:false,talkMessage:''};
 export function toSavedWork(record:WorkRecord,title=record.title):SavedWork{
  return {version:'work-v1',id:record.id,title,arrangement:record.arrangement,settings:record.settings,
   rendering:{background:'local-rules',prompt:null,rules:{...RULE_VERSIONS}},visibility:'private',share:null,savedAt:record.updatedAt};
