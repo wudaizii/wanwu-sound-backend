@@ -29,6 +29,7 @@
     "test:p1": "node scripts/test-api.mjs p1",
     "test:settings": "node scripts/test-api.mjs settings",
     "test:settings:ui": "node scripts/test-settings-ui.mjs",
+    "test:frontend": "node --test --test-concurrency=1 apps/api/tests/browser/frontend.test.ts",
     "test:gateway": "node scripts/test-gateway.mjs",
     "test:worker:runtime": "node scripts/test-api.mjs media-runtime",
     "prototype:media": "node apps/worker/src/prototype.ts",

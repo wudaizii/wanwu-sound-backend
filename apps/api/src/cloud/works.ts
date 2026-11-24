@@ -129,10 +129,21 @@ export class Works {
     });
   }
   async facts(actor: Actor, id: string, revision: number | null = null) {
-    const work = await this.get(actor, id, revision);
+    // A current draft has no frozen work_snapshot yet. Bind that exact in-memory
+    // revision without silently substituting a newer draft from another device.
+    const current = await this.get(actor, id);
+    let work = current;
+    if (revision !== null && revision !== current.revision) {
+      try {
+        work = await this.get(actor, id, revision);
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 404)
+          throw new ApiError(409, 'version-conflict');
+        throw error;
+      }
+    }
     const frozen =
-      revision ??
-      (work.state === 'saved' && work.savedRevision === work.revision ? work.revision : null);
+      work.state === 'saved' && work.savedRevision === work.revision ? work.revision : null;
     if (frozen !== null) {
       const snapshot = (
         await this.context.pool.query(

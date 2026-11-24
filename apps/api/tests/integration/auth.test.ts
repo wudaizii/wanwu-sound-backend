@@ -17,6 +17,11 @@ import { DEFAULT_COMPOSE_SETTINGS } from '@wanwu-v2/contracts/work';
 import { LocalObjectStore } from '../helpers/localStore.ts';
 import { mediaBoss } from '../../src/jobs/mediaQueue.ts';
 import { auditFoundation } from '../../src/maintenance/foundationAudit.ts';
+import { guestContext } from '../../src/guest/routes.ts';
+import type { GuestConfig } from '../../src/guest/config.ts';
+import { SOUND_CONTRACT_VERSION } from '@wanwu-v2/contracts/sound';
+import { RULE_VERSIONS } from '@wanwu-v2/sound-rules/rules';
+import { parseWorkFacts, parseBoundWorkTalk } from '@wanwu-v2/contracts/cloud-status';
 
 const origin = 'https://voiceatalass.netlify.app',
   password = 'A disposable teacher test passphrase_123';
@@ -33,13 +38,54 @@ const config = {
 };
 let postgresVersion = '';
 let objects: LocalObjectStore;
-const application = () =>
-  buildApp(config, database, true, {
-    pool: database.pool,
-    boss: mediaBoss(database.pool),
-    store: objects,
-    origin,
-  });
+const testGuest: GuestConfig = {
+  language: {
+    baseUrl: 'https://example.invalid/v1',
+    apiKey: 'synthetic-not-a-real-key',
+    model: 'fixture-model',
+    builtIn: true,
+  },
+  music: null,
+  audio: null,
+  dailyLimit: 1000,
+};
+const model = { calls: 0, prompts: [] as string[], hold: null as Promise<void> | null, bad: false };
+const application = () => {
+  const boss = mediaBoss(database.pool),
+    cloud = { pool: database.pool, boss, store: objects, origin };
+  return buildApp(
+    config,
+    database,
+    true,
+    cloud,
+    guestContext(
+      testGuest,
+      async (_url, _headers, body) => {
+        model.calls++;
+        model.prompts.push(JSON.stringify(body));
+        if (model.hold) await model.hold;
+        return {
+          status: 200,
+          json: {
+            choices: [
+              {
+                message: {
+                  content: model.bad
+                    ? 'not JSON'
+                    : JSON.stringify({
+                        lines: [{ kind: 'single', line: '这里听起来很有意思。' }],
+                        tryThis: '再听一遍试试。',
+                      }),
+                },
+              },
+            ],
+          },
+        };
+      },
+      { pool: database.pool, boss },
+    ),
+  );
+};
 
 class Client {
   cookie = '';
@@ -217,6 +263,171 @@ test('cloud drafts are account-owned, readable on another device, and reject sta
     'if-match': etag,
   });
   assert.equal((await secondDevice.send('GET', `/api/v1/works/${id}`)).body.title, '草稿乙');
+});
+
+test('cloud AI accepts only an owned canonical revision, hides private names, and refuses stale or forged facts', async () => {
+  const a = await teacher(),
+    b = await teacher(),
+    sourceId = `recording:${randomUUID()}`,
+    id = `work:${randomUUID()}`;
+  const analysis = {
+    rules: RULE_VERSIONS.analysis,
+    durationMs: 1000,
+    silent: false,
+    main: { startMs: 0, endMs: 1000 },
+    units: [{ startMs: 0, endMs: 1000, peakDb: -10 }],
+    kind: 'one',
+    unitMs: 1000,
+    lengthBand: 'short',
+    loudnessDb: -20,
+    peakDb: -10,
+    brightnessHz: 500,
+    band: 'mid',
+  };
+  const source = {
+    id: sourceId,
+    kind: 'local-recording',
+    label: '私密原件名',
+    durationMs: 1000,
+    mimeType: 'audio/wav',
+    provenance: {
+      recordedBy: '私密录音人',
+      recordedOn: '2026-11-01',
+      place: '私密地点',
+      group: null,
+      provenanceUrl: null,
+    },
+  };
+  // Only the disposable owner seeds a technically processed synthetic source; this test exercises API ownership and canonicalisation, not FFmpeg.
+  await owner.pool.query(
+    "INSERT INTO sources(id,owner_id,metadata,checksum,bytes,status,original_key,playback_key,playback_checksum,analysis,duration_ms) VALUES($1,$2,$3,$4,2044,'ready',$5,$6,$4,$7,1000)",
+    [
+      sourceId,
+      a.id,
+      source,
+      'a'.repeat(64),
+      `wanwu/dev/originals/${randomUUID()}`,
+      `wanwu/dev/playback/${randomUUID()}`,
+      analysis,
+    ],
+  );
+  const content = {
+    id,
+    title: '私密作品名',
+    arrangement: {
+      version: 'arrangement-v1',
+      id,
+      rows: 3,
+      spanSeconds: 30,
+      mood: null,
+      origin: 'child',
+      updatedAt: new Date().toISOString(),
+      units: [
+        {
+          version: SOUND_CONTRACT_VERSION,
+          id: 'unit:canonical',
+          sourceId,
+          name: '私密孩子声卡名',
+          maker: '私密孩子',
+          markerIndex: 0,
+          shape: {},
+          input: 'manual',
+          createdAt: new Date().toISOString(),
+          analysis: { ...analysis, loudnessDb: 99 },
+        },
+      ],
+      events: [
+        {
+          id: 'event:canonical',
+          unitId: 'unit:canonical',
+          at: 0,
+          row: 0,
+          clip: { startMs: 0, endMs: 1000 },
+        },
+      ],
+    },
+    settings: DEFAULT_COMPOSE_SETTINGS,
+  };
+  await a.client.send('POST', '/api/v1/works', content, 201);
+  const read = await a.client.send('GET', `/api/v1/works/${id}/facts?revision=1`),
+    facts = parseWorkFacts(read.body);
+  assert.ok(facts?.talkBrief);
+  assert.equal(facts.events[0]!.measured!.loudnessDb, -20);
+  const body = { revision: 1, inputDigest: facts.inputDigest },
+    headers = { 'if-match': String(read.result.headers.etag) };
+  const before = model.calls;
+  await b.client.send('POST', `/api/v1/works/${id}/talk`, body, 404, headers);
+  await a.client.send(
+    'POST',
+    `/api/v1/works/${id}/talk`,
+    { ...body, brief: { facts: [] } },
+    400,
+    headers,
+  );
+  await a.client.send(
+    'POST',
+    `/api/v1/works/${id}/talk`,
+    { ...body, inputDigest: 'b'.repeat(64) },
+    409,
+    headers,
+  );
+  await a.client.send('POST', `/api/v1/works/${id}/talk`, body, 428);
+  assert.equal(model.calls, before);
+  const reply = await a.client.send('POST', `/api/v1/works/${id}/talk`, body, 200, headers);
+  assert.ok(parseBoundWorkTalk(reply.body));
+  assert.equal(reply.body.inputDigest, facts.inputDigest);
+  assert.equal(model.calls, before + 1);
+  const prompt = model.prompts.at(-1)!;
+  for (const name of [
+    '私密原件名',
+    '私密录音人',
+    '私密地点',
+    '私密作品名',
+    '私密孩子声卡名',
+    '私密孩子',
+  ])
+    assert.equal(prompt.includes(name), false);
+  const language = testGuest.language;
+  testGuest.language = null;
+  try {
+    await a.client.send('POST', `/api/v1/works/${id}/talk`, body, 503, headers);
+    assert.equal(model.calls, before + 1);
+  } finally {
+    testGuest.language = language;
+  }
+  model.bad = true;
+  try {
+    await a.client.send('POST', `/api/v1/works/${id}/talk`, body, 502, headers);
+    assert.equal(model.calls, before + 2);
+  } finally {
+    model.bad = false;
+  }
+  let release!: () => void;
+  model.hold = new Promise((done) => {
+    release = done;
+  });
+  try {
+    const pending = a.client.send('POST', `/api/v1/works/${id}/talk`, body, 409, headers);
+    for (let i = 0; model.calls < before + 3; i++) {
+      if (i > 200) throw new Error('model fixture wait');
+      await delay(10);
+    }
+    await a.client.send(
+      'PATCH',
+      `/api/v1/works/${id}`,
+      { title: '另一设备的新修订' },
+      200,
+      headers,
+    );
+    release();
+    await pending;
+    await a.client.send('GET', `/api/v1/works/${id}/facts?revision=1`, undefined, 409);
+    const current = await a.client.send('GET', `/api/v1/works/${id}/facts?revision=2`);
+    assert.equal(current.body.revision, 2);
+  } finally {
+    release();
+    model.hold = null;
+  }
 });
 
 test('twelve-character mixed passwords work across entry points and existing short passwords still log in', async () => {

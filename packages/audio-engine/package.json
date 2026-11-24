@@ -17,6 +17,7 @@
     "./instruments": "./src/instruments.ts",
     "./timeline": "./src/timeline.ts",
     "./render": "./src/render.ts",
-    "./pcm": "./src/pcm.ts"
+    "./pcm": "./src/pcm.ts",
+    "./discoveries": "./src/discoveries.ts"
   }
 }

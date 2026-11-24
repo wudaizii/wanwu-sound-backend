@@ -9,7 +9,7 @@
     },
     {
       "path": "packages/contracts/package.json",
-      "sha256": "c3b334bca7df6d34f437e5c7de85773aebd0ac99c1e6ab500fee197bbaa2d217"
+      "sha256": "b09728c6a31387e5d7d0346724cc03b042e5705c70a44a460ca5b3883344c1a0"
     },
     {
       "path": "packages/contracts/src/account.ts",
@@ -30,6 +30,10 @@
     {
       "path": "packages/contracts/src/cloud.ts",
       "sha256": "d8c299862d1e92028bf261b3346096e09a974677c78e4f6b1a7c9417d9a00309"
+    },
+    {
+      "path": "packages/contracts/src/cloudStatus.ts",
+      "sha256": "073ab8b5d3249253e8a5deabb4ee3c51054470e4ade4dd63a03f421d47666c4f"
     },
     {
       "path": "packages/contracts/src/discovery.ts",
@@ -225,11 +229,15 @@
     },
     {
       "path": "packages/audio-engine/package.json",
-      "sha256": "28b8138162e2ff95eb63a421fa003cbdcdae97feba71511ea37b1e4ef420702a"
+      "sha256": "85d08db13c54f7322e923950ae1732e6e452ac5700ab6b56eb4decedfcd0b591"
     },
     {
       "path": "packages/audio-engine/src/background.ts",
       "sha256": "04040cd981df21b5a3156e7f4182867298f71df8cbb71e7cff0f53de431a8a6e"
+    },
+    {
+      "path": "packages/audio-engine/src/discoveries.ts",
+      "sha256": "a747418580aa94011b304f5bde49d46f4f147a63ae332a5e8e70f7dfd6160e0f"
     },
     {
       "path": "packages/audio-engine/src/grains.ts",

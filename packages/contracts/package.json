@@ -16,6 +16,7 @@
     "./talk": "./src/talk.ts",
     "./discovery": "./src/discovery.ts",
     "./textbook-compose": "./src/textbookCompose.ts",
-    "./textbook-melody": "./src/textbookMelody.ts"
+    "./textbook-melody": "./src/textbookMelody.ts",
+    "./cloud-status": "./src/cloudStatus.ts"
   }
 }

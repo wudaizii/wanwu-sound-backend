@@ -2,6 +2,8 @@
 
 交接日期：2026-10-29。前端由原作者及其 Claude Code 维护；后端由 wudaizii 维护。不要重新讨论已经确定的页面视觉，不需要重写整套业务。
 
+> 本分支增量：用量、作品事实和绑定讲解的代码及独立前端交付见 [FRONTEND_CLOUD_INTEGRATION.md](FRONTEND_CLOUD_INTEGRATION.md)。这是待合并／发布的本机验证结果，不能视作线上已更新。
+
 > 2026-11-09 增量：正式入口为 `https://wanwu.proterm.ink`（ECS Nginx 同源代理），P0/P1 后端已部署；先读 [当前生产交接](../docs/PRODUCTION_2026-11-09.md) 和 [职责边界](BACKEND_BOUNDARY.md)。管理员已创建，正式 HTTPS／OSS 后台业务验收通过；真实页面、老师注册、手机及听感待协作验收。下列 2026-10-29 状态是历史交接记录，不是当前部署事实。
 
 ## 一句话说明

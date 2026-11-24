@@ -7,6 +7,12 @@ import { createHash } from 'node:crypto';
 import type { Pool } from 'pg';
 import type { PgBoss } from 'pg-boss';
 import { exactObject } from '@wanwu-v2/contracts/account';
+import { cloudId, fingerprint, workEtag } from '@wanwu-v2/contracts/cloud';
+import { WORK_TALK_BRIEF_VERSION } from '@wanwu-v2/contracts/talk';
+import type { WorkTalkBrief } from '@wanwu-v2/contracts/talk';
+import type { Authenticated } from '../auth/routes.ts';
+import type { CloudContext } from '../cloud/context.ts';
+import { Works } from '../cloud/works.ts';
 import { MOODS } from '@wanwu-v2/contracts/arrangement';
 import { AI_BACKGROUND_STEPS, isBackgroundBrief } from '@wanwu-v2/contracts/background';
 import type { AiBackgroundStep } from '@wanwu-v2/contracts/background';
@@ -119,7 +125,11 @@ export function guestContext(
   };
 }
 
-export function guestRoutes(app: FastifyInstance, context: GuestContext) {
+export function guestRoutes(
+  app: FastifyInstance,
+  context: GuestContext,
+  bound?: { cloud: CloudContext; authenticated: Authenticated },
+) {
   const limiter = new WindowLimiter();
   app.addHook('preHandler', async (request) => {
     if (request.method === 'GET' && request.url.split('?')[0] === '/api/v1/guest/status')
@@ -130,12 +140,13 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
       );
     if (
       request.method === 'POST' &&
-      /^\/api\/v1\/(moods\/interpret|talk\/(work|textbook)|discovery\/work|textbook\/features|backgrounds)$/.test(
-        request.url.split('?')[0]!,
-      )
+      (request.routeOptions.url === '/api/v1/works/:id/talk' ||
+        /^\/api\/v1\/(moods\/interpret|talk\/(work|textbook)|discovery\/work|textbook\/features|backgrounds)$/.test(
+          request.url.split('?')[0]!,
+        ))
     )
       limiter.take(
-        `${request.url.split('?')[0]}:${request.ip}`,
+        `${request.routeOptions.url}:${request.ip}`,
         settingNumber('ai.rateMax'),
         settingNumber('ai.rateWindowSeconds'),
       );
@@ -225,9 +236,7 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
     return { nearest: MOODS.includes(nearest as never) ? nearest : null, model, promptVersion };
   });
 
-  app.post('/api/v1/talk/work', GUEST_RATE_LIMIT, async (request) => {
-    const brief = request.body;
-    if (!isWorkTalkBrief(brief)) throw new ApiError(400, 'invalid-request');
+  const workTalk = async (request: FastifyRequest, brief: WorkTalkBrief) => {
     const { reply, model, promptVersion } = await text(request, 'work-talk', () =>
       buildWorkTalk(brief),
     );
@@ -241,7 +250,57 @@ export function guestRoutes(app: FastifyInstance, context: GuestContext) {
       model,
       promptVersion,
     };
+  };
+  app.post('/api/v1/talk/work', GUEST_RATE_LIMIT, async (request) => {
+    if (!isWorkTalkBrief(request.body)) throw new ApiError(400, 'invalid-request');
+    return workTalk(request, request.body);
   });
+
+  if (bound) {
+    const works = new Works(bound.cloud);
+    app.post<{ Params: { id: string } }>(
+      '/api/v1/works/:id/talk',
+      GUEST_RATE_LIMIT,
+      async (request) => {
+        const actor = await bound.authenticated(request);
+        const expected = request.headers['if-account-match'];
+        if (expected !== undefined && expected !== actor.id)
+          throw new ApiError(409, 'account-changed');
+        const body = request.body;
+        if (
+          !cloudId(request.params.id, 'work') ||
+          !exactObject(body, ['revision', 'inputDigest']) ||
+          !Number.isSafeInteger(body.revision) ||
+          (body.revision as number) < 1 ||
+          !fingerprint(body.inputDigest)
+        )
+          throw new ApiError(400, 'invalid-request');
+        const revision = body.revision as number;
+        if (request.headers['if-match'] === undefined)
+          throw new ApiError(428, 'precondition-required');
+        if (request.headers['if-match'] !== workEtag(request.params.id, revision))
+          throw new ApiError(412, 'version-conflict');
+        const { facts } = await works.facts(actor, request.params.id, revision);
+        if (facts.inputDigest !== body.inputDigest) throw new ApiError(409, 'version-conflict');
+        if (!facts.talkBrief) throw new ApiError(400, 'invalid-request');
+        const result = await workTalk(request, facts.talkBrief);
+        // A late model reply must not revive a disabled account or describe a replaced draft as current.
+        const liveActor = await bound.authenticated(request);
+        const again = await works.facts(liveActor, request.params.id, revision);
+        if (again.facts.inputDigest !== facts.inputDigest)
+          throw new ApiError(409, 'version-conflict');
+        return {
+          workId: request.params.id,
+          revision,
+          inputDigest: facts.inputDigest,
+          briefVersion: WORK_TALK_BRIEF_VERSION,
+          reply: { lines: result.lines, tryThis: result.tryThis },
+          model: result.model,
+          promptVersion: result.promptVersion,
+        };
+      },
+    );
+  }
 
   app.post('/api/v1/talk/textbook', GUEST_RATE_LIMIT, async (request) => {
     const brief = request.body;

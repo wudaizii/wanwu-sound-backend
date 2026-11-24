@@ -15,6 +15,8 @@
 2. 前端接入包已在前端提交 `2823401`（分支 `integrate/wanwu-backend-v1`）合入；正式域名、同源代理与联调见 [前端接入](handoff/FRONTEND.md)。
 3. 负责后端的开发者读 [配置表](docs/CONFIGURATION.md)、[运维边界](docs/OPERATIONS.md)、[验收状态](docs/STATUS.md)。
 
+本分支另有待合并的 [前端用量／作品事实／AI 讲解交接](handoff/FRONTEND_CLOUD_INTEGRATION.md)，含独立前端分支、后端配套接口和真实本机浏览器验证。它尚未部署，不改变下面带日期的生产记录。
+
 需要查接口时先读 [接口速查](docs/API_QUICKSTART.md)，再按链接查完整协议与实际契约。
 
 根目录 `CLAUDE.md` 是 AI 入口，`AGENTS.md` 是项目边界。共享包指纹、命令和验收标准都在仓库内；不依赖聊天记录或这台 Mac 的私密配置。
@@ -25,7 +27,7 @@
 
 首个网站管理员已按用户单独授权创建；当前登录名为 `guohaha`（2026-11-24 从 `wudaizii` 更名，账号 ID 和角色保留，管理员仍为 1 个；密码随后按用户指定另行更新，旧会话已撤销）。密码规则变更见 [2026-11-24 说明](docs/PASSWORD_POLICY_2026-11-24.md)。正式 HTTPS／私有 OSS 的后台链路已通过：登录、上传与处理、个人／共享素材确认、多草稿与冲突、成品生成、匿名分享及撤销。验收发现并修复了 API 压缩改写 ETag、导致合法保存失败的问题；前端静态资源压缩保留。每日备份已有实际自动触发，含管理员的新备份也已独立恢复并校验密码。原 H5 业务页面、邀请码成功注册、手机录音和音乐听感仍待协作验收，不能用本管理页或后台接口通过代替这些项目。
 
-P1 加固与职责分离见 [P1 修复记录](docs/P1_HARDENING.md) 和 [人／AI 对接说明](handoff/BACKEND_BOUNDARY.md)。facts／额度接口仍待前端以后接入。当前管理员配置代码在 `codex/admin-configuration`；此前 P0/P1 和 11-09 证据保留其历史日期。普通 `ecs-dev` 权限未提升，发布使用已有授权管理入口，网页不取得 root 或 Docker socket。
+P1 加固与职责分离见 [P1 修复记录](docs/P1_HARDENING.md) 和 [人／AI 对接说明](handoff/BACKEND_BOUNDARY.md)。facts／额度的前端接入及绑定讲解已在本分支配套完成，待双方合并和发布，见 [本次交接](handoff/FRONTEND_CLOUD_INTEGRATION.md)。此前 P0/P1 和 11-09 证据保留其历史日期。普通 `ecs-dev` 权限未提升，发布使用已有授权管理入口，网页不取得 root 或 Docker socket。
 
 2026-10-29 的旧验收及 2026-11-08 的准备记录仍保留其日期和范围，不代表当前部署状态；入口见 [验收状态](docs/STATUS.md)、[发布准备记录](docs/RELEASE_2026-11-08.md)。Git 推送本身仍不会自动部署 ECS。
 

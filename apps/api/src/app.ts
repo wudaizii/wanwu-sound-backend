@@ -149,7 +149,7 @@ export async function buildApp(
   settingsRoutes(app, { accounts, authenticated });
   limitAttemptsByName(app);
   if (cloud) cloudRoutes(app, cloud, authenticated);
-  if (guest) guestRoutes(app, guest);
+  if (guest) guestRoutes(app, guest, cloud ? { cloud, authenticated } : undefined);
   if (guest?.jobs instanceof PgBackgroundJobs)
     app.addHook('onClose', () =>
       guest.jobs instanceof PgBackgroundJobs ? guest.jobs.close() : Promise.resolve(),
