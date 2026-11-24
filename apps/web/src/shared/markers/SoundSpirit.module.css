@@ -1,0 +1,26 @@
+/* The sound character. The root sets the stacking layer: arms (fixed, viewport pixels) paint behind the body but above
+   neighbouring panels, so the right hand can reach across them. Size comes from the caller (width). */
+.spirit{position:relative;z-index:5;display:block;flex-shrink:0;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.arms{position:fixed;inset:0;z-index:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.arms path{fill:none;stroke:#171a16;stroke-linecap:round;stroke-linejoin:round}
+.floor{position:absolute;left:8%;right:8%;bottom:-4%;height:9%;border-radius:50%;background:radial-gradient(ellipse at center,#4a5a2a2e 0%,#4a5a2a00 70%);filter:blur(5px);pointer-events:none}
+/* Taps land on the button underneath; only the label (an editable maker name) takes pointer events on the body. */
+.hit{position:absolute;inset:4% 3% 2%;z-index:1;padding:0;border:0;border-radius:48%;background:none;cursor:pointer}
+.hit:focus-visible{outline:3px solid var(--wk-green-deep,#a5cf33);outline-offset:4px}
+.body{position:absolute;inset:0;z-index:2;container-type:inline-size;pointer-events:none;will-change:transform}
+.art{width:100%;height:100%}
+.shape{display:block;width:100%;height:100%;border-radius:46% 54% 50% 50%/55% 52% 48% 45%;background:#dfe6dc}
+[data-marker=marker-ochre] .shape{background:#f3dfb4}[data-marker=marker-slate] .shape{background:#d6dfea}[data-marker=marker-lilac] .shape{background:#e2d6ea}
+.eyes{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* Same place and type as SoundMarker's label: the flat lower right of every marker shape. */
+.label{position:absolute;right:15%;bottom:17%;max-width:52%;display:flex;justify-content:flex-end;white-space:nowrap;pointer-events:auto;
+ font-size:max(var(--font-caption),7.8cqw);line-height:1.2;font-weight:500;letter-spacing:.12em;color:#2f3530;font-variant-numeric:tabular-nums}
+.effects{position:absolute;inset:0;z-index:3;overflow:visible;pointer-events:none}
+/* The cheer's stars: over the whole page (above speech bubbles and panels), clipped to the window so they never scroll it. */
+.burst{position:fixed;inset:0;z-index:50;overflow:hidden;pointer-events:none}
+.ripple{position:absolute;width:110px;height:26px;margin:-13px 0 0 -55px;border-radius:50%;background:radial-gradient(ellipse at center,#a5cf33aa 0%,#a5cf3350 45%,#a5cf3300 72%);transform:scale(.3);animation:ripple .7s var(--wk-ease) forwards}
+.spark{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;animation:spark 1.3s var(--wk-ease) forwards}
+.spark svg{display:block;width:100%;height:100%}
+@keyframes ripple{0%{transform:scale(calc(var(--s) * .3));opacity:1}100%{transform:scale(var(--s));opacity:0}}
+@keyframes spark{0%{transform:translate(0,0) scale(.2) rotate(0);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg);opacity:0}}
+@media(--reduced-motion){.ripple,.spark{display:none}}

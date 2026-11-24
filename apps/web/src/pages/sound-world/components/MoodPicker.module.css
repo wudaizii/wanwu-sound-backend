@@ -1,0 +1,39 @@
+/* 这首曲子的心情: nine faces in a pressed tray, plus 自己写. */
+.mood{container-type:inline-size;display:flex;align-items:center;gap:14px;padding:10px 4px 0 14px}
+.moodTitle{flex-shrink:0;font-size:var(--font-body);font-weight:800;color:var(--wk-ink)}
+.moodOptions{flex:1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;padding:5px;border-radius:22px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.moodOption{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:46px;padding:0 3px;border:0;border-radius:16px;background:#fff;color:var(--wk-ink-soft);font-size:var(--font-small);font-weight:700;box-shadow:var(--wk-key);transition:box-shadow .15s,background .25s,transform .15s var(--wk-ease)}
+.moodOption span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.moodFace{width:27px;height:27px;flex-shrink:0;transition:transform .2s var(--wk-ease)}
+.moodOption small{position:absolute;top:-7px;right:-2px;padding:0 6px;border-radius:8px;background:var(--wk-soft);font-size:var(--font-micro);font-weight:700;color:var(--wk-muted);box-shadow:inset 0 0 0 1px var(--wk-line-strong)}
+.moodOption:hover{transform:translateY(-2px);box-shadow:var(--wk-key-lg)}
+.moodOption:hover .moodFace{transform:rotate(-8deg) scale(1.08)}
+.moodOption[aria-checked=true]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);transform:translateY(-1px)}
+.moodOption[aria-checked=true] .moodFace{animation:pop .32s var(--wk-ease)}
+.moodOption:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wk-line-strong)}
+.customMood input{width:100%;min-height:52px;margin-top:20px;padding:0 18px;border:0;border-radius:16px;background:var(--wk-soft);font:inherit;font-size:var(--font-control-lg);font-weight:700;color:var(--wk-ink);box-shadow:inset 0 0 0 2px var(--wk-line-strong);outline:0}
+.customMood input:focus{box-shadow:inset 0 0 0 2.5px var(--wk-green-deep)}
+@keyframes pop{0%{transform:scale(.93)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@media(--reduced-motion){
+ .moodOption{transition:none}
+}
+@media(--short){
+ .mood{padding-top:8px}
+ .moodOption{min-height:44px}
+ .moodFace{width:26px;height:26px}
+}
+@media(--narrow){
+ .moodTitle{display:none}
+}
+@media(--phone){
+ .mood{flex-direction:column;align-items:stretch;gap:8px;padding:14px 2px 0}
+ .moodTitle{display:block;font-size:var(--font-body)}
+ .moodOptions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .moodOption{min-height:48px;font-size:var(--font-small)}
+}
+/* Keep all mood labels visible when the stage is a narrow desktop column or tablet. */
+@container(max-width:850px){
+ .moodOptions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .moodTitle{display:block}
+ .moodOption span{white-space:normal;overflow:visible;text-overflow:clip}
+}

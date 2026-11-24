@@ -1,0 +1,43 @@
+/* 当前声音: the source tab tucked under 声音的样子 — current sound, listen, and the four ways to bring one in. */
+.bar{animation:global(wk-rise) .5s var(--wk-ease) both}
+.bar{animation-delay:.05s}
+/* A folder-like paper tab tucked behind 声音的样子: a little narrower than the panel and lightly tinted, so the panel's
+   rounded top edge reads as lying on top of it (with a soft shadow) instead of two white cards colliding. */
+.bar{position:relative;z-index:2;flex-shrink:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 18px;margin:0 18px -20px;padding:10px 20px 30px 16px;border-radius:26px 26px 0 0;background:linear-gradient(180deg,#fdfef6,#f6f9e8);box-shadow:inset 0 0 0 1px #e6ecd2,0 6px 18px #26301a0d}
+.barCurrent{display:flex;align-items:center;gap:12px;flex:1 1 260px;min-width:0}
+.barMarker{--marker-size:46px;width:46px}
+.barText{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.barText small{font-size:var(--font-label);font-weight:500;color:var(--wk-muted)}
+.barText b{min-width:0;overflow-wrap:anywhere;display:block;align-items:center;gap:8px;font-size:var(--font-section);font-weight:700;white-space:normal;}
+.barText em{display:inline-block;margin-left:6px;white-space:nowrap;padding:2px 8px;border-radius:10px;background:var(--wk-soft);color:var(--wk-muted);font-size:var(--font-label);font-style:normal;font-weight:700}
+.barListen{flex-shrink:0;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;min-height:44px;margin-left:auto;padding:0 18px 0 14px;border:0;border-radius:999px;background:var(--wk-green-soft);color:var(--wk-on-fill);box-shadow:inset 0 0 0 2px var(--wk-green-mid);font-size:var(--font-body);font-weight:700;transition:transform .12s,background .16s}
+.barListen svg{width:17px;height:17px}
+.barListen:hover{background:#eef8cc}
+.barListen:active{transform:scale(.96)}
+.barListen[aria-pressed=true]{background:var(--wk-sun-fill);box-shadow:none}
+.tiles{display:flex;gap:4px}
+/* "Pick a sound first": 还没有选声音 gets a pink highlighter stroke and a small shake (the character says the words). */
+.barText b[data-attention]{align-self:flex-start;margin:0 -6px;padding:0 6px;border-radius:6px;background:linear-gradient(transparent 38%,var(--wk-pink) 38%,var(--wk-pink) 92%,transparent 92%) no-repeat 0 0/100% 100%;color:#9c2f45;animation:highlight .6s var(--wk-ease) both,nudge-x .45s .2s ease-in-out}
+@keyframes highlight{from{background-size:0 100%}}
+@keyframes nudge-x{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@media(--short){
+ .bar{padding:8px 18px 26px 14px}
+ .barMarker{--marker-size:40px;width:40px}
+ .barText b{font-size:var(--font-subtitle)}
+}
+@media(--one-column){
+ .bar{order:2;margin:0;padding:14px 16px;border-radius:26px}
+}
+@media(--phone){
+ .bar{flex-direction:column;align-items:stretch;gap:10px;border-radius:22px}
+ .barCurrent{flex-basis:auto}
+ .barMarker{--marker-size:44px;width:44px}
+ .barText b{font-size:var(--font-control-lg)}
+ .barListen{min-height:44px;padding:0 16px 0 12px;font-size:var(--font-body)}
+ .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;width:100%}
+}
+@media(--reduced-motion){
+ .bar,.barText b[data-attention]{animation:none}
+ .barListen{transition:none}
+}
+[data-entry-motion=still] .bar{animation:none}

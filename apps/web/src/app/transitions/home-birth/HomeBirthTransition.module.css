@@ -1,0 +1,5 @@
+/* Crossfade the existing, full-resolution home over the real destination. No snapshot, scale or filter. */
+.home[data-overlay]{position:fixed;top:var(--home-top);right:0;bottom:0;left:0;z-index:50;overflow:hidden;will-change:opacity}
+.root[data-page-crossfade=fading] .home{animation:crossfade var(--crossfade-duration) ease-in-out both}
+@keyframes crossfade{from{opacity:1}to{opacity:0}}
+@media(--reduced-motion){.home[data-overlay]{display:none}}

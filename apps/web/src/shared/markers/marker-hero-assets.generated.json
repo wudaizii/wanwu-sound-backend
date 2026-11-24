@@ -1,0 +1,130 @@
+{
+  "version": "sound-markers-hero-v1",
+  "assets": {
+    "marker-sage": {
+      "label": "浅绿弧纹标记",
+      "group": "markers-hero",
+      "crop": {
+        "left": 61,
+        "top": 116,
+        "width": 540,
+        "height": 478
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers-hero/mobile/marker-sage.82d8b22735.webp",
+          "width": 378,
+          "height": 335,
+          "bytes": 16112
+        },
+        "desktop": {
+          "url": "/media/shared/markers-hero/desktop/marker-sage.4ce413fc10.webp",
+          "width": 540,
+          "height": 478,
+          "bytes": 28282
+        },
+        "fallback": {
+          "url": "/media/shared/markers-hero/fallback/marker-sage.1a38ced511.png",
+          "width": 378,
+          "height": 335,
+          "bytes": 37695
+        }
+      }
+    },
+    "marker-ochre": {
+      "label": "柔黄圆点标记",
+      "group": "markers-hero",
+      "crop": {
+        "left": 20,
+        "top": 116,
+        "width": 548,
+        "height": 478
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers-hero/mobile/marker-ochre.4a701e7e2b.webp",
+          "width": 384,
+          "height": 335,
+          "bytes": 19158
+        },
+        "desktop": {
+          "url": "/media/shared/markers-hero/desktop/marker-ochre.5ca27c8e20.webp",
+          "width": 548,
+          "height": 478,
+          "bytes": 33800
+        },
+        "fallback": {
+          "url": "/media/shared/markers-hero/fallback/marker-ochre.b5e78d16c1.png",
+          "width": 384,
+          "height": 335,
+          "bytes": 40642
+        }
+      }
+    },
+    "marker-slate": {
+      "label": "灰蓝斜纹标记",
+      "group": "markers-hero",
+      "crop": {
+        "left": 61,
+        "top": 44,
+        "width": 541,
+        "height": 482
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers-hero/mobile/marker-slate.47179ee417.webp",
+          "width": 379,
+          "height": 338,
+          "bytes": 15830
+        },
+        "desktop": {
+          "url": "/media/shared/markers-hero/desktop/marker-slate.6816c294e0.webp",
+          "width": 541,
+          "height": 482,
+          "bytes": 29552
+        },
+        "fallback": {
+          "url": "/media/shared/markers-hero/fallback/marker-slate.9005b2b9f0.png",
+          "width": 379,
+          "height": 338,
+          "bytes": 39609
+        }
+      }
+    },
+    "marker-lilac": {
+      "label": "浅紫回环标记",
+      "group": "markers-hero",
+      "crop": {
+        "left": 24,
+        "top": 45,
+        "width": 548,
+        "height": 482
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers-hero/mobile/marker-lilac.ca2a8f80e8.webp",
+          "width": 384,
+          "height": 338,
+          "bytes": 17288
+        },
+        "desktop": {
+          "url": "/media/shared/markers-hero/desktop/marker-lilac.6856715a32.webp",
+          "width": 548,
+          "height": 482,
+          "bytes": 31336
+        },
+        "fallback": {
+          "url": "/media/shared/markers-hero/fallback/marker-lilac.35c66ed025.png",
+          "width": 384,
+          "height": 338,
+          "bytes": 42821
+        }
+      }
+    }
+  },
+  "totals": {
+    "mobile": 68388,
+    "desktop": 122970,
+    "fallback": 160767
+  }
+}

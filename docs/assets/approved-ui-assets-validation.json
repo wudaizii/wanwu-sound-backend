@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-22",
+  "status": "passed",
+  "newUsablePngCount": 10,
+  "masterPngCount": 1,
+  "totalNewSourceBytes": 13066489,
+  "codeFilesVerifiedUnchanged": 108,
+  "newCodeAreaFiles": 0,
+  "referenceCopiesVerified": 6,
+  "sourceManifestRecordsVerified": 38,
+  "alphaCornerCheck": "All corner alpha values <=1/255; pond upper-left is1, all other checked corners0. No alpha normalization was applied.",
+  "atlasRawPixelCheck": "All four slices identical to parent cells",
+  "visualQA": "White-background composites inspected; contact sheet archived",
+  "existingTests": "10 passed",
+  "existingBuild": "Passed TypeScript, 51 public resource checks and Vite",
+  "newImagesInPublic": false,
+  "newPageBrowserQA": "Not performed: no new runtime integration"
+}

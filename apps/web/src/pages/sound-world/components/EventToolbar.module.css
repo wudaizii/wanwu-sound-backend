@@ -1,0 +1,26 @@
+/* Floating tools for the selected occurrence: under the marker and its name, above it in the bottom row. */
+/* Floating tools for the selected occurrence: under the marker and its name, above it in the bottom row. */
+.toolbar{position:absolute;z-index:4;display:flex;padding:5px;border-radius:22px;background:#fff;box-shadow:0 14px 30px #26301a26,0 1px 0 var(--wk-line-strong);
+ --tx:-50%;--ty:calc(var(--mk) * .5 + 26px);transform:translate(var(--tx),var(--ty));animation:bubbleIn .22s var(--wk-ease)}
+.toolbar[data-side=above]{--ty:calc(-100% - var(--mk) * .5 - 14px)}
+/* Near either end the tools hug the field edge instead of hanging outside it. */
+.toolbar[data-edge=start]{left:0!important;--tx:0}
+.toolbar[data-edge=end]{left:100%!important;--tx:-100%}
+.toolbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:64px;min-height:56px;padding:4px 10px;border:0;border-radius:14px;background:none;color:var(--wk-ink);font-size:var(--font-label);font-weight:700;white-space:nowrap;transition:background .14s}
+.toolbar button+button{box-shadow:-1px 0 0 var(--wk-line)}
+.toolbar button:hover{background:var(--wk-green-soft)}
+.toolbar svg{width:22px;height:22px;color:var(--wk-ink-soft)}
+.toolbar button[aria-pressed=true]{background:var(--wk-sun)}
+.toolbar button[data-tone=remove]:hover{background:var(--wk-alert-soft);color:var(--wk-alert)}
+@keyframes bubbleIn{from{opacity:0;scale:.94}}
+@media(--reduced-motion){
+ .toolbar{animation:none}
+}
+@media(--phone){
+ .toolbar button{min-width:56px;min-height:52px;padding:4px 6px;font-size:var(--font-caption)}
+ /* The narrow field has room for the tools only when centred on it. */
+ .toolbar,.toolbar[data-edge]{left:50%!important;--tx:-50%}
+}
+@media(--tiny){
+ .toolbar button{min-width:50px}
+}

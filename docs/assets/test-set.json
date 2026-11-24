@@ -1,0 +1,28 @@
+{
+ "version": "test-set-v1",
+ "purpose": "调音台和规则回归用的固定声音。改规则后用同一组声音逐个维度、逐档听一遍；npm test 会核对每段的体检分类是否和预期一致。",
+ "originals": "assets-source/audio/test-set/（待收集的原件放这里，附来源与许可）",
+ "sounds": [
+  {"id": "cow", "name": "牛叫", "from": "library", "expectedKind": "one"},
+  {"id": "frog", "name": "蛙鸣", "from": "library", "expectedKind": "series"},
+  {"id": "drop", "name": "滴水声", "from": "library", "expectedKind": "series"},
+  {"id": "apple", "name": "苹果落地", "from": "library", "expectedKind": "series"},
+  {"id": "bird", "name": "鸟鸣", "from": "library", "expectedKind": "texture"},
+  {"id": "cicada", "name": "蝉鸣", "from": "library", "expectedKind": "texture"},
+  {"id": "leaves", "name": "风吹树叶", "from": "library", "expectedKind": "texture"},
+  {"id": "bicycle", "name": "自行车", "from": "library", "expectedKind": "texture"}
+ ],
+ "toCollect": [
+  {"id": "stream", "name": "流水", "expectedKind": "texture"},
+  {"id": "rain", "name": "雨声", "expectedKind": "texture"},
+  {"id": "clapping", "name": "一群人鼓掌", "expectedKind": "texture"},
+  {"id": "playground", "name": "操场上的人声", "expectedKind": "texture"},
+  {"id": "voice", "name": "一个人说一句话", "expectedKind": "series"},
+  {"id": "knock", "name": "敲门", "expectedKind": "series"},
+  {"id": "dog", "name": "狗叫几声", "expectedKind": "series"},
+  {"id": "clap", "name": "拍一下手", "expectedKind": "one"},
+  {"id": "bell", "name": "敲一下钟", "expectedKind": "one"},
+  {"id": "rooster", "name": "鸡打鸣", "expectedKind": "one"},
+  {"id": "quiet", "name": "安静的教室（几乎无声）", "expectedKind": "silent"}
+ ]
+}

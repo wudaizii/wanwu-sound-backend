@@ -1,0 +1,29 @@
+{
+ "version": "textbook-talk-prompt-v1",
+ "task": "textbook-talk",
+ "model": "language",
+ "status": "open",
+ "temperature": 0.4,
+ "lines": [
+  "【任务】孩子选了一首课本歌曲，背景借了它的节奏。程序已经写好四句讲解，请把这四句说得更连贯、更亲切，意思不变。",
+  "【歌曲】「{title}」，{metre}，节奏拍出来是「{rhythm}」，{childLine}。",
+  "【这次的样子】{variation}",
+  "【和孩子的声音碰在一起】{meeting}",
+  "【本地的四句】",
+  "feature（特点）：{feature}",
+  "shape（这次的样子）：{shape}",
+  "meeting（碰一碰）：{meetingLine}",
+  "task（试一试）：{task}",
+  "【要求】",
+  "· 四句各自不超过 {talkMax} 个字；feature 里要有歌名「{title}」。",
+  "· 不能加新的事实，不能写新的数字；声音只用本地句子里出现过的编号。",
+  "· 不唱、不引用歌词和旋律，只说节奏和感觉。",
+  "【返回格式】",
+  "{example}"
+ ],
+ "words": {
+  "variation": {"original": "原样", "stretch": "慢一倍（节奏慢一倍）", "squeeze": "压短（节奏快一倍）", "offset": "晚半拍（晚半拍进来）", "higher": "唱高一点（高 8 度）", "lower": "唱低一点（低 8 度）"},
+  "meeting": {"together": "孩子的声音落在拍子上，和背景一起用力", "answer": "孩子的声音停下，背景的旋律接上", "fill": "背景的旋律补在孩子的声音的空隙里", "under": "孩子的声音一直在响，背景在下面托着"}
+ },
+ "example": {"feature": "「摇篮曲」是三拍子，「嗒— 嗒」，像摇篮轻轻晃。", "shape": "这次它搬到了低处，背景更稳了。", "meeting": "你的「声音1」踩在拍子上，和背景一起用力。", "task": "把一个声音往后挪一点，听听还会不会一起用力。"}
+}

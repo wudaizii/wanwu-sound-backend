@@ -1,0 +1,502 @@
+{
+  "version": "home-v1",
+  "design": {
+    "width": 1440,
+    "height": 960,
+    "approved": "V12"
+  },
+  "layers": [
+    {
+      "id": "env-upper-left",
+      "label": "左上浅枝叶",
+      "kind": "environment",
+      "rect": [
+        0,
+        0,
+        174,
+        142
+      ],
+      "z": 1,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/environment/mobile/env-upper-left.4ee6a06d7d.webp",
+          "width": 224,
+          "height": 181,
+          "bytes": 11638
+        },
+        "desktop": {
+          "url": "/media/home/environment/desktop/env-upper-left.b5b60bf68a.webp",
+          "width": 320,
+          "height": 258,
+          "bytes": 18956
+        },
+        "fallback": {
+          "url": "/media/home/environment/fallback/env-upper-left.8645b5b3b7.png",
+          "width": 224,
+          "height": 181,
+          "bytes": 14892
+        }
+      }
+    },
+    {
+      "id": "env-canopy-right",
+      "label": "右上树冠与栖枝",
+      "kind": "environment",
+      "rect": [
+        1027,
+        0,
+        413,
+        543
+      ],
+      "z": 1,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/environment/mobile/env-canopy-right.f76f1e9dd3.webp",
+          "width": 262,
+          "height": 384,
+          "bytes": 33062
+        },
+        "desktop": {
+          "url": "/media/home/environment/desktop/env-canopy-right.1bf2841fd0.webp",
+          "width": 491,
+          "height": 720,
+          "bytes": 86370
+        },
+        "fallback": {
+          "url": "/media/home/environment/fallback/env-canopy-right.2fbef7bdcb.png",
+          "width": 218,
+          "height": 320,
+          "bytes": 30740
+        }
+      }
+    },
+    {
+      "id": "env-perch-left",
+      "label": "松鼠栖枝与中景",
+      "kind": "environment",
+      "rect": [
+        0,
+        178,
+        385,
+        410
+      ],
+      "z": 2,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/environment/mobile/env-perch-left.c950b6b7eb.webp",
+          "width": 350,
+          "height": 384,
+          "bytes": 47288
+        },
+        "desktop": {
+          "url": "/media/home/environment/desktop/env-perch-left.ee02142255.webp",
+          "width": 583,
+          "height": 640,
+          "bytes": 102474
+        },
+        "fallback": {
+          "url": "/media/home/environment/fallback/env-perch-left.6bc84203fc.png",
+          "width": 291,
+          "height": 320,
+          "bytes": 36982
+        }
+      }
+    },
+    {
+      "id": "env-pond-left",
+      "label": "左下森林水边",
+      "kind": "environment",
+      "rect": [
+        0,
+        476,
+        578,
+        484
+      ],
+      "z": 1,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/environment/mobile/env-pond-left.d25829deb2.webp",
+          "width": 510,
+          "height": 512,
+          "bytes": 60330
+        },
+        "desktop": {
+          "url": "/media/home/environment/desktop/env-pond-left.7e82669e9e.webp",
+          "width": 796,
+          "height": 800,
+          "bytes": 124672
+        },
+        "fallback": {
+          "url": "/media/home/environment/fallback/env-pond-left.10615229bb.png",
+          "width": 318,
+          "height": 320,
+          "bytes": 48483
+        }
+      }
+    },
+    {
+      "id": "env-bank-right",
+      "label": "右下植物水岸",
+      "kind": "environment",
+      "rect": [
+        1083,
+        615,
+        357,
+        345
+      ],
+      "z": 1,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/environment/mobile/env-bank-right.82243240bf.webp",
+          "width": 378,
+          "height": 384,
+          "bytes": 45902
+        },
+        "desktop": {
+          "url": "/media/home/environment/desktop/env-bank-right.2778adece6.webp",
+          "width": 629,
+          "height": 640,
+          "bytes": 102528
+        },
+        "fallback": {
+          "url": "/media/home/environment/fallback/env-bank-right.94a5a064b1.png",
+          "width": 315,
+          "height": 320,
+          "bytes": 39734
+        }
+      }
+    },
+    {
+      "id": "bird",
+      "label": "小鸟",
+      "kind": "character",
+      "rect": [
+        1091,
+        193,
+        168,
+        127
+      ],
+      "z": 4,
+      "origin": "52% 91%",
+      "motion": "bird",
+      "sound": "bird",
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/bird.669c27f0d8.webp",
+          "width": 256,
+          "height": 197,
+          "bytes": 12232
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/bird.e9d0863964.webp",
+          "width": 384,
+          "height": 296,
+          "bytes": 22428
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/bird.311428a188.png",
+          "width": 256,
+          "height": 197,
+          "bytes": 19556
+        }
+      }
+    },
+    {
+      "id": "frog",
+      "label": "青蛙",
+      "kind": "character",
+      "rect": [
+        141,
+        648,
+        156,
+        134
+      ],
+      "z": 4,
+      "origin": "50% 92%",
+      "motion": "frog",
+      "sound": "frog",
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/frog.ddb534212e.webp",
+          "width": 256,
+          "height": 223,
+          "bytes": 13286
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/frog.de8299b933.webp",
+          "width": 384,
+          "height": 335,
+          "bytes": 24126
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/frog.1d11fd37d8.png",
+          "width": 256,
+          "height": 223,
+          "bytes": 30847
+        }
+      }
+    },
+    {
+      "id": "squirrel",
+      "label": "松鼠",
+      "kind": "character",
+      "rect": [
+        53,
+        300,
+        174,
+        144
+      ],
+      "z": 4,
+      "origin": "53% 95%",
+      "motion": "squirrel",
+      "sound": "leaves",
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/squirrel.4bdf00ccd4.webp",
+          "width": 256,
+          "height": 226,
+          "bytes": 13758
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/squirrel.1c61fd212c.webp",
+          "width": 384,
+          "height": 339,
+          "bytes": 25170
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/squirrel.22875f1986.png",
+          "width": 256,
+          "height": 226,
+          "bytes": 24586
+        }
+      }
+    },
+    {
+      "id": "cicada",
+      "label": "蝉",
+      "kind": "character",
+      "rect": [
+        1320,
+        54,
+        73,
+        89
+      ],
+      "z": 4,
+      "origin": "50% 90%",
+      "motion": "cicada",
+      "sound": "cicada",
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/cicada.0b678d6215.webp",
+          "width": 132,
+          "height": 160,
+          "bytes": 6598
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/cicada.7999c8c488.webp",
+          "width": 185,
+          "height": 224,
+          "bytes": 10536
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/cicada.34c7437b04.png",
+          "width": 132,
+          "height": 160,
+          "bytes": 12963
+        }
+      }
+    },
+    {
+      "id": "drop",
+      "label": "雨滴",
+      "kind": "character",
+      "rect": [
+        1188,
+        581,
+        92,
+        123
+      ],
+      "z": 4,
+      "origin": "50% 85%",
+      "motion": "drop",
+      "sound": "drop",
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/drop.514442c212.webp",
+          "width": 134,
+          "height": 192,
+          "bytes": 8494
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/drop.852a2dbd63.webp",
+          "width": 201,
+          "height": 288,
+          "bytes": 14596
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/drop.48d7ff05c3.png",
+          "width": 134,
+          "height": 192,
+          "bytes": 10583
+        }
+      }
+    },
+    {
+      "id": "snail",
+      "label": "蜗牛",
+      "kind": "character",
+      "rect": [
+        450,
+        787,
+        86,
+        66
+      ],
+      "z": 4,
+      "origin": "50% 92%",
+      "motion": "snail",
+      "sound": null,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/characters/mobile/snail.5d32a31477.webp",
+          "width": 160,
+          "height": 123,
+          "bytes": 6234
+        },
+        "desktop": {
+          "url": "/media/home/characters/desktop/snail.86799375f8.webp",
+          "width": 224,
+          "height": 173,
+          "bytes": 9686
+        },
+        "fallback": {
+          "url": "/media/home/characters/fallback/snail.6658150702.png",
+          "width": 160,
+          "height": 123,
+          "bytes": 11950
+        }
+      }
+    },
+    {
+      "id": "fore-left",
+      "label": "开场近景左树丛",
+      "kind": "foreground",
+      "rect": [
+        0,
+        0,
+        800,
+        1080
+      ],
+      "z": 6,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/intro/mobile/fore-left.0056ce9cb9.webp",
+          "width": 335,
+          "height": 512,
+          "bytes": 47684
+        },
+        "desktop": {
+          "url": "/media/home/intro/desktop/fore-left.632f2569d3.webp",
+          "width": 502,
+          "height": 768,
+          "bytes": 88730
+        },
+        "fallback": {
+          "url": "/media/home/intro/fallback/fore-left.7ecde26829.png",
+          "width": 209,
+          "height": 320,
+          "bytes": 35844
+        }
+      }
+    },
+    {
+      "id": "fore-right",
+      "label": "开场近景右树丛",
+      "kind": "foreground",
+      "rect": [
+        640,
+        -120,
+        800,
+        1080
+      ],
+      "z": 6,
+      "variants": {
+        "mobile": {
+          "url": "/media/home/intro/mobile/fore-right.9f273e5231.webp",
+          "width": 280,
+          "height": 512,
+          "bytes": 43570
+        },
+        "desktop": {
+          "url": "/media/home/intro/desktop/fore-right.cc18fa06bb.webp",
+          "width": 420,
+          "height": 768,
+          "bytes": 81354
+        },
+        "fallback": {
+          "url": "/media/home/intro/fallback/fore-right.5642496c57.png",
+          "width": 175,
+          "height": 320,
+          "bytes": 30499
+        }
+      }
+    }
+  ],
+  "sounds": {
+    "bird": {
+      "label": "鸟鸣",
+      "kind": "recording",
+      "volume": 0.7,
+      "bytes": 19700,
+      "url": "/media/sounds/home/bird.d15a3befe5.mp3"
+    },
+    "frog": {
+      "label": "蛙鸣",
+      "kind": "recording",
+      "volume": 0.72,
+      "bytes": 19484,
+      "url": "/media/sounds/home/frog.62c6cc6b3e.mp3"
+    },
+    "cicada": {
+      "label": "蝉鸣",
+      "kind": "recording",
+      "volume": 0.55,
+      "bytes": 19700,
+      "url": "/media/sounds/home/cicada.39f147d9cd.mp3"
+    },
+    "drop": {
+      "label": "滴水声",
+      "kind": "recording",
+      "volume": 0.75,
+      "bytes": 17324,
+      "url": "/media/sounds/home/drop.2100519b1a.mp3"
+    },
+    "leaves": {
+      "label": "风吹树叶（环境声）",
+      "kind": "ambience",
+      "volume": 0.58,
+      "bytes": 17324,
+      "url": "/media/sounds/home/leaves.d9c187f700.mp3"
+    }
+  },
+  "totals": {
+    "mobile": {
+      "all": 350076,
+      "scene": 258822,
+      "intro": 91254,
+      "decodedPixels": 1228608
+    },
+    "desktop": {
+      "all": 711626,
+      "scene": 541542,
+      "intro": 170084,
+      "decodedPixels": 3067216
+    },
+    "fallback": {
+      "all": 347659,
+      "scene": 281316,
+      "intro": 66343,
+      "decodedPixels": 760768
+    }
+  },
+  "introDurationMs": 1500
+}

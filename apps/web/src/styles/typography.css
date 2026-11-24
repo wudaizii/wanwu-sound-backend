@@ -1,0 +1,34 @@
+/* Shared type scale: rem keeps browser text preferences; bounded viewport growth keeps
+   phone labels readable and prevents desktop text from outgrowing its illustrations.
+   Layout, wrapping and artwork sizes remain owned by each component. */
+:root{
+ --font-micro:clamp(.625rem,.6rem + .1vw,.6875rem);
+ --font-caption:clamp(.6875rem,.65rem + .15vw,.75rem);
+ --font-label:clamp(.75rem,.7rem + .2vw,.8125rem);
+ --font-small:clamp(.8125rem,.75rem + .25vw,.875rem);
+ --font-body:clamp(.875rem,.8rem + .3vw,.9375rem);
+ --font-control:clamp(.875rem,.8rem + .35vw,1rem);
+ --font-control-lg:clamp(.9375rem,.85rem + .35vw,1.0625rem);
+ --font-subtitle:clamp(1rem,.9rem + .4vw,1.125rem);
+ --font-section:clamp(1.0625rem,.95rem + .45vw,1.25rem);
+ --font-card-title:clamp(1.125rem,1rem + .5vw,1.375rem);
+ --font-page-title:clamp(1.375rem,1.125rem + .9vw,2rem);
+ --font-page-title-fit:clamp(1.375rem,1.125rem + .55vw,1.625rem);
+ --font-dialog-title:clamp(1.25rem,1.05rem + .8vw,1.75rem);
+ --font-timer:clamp(2rem,1.5rem + 2vw,3.125rem);
+ --font-brand:clamp(1.0625rem,1rem + .4vw,1.375rem);
+ --font-nav:clamp(.6875rem,.6rem + .35vw,.8125rem);
+ --line-title:1.3;--line-body:1.6;--line-control:1.35;
+ --icon-inline:1.15em;
+}
+/* 课堂大屏 (shared/ui/classroom.ts): read from across a classroom — the same scale, set larger and fixed. */
+:root[data-classroom]{
+ --font-micro:.8125rem;--font-caption:.875rem;--font-label:.9375rem;--font-small:1rem;--font-body:1.125rem;
+ --font-control:1.1875rem;--font-control-lg:1.25rem;--font-subtitle:1.375rem;--font-section:1.5rem;--font-card-title:1.625rem;
+ --font-page-title:2.25rem;--font-page-title-fit:2rem;--font-dialog-title:2rem;--font-timer:3.5rem;--font-brand:1.5rem;--font-nav:.9375rem;
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:var(--font-body);line-height:var(--line-body)}
+button,input,select,textarea{line-height:var(--line-control)}
+input,select,textarea{min-inline-size:0;max-inline-size:100%}
+h1,h2,h3,p,label{overflow-wrap:anywhere}

@@ -1,0 +1,16 @@
+/* Small data-free diagrams for each option, tinted by the row's --tone. */
+.glyph{flex-shrink:0;width:44px;height:28px;color:var(--tone)}
+.guide{stroke:currentColor;stroke-width:3;stroke-linecap:round;opacity:.2}
+.dot{fill:currentColor}
+.track{fill:currentColor;opacity:.18}
+.halo{fill:currentColor;opacity:.16}
+.stroke{fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+@media(--narrow){
+ .glyph{width:40px;height:26px}
+}
+@media(--tablet-short){
+ .glyph{width:30px;height:20px}
+}
+@media(--phone){
+ .glyph{width:40px;height:24px}
+}

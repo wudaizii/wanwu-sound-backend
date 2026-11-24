@@ -1,0 +1,11 @@
+/* 拍照读声卡: the photo tile and the enlarged card. */
+.tilePhoto{display:block;width:40px;height:40px;overflow:hidden;border-radius:12px;box-shadow:0 2px 6px #26301a26}
+.tilePhoto img{width:100%;height:100%;object-fit:cover}
+/* Dialog panel, footer row and note line: shared/ui/WorkSheet. */
+.cardLarge{display:block;max-width:100%;max-height:58vh;margin:16px auto 0;border-radius:20px;object-fit:contain}
+@media(--short){
+ .tilePhoto{width:36px;height:36px}
+}
+@media(--tiny){
+ .tilePhoto{width:36px;height:36px}
+}

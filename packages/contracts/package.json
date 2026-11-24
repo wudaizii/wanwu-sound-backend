@@ -1,0 +1,15 @@
+{
+ "name": "@wanwu-v2/contracts",
+ "version": "0.1.0",
+ "private": true,
+ "type": "module",
+ "description": "前后端共用的数据契约（类型 + 校验），源码直接以 TypeScript 发布给工作区使用",
+ "exports": {
+  "./sound": "./src/sound.ts",
+  "./arrangement": "./src/arrangement.ts",
+  "./work": "./src/work.ts",
+  "./textbook": "./src/textbook.ts",
+  "./background": "./src/background.ts",
+  "./talk": "./src/talk.ts"
+ }
+}

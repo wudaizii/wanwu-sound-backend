@@ -1,0 +1,10 @@
+node_modules/
+**/node_modules/
+apps/web/dist/
+artifacts/
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+*.tsbuildinfo

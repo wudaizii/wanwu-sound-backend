@@ -1,0 +1,13 @@
+/* Shared by the 万物声场 dialogs: the cancel / apply pair and the "not open yet" panel. Sheet itself: shared/ui/WorkSheet. */
+.scopeClosed{display:flex;flex-direction:column;align-items:center;gap:12px;margin:0;padding:36px 20px;border-radius:22px;background:var(--wk-soft);font-size:var(--font-body);font-weight:600;line-height:1.7;color:var(--wk-muted);text-align:center}
+.scopeClosed svg{width:34px;height:34px;color:#a5ad9b}
+.clipActions{display:flex;justify-content:center;gap:12px;margin-top:22px}
+.clipCancel,.clipApply{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;min-height:50px;padding:0 22px;border:0;border-radius:999px;font-size:var(--font-body);font-weight:800;transition:transform .12s}
+.clipCancel{background:var(--wk-soft);color:var(--wk-ink-soft);box-shadow:inset 0 0 0 1px var(--wk-line-strong)}
+.clipApply{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+.clipApply svg{width:18px;height:18px}
+.clipApply:disabled{opacity:.5;cursor:default}
+.clipCancel:active,.clipApply:active:not(:disabled){transform:scale(.96)}
+@media(--phone){
+ .clipCancel,.clipApply{min-width:0;flex:1}
+}

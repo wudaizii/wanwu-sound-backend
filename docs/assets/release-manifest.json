@@ -1,0 +1,310 @@
+[
+  {
+    "id": "env-upper-left",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/environment/mobile/env-upper-left.4ee6a06d7d.webp",
+    "sha256": "4ee6a06d7d392e27a6f4d492f4d537337e394261fe62f428a13132248987c582",
+    "bytes": 11638
+  },
+  {
+    "id": "env-upper-left",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/environment/desktop/env-upper-left.b5b60bf68a.webp",
+    "sha256": "b5b60bf68a0a7f68d00a531d29cab8bcd4283b74b023a404d1c69382308a194c",
+    "bytes": 18956
+  },
+  {
+    "id": "env-upper-left",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/environment/fallback/env-upper-left.8645b5b3b7.png",
+    "sha256": "8645b5b3b79f6793b5ffec0d89e3a9fba269de04a364b278fef1952c0f1bcd46",
+    "bytes": 14892
+  },
+  {
+    "id": "env-canopy-right",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/environment/mobile/env-canopy-right.f76f1e9dd3.webp",
+    "sha256": "f76f1e9dd3347021e6c6746482e60ef5d5d29841a65f98615516b440698f3972",
+    "bytes": 33062
+  },
+  {
+    "id": "env-canopy-right",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/environment/desktop/env-canopy-right.1bf2841fd0.webp",
+    "sha256": "1bf2841fd07d5da9cb0eb61eed8f53b7d55dafdb0914eb68851493112fef4276",
+    "bytes": 86370
+  },
+  {
+    "id": "env-canopy-right",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/environment/fallback/env-canopy-right.2fbef7bdcb.png",
+    "sha256": "2fbef7bdcb079e18c865345230540120fedac66d3baf90981bea8d685607471d",
+    "bytes": 30740
+  },
+  {
+    "id": "env-perch-left",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/environment/mobile/env-perch-left.c950b6b7eb.webp",
+    "sha256": "c950b6b7ebd39594a273afa0d75f8de2111318ee5c99210d5a7303a75dac9c0d",
+    "bytes": 47288
+  },
+  {
+    "id": "env-perch-left",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/environment/desktop/env-perch-left.ee02142255.webp",
+    "sha256": "ee021422559717576904766212201b768c085e1900a1f748b8cd53ac757fe76e",
+    "bytes": 102474
+  },
+  {
+    "id": "env-perch-left",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/environment/fallback/env-perch-left.6bc84203fc.png",
+    "sha256": "6bc84203fc39992e146fdb507efd7d842f7f162773fc8963c3815848246c5c5b",
+    "bytes": 36982
+  },
+  {
+    "id": "env-pond-left",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/environment/mobile/env-pond-left.d25829deb2.webp",
+    "sha256": "d25829deb21ff7bba4613ae391527c14c17ec9e2b24ce589226a78dafbbfecef",
+    "bytes": 60330
+  },
+  {
+    "id": "env-pond-left",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/environment/desktop/env-pond-left.7e82669e9e.webp",
+    "sha256": "7e82669e9e56f0cd854ae0466a821fd8b2da6a0b36d689d153d249563ba0b29d",
+    "bytes": 124672
+  },
+  {
+    "id": "env-pond-left",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/environment/fallback/env-pond-left.10615229bb.png",
+    "sha256": "10615229bbd886a3d0d8cfdc442d626a0357b4276bda04ddacbf7ab3d523fa9f",
+    "bytes": 48483
+  },
+  {
+    "id": "env-bank-right",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/environment/mobile/env-bank-right.82243240bf.webp",
+    "sha256": "82243240bf734139e67d7e51d2282a41fdfa51ca52117080abe9af83a680a997",
+    "bytes": 45902
+  },
+  {
+    "id": "env-bank-right",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/environment/desktop/env-bank-right.2778adece6.webp",
+    "sha256": "2778adece6c0f3f3408811ef1c000b4f1abe58783e67522ca56a9a5e51e01ff5",
+    "bytes": 102528
+  },
+  {
+    "id": "env-bank-right",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/environment/fallback/env-bank-right.94a5a064b1.png",
+    "sha256": "94a5a064b15422f14c25db45745a847c661da1db3672584c15fbb458ce6f8d9d",
+    "bytes": 39734
+  },
+  {
+    "id": "bird",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/bird.669c27f0d8.webp",
+    "sha256": "669c27f0d85cc5cf53b68d616fc370549718b674357c57a76ba858c240317dab",
+    "bytes": 12232
+  },
+  {
+    "id": "bird",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/bird.e9d0863964.webp",
+    "sha256": "e9d0863964f64256dbbda5d1e6ecb418c90ffb1d4166972953b5f78a09835c78",
+    "bytes": 22428
+  },
+  {
+    "id": "bird",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/bird.311428a188.png",
+    "sha256": "311428a18887faca58d12cc686eca24da3ce5b1604191937556f071e688aaab0",
+    "bytes": 19556
+  },
+  {
+    "id": "frog",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/frog.ddb534212e.webp",
+    "sha256": "ddb534212ea4ab487fe52a676c06203b1175701b6d95f6119b38e0b1f89f0469",
+    "bytes": 13286
+  },
+  {
+    "id": "frog",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/frog.de8299b933.webp",
+    "sha256": "de8299b9331fd0bcbcc95ef0103f8d2740a95627e865537d200d721a73c42deb",
+    "bytes": 24126
+  },
+  {
+    "id": "frog",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/frog.1d11fd37d8.png",
+    "sha256": "1d11fd37d8d63a438fd01f694d26bad058fe67c5325c380033419d3581ed08ca",
+    "bytes": 30847
+  },
+  {
+    "id": "squirrel",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/squirrel.4bdf00ccd4.webp",
+    "sha256": "4bdf00ccd4e34bd807b5d8a9db17265eeb65755570c44a356fabe821d9a228c7",
+    "bytes": 13758
+  },
+  {
+    "id": "squirrel",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/squirrel.1c61fd212c.webp",
+    "sha256": "1c61fd212c82b981411a660d38ebe10258094c061955f9cbae5847932fa33d56",
+    "bytes": 25170
+  },
+  {
+    "id": "squirrel",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/squirrel.22875f1986.png",
+    "sha256": "22875f19865448253ba755e7ad95151504352c49cea3f5c993cbca09f5ab3395",
+    "bytes": 24586
+  },
+  {
+    "id": "cicada",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/cicada.0b678d6215.webp",
+    "sha256": "0b678d62153c2be358c99e5f4f789fe5c49f9c203a5135e021b37e49c1cb994f",
+    "bytes": 6598
+  },
+  {
+    "id": "cicada",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/cicada.7999c8c488.webp",
+    "sha256": "7999c8c488f74cc329970207836f3dbe8e5a11e2ce6da234349b90090b580452",
+    "bytes": 10536
+  },
+  {
+    "id": "cicada",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/cicada.34c7437b04.png",
+    "sha256": "34c7437b04f6480d1be6d4817c3ba79ea04a1093ac1fd4b5bf4a147565cb605d",
+    "bytes": 12963
+  },
+  {
+    "id": "drop",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/drop.514442c212.webp",
+    "sha256": "514442c2128d1e19f35bdec5d614bc9e0c3c5ad9135024a0f703f820a834b836",
+    "bytes": 8494
+  },
+  {
+    "id": "drop",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/drop.852a2dbd63.webp",
+    "sha256": "852a2dbd635b04c1e0a385b7854eefca82caf44b14eb9a6288c99b3e20e5651a",
+    "bytes": 14596
+  },
+  {
+    "id": "drop",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/drop.48d7ff05c3.png",
+    "sha256": "48d7ff05c3ec29bd12167fe89965f0686f3feafeb00768027a43fa7b7f01636d",
+    "bytes": 10583
+  },
+  {
+    "id": "snail",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/characters/mobile/snail.5d32a31477.webp",
+    "sha256": "5d32a314771f3a56fa93a0534ca24a772161c53e70a7ab8b5fa2add9562ff9b5",
+    "bytes": 6234
+  },
+  {
+    "id": "snail",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/characters/desktop/snail.86799375f8.webp",
+    "sha256": "86799375f821a37d937544216ead0bdaf32e3f1b78ade6aa498c2b6d788867c3",
+    "bytes": 9686
+  },
+  {
+    "id": "snail",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/characters/fallback/snail.6658150702.png",
+    "sha256": "66581507022862b4d3975cbc49615c1a8a4a90209cc45104bfbbfc8c033609b5",
+    "bytes": 11950
+  },
+  {
+    "id": "fore-left",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/intro/mobile/fore-left.0056ce9cb9.webp",
+    "sha256": "0056ce9cb984566a74a78f22e333b4b93c910c588188d3a802ed7a17a3552a40",
+    "bytes": 47684
+  },
+  {
+    "id": "fore-left",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/intro/desktop/fore-left.632f2569d3.webp",
+    "sha256": "632f2569d31677c955e810c798eef477065588e54348109029f6c172a1d46026",
+    "bytes": 88730
+  },
+  {
+    "id": "fore-left",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/intro/fallback/fore-left.7ecde26829.png",
+    "sha256": "7ecde2682952c5e32a6929159885bbce6a517b93ceb8dbe642fa2e305590ec3b",
+    "bytes": 35844
+  },
+  {
+    "id": "fore-right",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/intro/mobile/fore-right.9f273e5231.webp",
+    "sha256": "9f273e5231ad0606ac06d5d0a3d03d30359be3ae4bc1796b51c9924016a81897",
+    "bytes": 43570
+  },
+  {
+    "id": "fore-right",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/intro/desktop/fore-right.cc18fa06bb.webp",
+    "sha256": "cc18fa06bbcd9e7c7a5d7a5931ba913d91304e375178e89b546e81dfa3fbe0b2",
+    "bytes": 81354
+  },
+  {
+    "id": "fore-right",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/intro/fallback/fore-right.5642496c57.png",
+    "sha256": "5642496c57a93af51aad7ab9f8688894695ffb2d1b1b7c5d484b738fd9c6fdbe",
+    "bytes": 30499
+  },
+  {
+    "id": "bird",
+    "tier": "audio",
+    "path": "apps/web/public/media/sounds/home/bird.d15a3befe5.mp3",
+    "sha256": "d15a3befe5f1bb70477531212a13c3ab51359c4f9ed4736f53bee065dfcb7bd1",
+    "bytes": 19700
+  },
+  {
+    "id": "frog",
+    "tier": "audio",
+    "path": "apps/web/public/media/sounds/home/frog.62c6cc6b3e.mp3",
+    "sha256": "62c6cc6b3e7bd0dcffe97473ac1eda5c506817b7854c5ec77c603df4703dce1c",
+    "bytes": 19484
+  },
+  {
+    "id": "cicada",
+    "tier": "audio",
+    "path": "apps/web/public/media/sounds/home/cicada.39f147d9cd.mp3",
+    "sha256": "39f147d9cd664559c28d03ac674b124b180c41e048587b0b304999effdb49271",
+    "bytes": 19700
+  },
+  {
+    "id": "drop",
+    "tier": "audio",
+    "path": "apps/web/public/media/sounds/home/drop.2100519b1a.mp3",
+    "sha256": "2100519b1a12f14d645c6eb0af7702e5e814e5a1b3f329b7cf1a643c8684e680",
+    "bytes": 17324
+  },
+  {
+    "id": "leaves",
+    "tier": "audio",
+    "path": "apps/web/public/media/sounds/home/leaves.d9c187f700.mp3",
+    "sha256": "d9c187f700e7a7fb1af5dff0193212ff8ae485162390b01e6715ec94a5c988d2",
+    "bytes": 17324
+  }
+]

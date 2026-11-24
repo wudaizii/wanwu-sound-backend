@@ -1,0 +1,46 @@
+/* 我的声卡: a taped paper card (look from ui.limeCard / ui.tape). */
+.card{animation:global(wk-rise) .5s var(--wk-ease) both}
+.card{animation-delay:.08s}
+/* Look from ui.limeCard / ui.tape; here only its size, cream stop and tilt. */
+.card{--card-cream:46%;flex-shrink:0;padding:18px 22px 14px;transform:rotate(-.6deg);transform-origin:50% 100%}
+.cardTitle{display:flex;align-items:center;gap:7px;margin:0;font-size:var(--font-small);font-weight:700;color:var(--wk-green-text)}
+.cardTitle::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--wk-green-deep)}
+.cardEdit{position:relative;display:inline-flex;align-items:center;gap:5px;margin-left:auto;min-height:32px;padding:0 12px;border:0;border-radius:999px;background:#ffffffb3;color:var(--wk-green-text);font-size:var(--font-label);font-weight:700;transition:background .16s}
+.cardEdit::before{content:"";position:absolute;inset:-6px -2px}
+.cardEdit:hover{background:#fff}
+.cardEdit svg{width:14px;height:14px}
+.identity{min-width:0;margin-top:7px}
+.name{flex-wrap:wrap;min-width:0;display:flex;align-items:center;gap:4px;margin:7px 0 0;font-size:var(--font-card-title);font-weight:800;letter-spacing:-.01em;line-height:1.2;overflow-wrap:anywhere}
+.identity .name{margin:0}
+.name[data-empty]{color:#8e9783}
+.iconButton{position:relative;display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;border:0;border-radius:50%;background:#ffffffb3;color:var(--wk-muted);transition:background .16s,color .16s}
+.iconButton::before{content:"";position:absolute;inset:-5px}
+.iconButton svg{width:15px;height:15px}
+.iconButton:hover{color:var(--wk-green-text);background:#fff}
+.nameInput{width:100%;font:inherit;font-size:var(--font-card-title);font-weight:800;border:0;border-bottom:2.5px solid var(--wk-green);background:transparent;padding:2px;outline:0}
+.sourceKind{margin:3px 0 0;font-size:var(--font-label);font-weight:500;color:var(--wk-muted)}
+.sourceKind a{color:inherit}
+.cardEmpty{margin:10px 0 4px;padding:8px 14px;border-radius:20px;background:#ffffffb8;box-shadow:inset 0 2px 5px #26301a0d}
+.cardEmpty svg{display:block;width:100%;height:44px}
+.cardEmpty path{fill:none;stroke:#cfd8b8;stroke-width:2.4;stroke-dasharray:2 6;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:10px}
+.cardFoot{margin:9px 0 0;font-size:var(--font-label);font-weight:500;color:var(--wk-muted);text-align:center}
+@media(--short){
+ .card{padding:14px 18px 12px}
+ .name{font-size:var(--font-card-title)}
+ .identity{margin-top:4px}
+ .compare{margin-top:8px}
+ .cardFoot{display:none}
+}
+@media(--one-column){
+ .card{order:3}
+}
+@media(--phone){
+ .card{padding:16px 16px 12px;border-radius:24px}
+ .name{font-size:var(--font-card-title)}
+ .compare{gap:8px}
+}
+@media(--reduced-motion){
+ .card{animation:none}
+}
+[data-entry-motion=still] .card{animation:none}

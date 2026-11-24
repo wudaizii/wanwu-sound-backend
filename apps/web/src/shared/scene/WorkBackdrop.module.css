@@ -1,0 +1,5 @@
+.backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* Same placement as the home scene: fills each rect (object-fit:fill), so edge layers meet the window edges. */
+.layer{position:absolute}
+.layer img{object-fit:fill}
+@media(--phone){.backdrop{display:none}}

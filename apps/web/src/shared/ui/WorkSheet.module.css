@@ -1,0 +1,22 @@
+/* Work-page dialog sheet (声音诞生 onward): big rounded white panel over a soft blurred backdrop. One look for every
+   work-page dialog; pages add their own content classes, and a wider variant adds only its width. */
+dialog.sheet{width:min(600px,calc(100vw - 32px));padding:44px 28px 28px;border:0;border-radius:30px;box-shadow:0 30px 80px #1f2a2429}
+dialog.sheet[open]{animation:sheetIn .34s var(--wk-ease)}
+dialog.sheet::backdrop{background:#1f2a2438;backdrop-filter:blur(3px)}
+dialog.sheet h2{font-weight:800}
+.actions{container-type:inline-size;flex-wrap:wrap;display:flex;justify-content:center;gap:12px;width:100%;margin-top:22px}
+.actions>*{flex:1 1 120px;min-width:0;max-width:230px}
+.actions button{white-space:normal;overflow-wrap:anywhere;padding:10px 14px}
+.note{min-height:20px;margin:16px 0 0;font-size:var(--font-small);font-weight:500;line-height:1.6;color:var(--wk-muted);text-align:center}
+/* Body text and the footer's two buttons (primary = ui.go, secondary = ui.back), a little smaller and bolder in sheets. */
+.body{margin:20px 4px 0;font-size:var(--font-body);font-weight:500;line-height:1.8;color:var(--wk-text);text-align:center}
+/* A second line of the same message (e.g. what is not open yet) follows closely. */
+.body+.body{margin-top:2px}
+.primary,.secondary{gap:8px;min-height:50px;padding:0 20px;font-size:var(--font-body);font-weight:800;letter-spacing:0;white-space:normal}
+.primary svg,.secondary svg{width:var(--icon-inline);height:var(--icon-inline)}
+.primary:disabled{opacity:.5;cursor:default}
+@keyframes sheetIn{from{opacity:0;transform:translateY(20px) scale(.97)}}
+@media(--phone){dialog.sheet{padding:44px 18px 22px;border-radius:26px}}
+@media(--reduced-motion){dialog.sheet[open]{animation:none}}
+
+@container(max-width:300px){.actions>*{flex-basis:100%;max-width:none}}

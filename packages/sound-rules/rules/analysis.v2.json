@@ -1,0 +1,10 @@
+{
+ "version": "analysis-v2",
+ "frameSeconds": 0.01,
+ "smoothFrames": 3,
+ "silence": {"belowPeakDb": 35, "floorDb": -60},
+ "units": {"mergeGapSeconds": 0.08, "minSeconds": 0.05, "splitAboveSeconds": 0.8, "splitDipDb": 6, "maxCount": 64},
+ "kind": {"oneMaxSeconds": 3, "oneDominanceDb": 10, "seriesQuietRatio": 0.1},
+ "unitLength": {"shortBelowSeconds": 0.4, "longAboveSeconds": 1.2},
+ "brightness": {"fftSize": 2048, "maxFrames": 48, "withinDb": 12, "ignoreBelowHz": 200, "lowBelowHz": 1000, "highAboveHz": 2500}
+}

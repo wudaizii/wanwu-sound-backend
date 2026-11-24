@@ -1,0 +1,16 @@
+{
+ "name": "@wanwu-v2/prompts",
+ "version": "0.1.0",
+ "private": true,
+ "type": "module",
+ "description": "语料与提示词：给孩子和老师的话（corpus/，前端本地降级用）和给模型的指令（prompts/，只在服务端拼装）。改文本不改代码，测试校验字数、用词和占位符",
+ "dependencies": {
+  "@wanwu-v2/contracts": "0.1.0"
+ },
+ "exports": {
+  "./style": "./src/style.ts",
+  "./corpus": "./src/corpus.ts",
+  "./accept": "./src/accept.ts",
+  "./tasks": "./src/tasks/index.ts"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "version": "work-talk-prompt-v1",
+ "task": "work-talk",
+ "model": "language",
+ "status": "open",
+ "temperature": 0.4,
+ "lines": [
+  "【任务】下面是程序从一首小曲里数出来的几条“音乐小发现”，每条都有一句本地的说法。请把每一条换成孩子更爱听的一句话，再写一句“试一试”。",
+  "【这首小曲】长 {seconds} 秒；心情：{mood}；课本歌曲：{textbook}。",
+  "【事实】按顺序，每条一句：",
+  "{facts}",
+  "【要求】",
+  "· lines 的条数、顺序和 kind 必须和上面完全一样，每句不超过 {discoveryMax} 个字。",
+  "· 每句只能提到这一条事实里的声音编号；数字照抄，不能写新的数字。",
+  "· 先说清“听到了什么”，可以再加一个孩子熟悉的比喻，但不能只有比喻。",
+  "· tryThis 不超过 {tryThisMax} 个字：只给一个在万物声场里马上能做的动作（挪一挪、拿走一个、再放一个、留一点空），并说清要听什么变化。",
+  "【返回格式】",
+  "{example}"
+ ],
+ "factLine": "{n}. kind={kind}｜{values}｜本地说法：{local}",
+ "words": {
+  "mood": {"none": "没选", "happy": "开心", "calm": "平静", "lively": "活泼", "sad": "悲伤", "angry": "生气", "scared": "害怕", "curious": "好奇"},
+  "noTextbook": "没选"
+ },
+ "example": {"lines": [{"kind": "repeat", "line": "「声音1」响了 3 次，像小朋友在拍手打拍子。"}], "tryThis": "拿走一个「声音1」，听听少一次有什么不一样。"}
+}

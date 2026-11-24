@@ -1,0 +1,82 @@
+[
+  {
+    "id": "bird",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/bird.d36e03aaf2.mp3",
+    "sha256": "d36e03aaf26dcd18538453aa595aeeb4ee5c65ba6b7626c7b47664fe4de1e652",
+    "bytes": 357048,
+    "original": "assets-source/audio/home/bird.mp3",
+    "originalSha256": "f72f194cc0317032386f75190412ec2ea23484a1b9cd120e97de66596c3f8e85",
+    "originalBytes": 1426962
+  },
+  {
+    "id": "frog",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/frog.3664d8b801.mp3",
+    "sha256": "3664d8b8015630ddc9fc3097f02acb25822ff16b74b0ba1c8ca23fc48ef37117",
+    "bytes": 26568,
+    "original": "assets-source/audio/home/frog.oga",
+    "originalSha256": "cb7ad91b3943678c50e16f914cf5652e9da0bd782b5efb065d95d89549ff7b89",
+    "originalBytes": 83798
+  },
+  {
+    "id": "cicada",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/cicada.4098876741.mp3",
+    "sha256": "409887674193632b2ecf62e7f6ce9eb40a80f007a32dd4867730575ec739e4d1",
+    "bytes": 141480,
+    "original": "assets-source/audio/home/cicada.ogg",
+    "originalSha256": "b58bb6545ec080fd75eb68e9f580a96b4a1217c6294e80233f56b49fc6d8b250",
+    "originalBytes": 387185
+  },
+  {
+    "id": "drop",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/drop.8a422105fa.mp3",
+    "sha256": "8a422105fa25108a2e298535aba79115fab5dc28ea355dcf8df39bbc96861c81",
+    "bytes": 101304,
+    "original": "assets-source/audio/home/drop.ogg",
+    "originalSha256": "2fb744ec4ced2f478ddbec51b0115796747f4c00b232e34964a38323e05a6ccc",
+    "originalBytes": 309318
+  },
+  {
+    "id": "leaves",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/leaves.bc0b25e9f8.mp3",
+    "sha256": "bc0b25e9f8bdf1959042a920b551dd56aec6e45c80e49a8ea770d3166033bfd4",
+    "bytes": 114264,
+    "original": "assets-source/audio/home/leaves.mp3",
+    "originalSha256": "b75ba153778a0b9ce4c68b3feab43da37eb26a5c9433389fd8c5ce3d4af6a0ad",
+    "originalBytes": 455834
+  },
+  {
+    "id": "cow",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/cow.3caf1db5ca.mp3",
+    "sha256": "3caf1db5cad75d9945fec506243312c39ce363f0285185c94a1cab57a05c8b7b",
+    "bytes": 7776,
+    "original": "assets-source/audio/home/cow.mp3",
+    "originalSha256": "77565a6a210c487846c43068cd90f70e9b9625e85efe5d3a638ab48a3bcfaac0",
+    "originalBytes": 30143
+  },
+  {
+    "id": "apple",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/apple.521c3e4f7c.mp3",
+    "sha256": "521c3e4f7ceded6ec2160a7f4f115eadd0900ec224c14cec4a05d26332553599",
+    "bytes": 22248,
+    "original": "assets-source/audio/home/falling apple.mp3",
+    "originalSha256": "c48330fa9482fe2618456df7af0019d75adaeb90c3dc7b513cbc3f3654fb9389",
+    "originalBytes": 87821
+  },
+  {
+    "id": "bicycle",
+    "tier": "library-audio",
+    "path": "apps/web/public/media/sounds/library/bicycle.fe67e84c2a.mp3",
+    "sha256": "fe67e84c2acf20d8791f7d22dc5a38d4ea64b5dda01412d025e90bd3a4735b56",
+    "bytes": 34344,
+    "original": "assets-source/audio/home/bicycle.mp3",
+    "originalSha256": "803c4157eb7709566df8ac1116115ebf5f9dc2210ba5f41b54a42031aa3508f8",
+    "originalBytes": 136095
+  }
+]

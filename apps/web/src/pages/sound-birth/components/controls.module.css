@@ -1,0 +1,28 @@
+/* Controls shared inside 声音诞生: the card / dialog buttons (with ui.pill + ui.go / ui.outline) and the source tiles. */
+/* Card and dialog buttons: ui.pill + ui.go (primary) / ui.outline (secondary); a little smaller, and they wrap. */
+.primary,.secondary{display:flex;gap:8px;min-height:50px;padding:0 14px;font-size:var(--font-control);white-space:normal}
+.primary svg,.secondary svg{width:19px;height:19px}
+.tileButton{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:82px;padding:6px 8px;border:0;border-radius:18px;background:transparent;color:var(--wk-ink-soft);font-size:var(--font-small);font-weight:600;white-space:nowrap;transition:transform .2s var(--wk-ease),background .2s,box-shadow .2s}
+.tile{display:block;width:40px;height:40px;filter:drop-shadow(0 2px 2px #26301a22)}
+.tileButton:hover{background:var(--wk-green-soft);transform:translateY(-3px)}
+.tileButton:active{transform:translateY(0) scale(.97)}
+.tileButton:disabled{opacity:.5;cursor:progress}
+@media(--short){
+ .primary,.secondary{min-height:46px;font-size:var(--font-body)}
+ .tile{width:36px;height:36px}
+ .tileButton{gap:2px;padding:4px 6px;font-size:var(--font-label);min-width:76px}
+}
+@media(--narrow){
+ .tileButton{min-width:68px;font-size:var(--font-label)}
+}
+@media(--phone){
+ .tileButton{min-width:0;max-width:100%;padding:6px 0;font-size:var(--font-label);letter-spacing:-.02em}
+ .primary,.secondary{font-size:var(--font-body);padding:0 8px}
+}
+@media(--tiny){
+ .tileButton{font-size:var(--font-caption)}
+ .tile{width:36px;height:36px}
+}
+@media(--reduced-motion){
+ .primary,.secondary,.tileButton{transition:none}
+}

@@ -1,0 +1,7 @@
+{
+ "version": "mix-v1",
+ "childGain": 0.8,
+ "backgroundMaxGain": 0.35,
+ "duck": {"depthDb": 6, "attackSeconds": 0.08, "releaseSeconds": 0.4},
+ "limiter": {"thresholdDb": -3, "kneeDb": 0, "ratio": 20, "attackSeconds": 0.003, "releaseSeconds": 0.25}
+}

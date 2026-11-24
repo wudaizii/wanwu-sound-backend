@@ -1,0 +1,27 @@
+/* Waveform: now vs original, played part, play button and time. */
+.wave{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;margin:10px 0 0}
+.wave[data-has-play]{grid-template-columns:44px minmax(0,1fr)}
+.wave[data-has-play] .time{grid-column:2}
+.waveBox{min-width:0;padding:6px 10px 4px;border-radius:20px;background:#ffffffb8;box-shadow:inset 0 2px 5px #26301a0d}
+.wave svg{display:block;width:100%;height:56px;overflow:visible}
+.waveMid{stroke:#dfe6c8;stroke-width:1.4;stroke-dasharray:2 6;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.waveGhost{fill:none;stroke:#aab29a;stroke-width:2;stroke-dasharray:1 5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.waveNow{fill:none;stroke:var(--wk-green-deep);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.wavePlayed{fill:none;stroke:var(--wk-green-text);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.waveHead{stroke:var(--wk-green-text);stroke-width:2;stroke-linecap:round;opacity:.7;vector-effect:non-scaling-stroke}
+.legend{display:flex;justify-content:flex-end;gap:12px;margin:0;font-size:var(--font-caption);color:var(--wk-muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:4px}
+.legend i[data-line=now]{background:var(--wk-green-deep)}
+.legend i[data-line=original]{background:radial-gradient(circle,#aab29a 1.2px,transparent 1.5px) 0 50%/5px 4px repeat-x}
+.wavePlay{position:relative;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);transition:transform .12s}
+.wavePlay:active{transform:scale(.92)}
+.wavePlay[aria-pressed=true]{background:var(--wk-sun-fill);box-shadow:inset 0 1px 0 #ffffff80,0 6px 14px #ffd84a66}
+.wavePlay svg{width:20px;height:20px}
+.time{justify-self:end;margin-top:-2px;font-size:var(--font-caption);font-weight:600;color:var(--wk-muted);font-variant-numeric:tabular-nums}
+@media(--short){
+ .wave svg{height:44px}
+}
+@media(--reduced-motion){
+ .wavePlay{transition:none}
+}

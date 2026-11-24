@@ -1,0 +1,48 @@
+{
+ "version": "background-notes-prompt-v1",
+ "task": "background-notes",
+ "model": "language",
+ "status": "open",
+ "temperature": 0.5,
+ "lines": [
+  "【任务】你为孩子用自然声音摆的小曲写背景伴奏的“音乐想法”：一句动机、四段的疏密和音区、低音律动。",
+  "不要写完整的音符表：重复、变化、留白和收尾由程序按你的想法来发展，并且只放在孩子的声音的空档里。",
+  "所以请把心思花在那一句动机上：它要短、好记、能哼出来，经得起反复听。",
+  "【这首小曲】长 {seconds} 秒，速度 {tempo}，{metre}，{mode}。",
+  "【心情】{mood}：{moodHint}",
+  "【课本】{textbook}",
+  "【四段，孩子的声音多的段落伴奏要更稀】",
+  "{sections}",
+  "【动机怎么写】",
+  "· motifDegrees：2 到 6 个音，写成调式音阶里的级数，0 是主音，1 是往上一个音，-1 是往下一个音，范围 -7 到 7。",
+  "· motifBeats：每个音几拍，和 motifDegrees 一一对应，取 0.25 到 4，长短要有变化。",
+  "· 至少有一次跳进（相邻两音差 2 级以上），轮廓要有方向，不要原地打转。",
+  "【段落怎么写】sections 依次是开头、发展、变化、收尾四段；density 取 sparse / medium / busy，register 取 low / mid / high，四段的 register 至少换一次。bassPulse 取 none / slow / steady。",
+  "伴奏是回应孩子的声音的，不是主角。不要人声、歌词，不要引用任何已知歌曲的旋律。",
+  "{retry}",
+  "【返回格式】",
+  "{example}"
+ ],
+ "sectionLine": "· {name} {start}–{end} 秒：孩子的声音响 {count} 次",
+ "retry": "这是第 {attempt} 次为这首小曲写伴奏：请换一个明显不同的动机，换一个起音或换一种长短。",
+ "words": {
+  "section": ["开头", "发展", "变化", "收尾"],
+  "metre": {"2": "二拍子", "3": "三拍子", "4": "四拍子"},
+  "mode": {"major": "大调，音阶 do re mi sol la（五声为主）", "minor": "小调，音阶 la do re mi sol（五声为主）", "pentatonic": "五声调式 do re mi sol la", "dorian": "多利亚调式，有点神秘"},
+  "mood": {"none": "没选", "happy": "开心", "calm": "平静", "lively": "活泼", "sad": "悲伤", "angry": "生气", "scared": "害怕", "curious": "好奇"},
+  "moodHint": {
+   "none": "明暗各半，保持中性，bassPulse 用 slow。",
+   "happy": "明亮开朗，动机多用向上的跳进，bassPulse 用 steady。",
+   "calm": "舒展安静，时值偏长，bassPulse 用 none 或 slow。",
+   "lively": "轻快跳跃，时值偏短，bassPulse 用 steady。",
+   "sad": "收敛柔和，多用向下的级进，时值偏长，bassPulse 用 slow。",
+   "angry": "有力但不吵，短促的重音，bassPulse 用 steady。",
+   "scared": "小心翼翼，音少、留白多，bassPulse 用 none。",
+   "curious": "像在探头张望，上下试探，bassPulse 用 slow。"
+  },
+  "variation": {"original": "原样", "stretch": "节奏拉长一倍", "squeeze": "节奏压短一半", "offset": "晚半拍出来", "higher": "搬到高处", "lower": "搬到低处"},
+  "textbook": "借「课本歌曲」的节奏：{metre}，节奏型 {rhythm}（拍），这次{variation}。动机的时值可以照这个节奏型，只借节奏和感觉，不借旋律。",
+  "noTextbook": "没选课本歌曲，节奏按心情来。"
+ },
+ "example": {"motifDegrees": [0, 2, 4, 2], "motifBeats": [1, 0.5, 0.5, 2], "sections": [{"density": "sparse", "register": "mid"}, {"density": "medium", "register": "mid"}, {"density": "medium", "register": "high"}, {"density": "sparse", "register": "low"}], "bassPulse": "slow"}
+}

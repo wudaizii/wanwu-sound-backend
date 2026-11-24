@@ -1,0 +1,18 @@
+{
+ "version": "style-v1",
+ "slots": {
+  "hint": {"reader": "child", "maxChars": 36},
+  "discovery": {"reader": "child", "maxChars": 45},
+  "tryThis": {"reader": "child", "maxChars": 35},
+  "talk": {"reader": "child", "maxChars": 45},
+  "childLine": {"reader": "child", "maxChars": 16},
+  "guide": {"reader": "child", "maxChars": 36},
+  "idea": {"reader": "teacher", "maxChars": 12},
+  "explain": {"reader": "teacher", "maxChars": 80},
+  "ask": {"reader": "teacher", "maxChars": 40}
+ },
+ "placeholderChars": 4,
+ "childAvoid": ["音域", "声部", "织体", "密度", "动态", "层次", "动机", "和声"],
+ "notTerms": ["柔和声", "调和声"],
+ "neverSay": ["真棒", "太棒了", "好厉害", "真聪明", "不对", "错了", "不好听", "难听", "应该", "必须", "不行", "失败"]
+}

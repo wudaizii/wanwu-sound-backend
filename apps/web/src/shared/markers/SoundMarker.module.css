@@ -1,0 +1,13 @@
+.marker{position:relative;display:inline-block;aspect-ratio:1;flex-shrink:0}
+.art{width:100%;height:100%}
+.shape{display:block;width:100%;height:100%;border-radius:46% 54% 50% 50%/55% 52% 48% 45%;background:#dfe6dc}
+/* Sits in the flat lower-right of every marker shape, clear of the embossed pattern and the folded corner. */
+.label{position:absolute;right:15%;bottom:17%;max-width:52%;display:flex;justify-content:flex-end;white-space:nowrap;
+ font-size:max(var(--font-caption),calc(var(--marker-size,120px) * .078));line-height:1.2;font-weight:500;letter-spacing:.12em;color:#2f3530;font-variant-numeric:tabular-nums}
+[data-marker=marker-ochre] .shape{background:#f3dfb4}[data-marker=marker-slate] .shape{background:#d6dfea}[data-marker=marker-lilac] .shape{background:#e2d6ea}
+/* Eyes (optional): blink every few seconds, each marker a little out of step with the others. */
+.face{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 5.2s ease-in-out infinite}
+[data-marker=marker-ochre] .eye{animation-delay:-1.3s}[data-marker=marker-slate] .eye{animation-delay:-2.9s}[data-marker=marker-lilac] .eye{animation-delay:-4.1s}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+@media(--reduced-motion){.eye{animation:none}}

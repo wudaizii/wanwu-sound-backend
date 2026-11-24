@@ -1,0 +1,131 @@
+/* The field: rows only spread sounds out; time runs left → right on a seconds ruler. */
+.field{border-radius:34px;background:#fff;box-shadow:var(--wk-panel-shadow)}
+.srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.field{--mk:clamp(58px,9.4vh,88px);position:relative;flex:1;min-height:300px;display:flex;flex-direction:column;padding:12px 22px 8px 12px}
+.fieldHead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-height:40px;margin:0 0 8px 52px}
+.fieldHintSpace{visibility:hidden;pointer-events:none;flex:1 1 220px;min-width:0;line-height:var(--line-body);margin:0;font-size:var(--font-small);font-weight:600}
+.fieldLoading{margin:auto;font-size:var(--font-body);color:var(--wk-muted)}
+.fieldGrid{--rows:3;flex:1;min-height:calc(var(--rows) * (var(--mk) + 18px) + 22px);display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+/* Row buttons: a quiet number when idle, a green + while a sound is selected (place at the row's end / move there). */
+.rowButtons{display:grid;grid-template-rows:repeat(var(--rows),1fr);gap:8px}
+.rowButton{display:grid;place-items:center;min-height:36px;border:0;border-radius:16px;background:none;color:#a5ad9b;font-size:var(--font-small);font-weight:700;font-variant-numeric:tabular-nums;transition:background .16s,color .16s}
+.rowButton span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 0 var(--wk-line-strong)}
+.rowButton svg{width:16px;height:16px;padding:5px;border-radius:50%;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);box-sizing:content-box}
+.field[data-armed] .rowButton:hover{background:var(--wk-green-soft)}
+.lanes{position:relative;display:grid;grid-template-rows:repeat(var(--rows),1fr);gap:8px;min-height:0}
+.field[data-armed] .lanes{cursor:copy}
+/* Soft, slightly irregular paper trays pressed into the panel rather than a grid. The tints only alternate for the eye;
+   rows carry no meaning for the sound — only left → right does. */
+.lane{border-radius:34px 52px 40px 60px/26px 34px 30px 40px;background:linear-gradient(100deg,#f3f8e0,#f8fbea 55%,#f1f7da);box-shadow:var(--wk-inset),inset 0 0 0 1px #e8f0cc;transition:filter .2s}
+.lane:nth-child(3n+1){background:linear-gradient(100deg,#ecf8fd,#f4fbfe 60%,#eaf7fc);box-shadow:inset 0 2px 6px #1f4f5c12,inset 0 0 0 1px #d8eef6}
+.lane:nth-child(3n+2){border-radius:52px 36px 58px 42px/32px 26px 38px 30px}
+.lane:nth-child(3n){background:linear-gradient(100deg,#f9f8e6,#fcfbf0 55%,#f6f5de);box-shadow:inset 0 2px 6px #4a40001a,inset 0 0 0 1px #ecebcc;border-radius:40px 58px 34px 50px/30px 40px 26px 34px}
+.field[data-armed] .lane{filter:saturate(1.25)}
+.events{position:absolute;inset:0;margin:0;padding:0;list-style:none;pointer-events:none}
+.placed{position:absolute;z-index:1;transform:translate(-50%,calc(var(--mk) * -.5 - 4px));pointer-events:auto;transition:left .28s var(--wk-ease),top .28s var(--wk-ease)}
+.placed[data-selected]{z-index:3}
+.placed[data-dragging]{opacity:.3;transition:none}
+.placedButton{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0;border:0;background:none;color:inherit;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+.placedButton:active{cursor:grabbing}
+.placedButton:focus-visible{outline-offset:2px;border-radius:18px}
+.placedMarker{--marker-size:var(--mk);width:var(--mk);filter:drop-shadow(0 6px 6px #26301a26);transition:transform .16s var(--wk-ease)}
+.placedButton:hover .placedMarker{transform:translateY(-2px) scale(1.03)}
+.placed[data-selected] .placedMarker{border-radius:50%;box-shadow:0 0 0 3px #fff,0 0 0 6px var(--wk-green-deep)}
+.placed[data-sounding] .placedMarker{animation:bob .9s ease-in-out infinite;filter:drop-shadow(0 0 10px #ffd84a) drop-shadow(0 6px 8px #26301a1f)}
+.placedName small{margin-left:6px;font-size:.92em;font-weight:600;color:var(--wk-muted)}
+.placedName{max-width:calc(var(--mk) + 84px);padding:1px 9px;border-radius:999px;background:#fff;box-shadow:0 2px 0 var(--wk-line-strong);font-size:var(--font-small);font-weight:700;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.placed[data-sounding] .placedName{background:var(--wk-sun)}
+/* 课堂大屏: bigger markers, and the sounding one grows and glows so the back row can follow. */
+:global(:root[data-classroom]) .field{--mk:clamp(72px,11vh,112px)}
+:global(:root[data-classroom]) .placed[data-sounding] .placedMarker{scale:1.18;filter:drop-shadow(0 0 18px #ffd84a) drop-shadow(0 0 6px #ffd84a) drop-shadow(0 6px 8px #26301a1f)}
+.dropTarget{position:absolute;z-index:0;display:grid;place-items:center;width:var(--mk);height:var(--mk);border:3px dashed var(--wk-green-deep);border-radius:46% 54% 50% 50%/55% 52% 48% 45%;background:#ffffffb3;color:var(--wk-green-text);transform:translate(-50%,calc(-50% - 10px));pointer-events:none;animation:breathe 1.6s ease-in-out infinite}
+.dropTarget svg{width:28px;height:28px}
+.playhead{position:absolute;top:-6px;bottom:-6px;z-index:2;width:3px;margin-left:-1.5px;border-radius:3px;background:var(--wk-sun-deep);box-shadow:0 0 0 3px #ffe57666;pointer-events:none}
+.playhead::before{content:"";position:absolute;top:-4px;left:50%;width:11px;height:11px;border-radius:50%;background:var(--wk-sun-deep);transform:translateX(-50%)}
+.ruler{grid-column:2;position:relative;height:22px}
+.ruler i{position:absolute;left:0;right:0;top:4px;height:2px;background:var(--wk-rule)}
+.ruler i::after{content:"";position:absolute;right:-1px;top:50%;width:8px;height:8px;border-top:2px solid var(--wk-rule);border-right:2px solid var(--wk-rule);transform:translateY(-50%) rotate(45deg)}
+.ruler span{position:absolute;top:8px;transform:translateX(-50%);font-size:var(--font-label);font-weight:700;color:#7d8571;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ruler span::before{content:"";position:absolute;left:50%;top:-6px;width:2px;height:6px;background:var(--wk-rule)}
+/* Length tail: starts under the marker centre and runs right as long as the sound is heard (same scale as the ruler). */
+.tail{position:absolute;z-index:0;display:flex;align-items:center;width:min(max(var(--len),calc(var(--mk) * .5 + 8px)),calc(100% - var(--left)));height:24px;margin:0;padding:0;border:0;background:none;transform:translateY(-50%);cursor:pointer;transition:left .28s var(--wk-ease),top .28s var(--wk-ease)}
+.tail::before{content:"";position:absolute;inset:-8px 0}
+.tailBar{display:block;width:100%;height:14px;border-radius:0 999px 999px 0;background:var(--tail);box-shadow:inset 0 2px 0 #ffffff80,inset 0 -2px 0 var(--tail-line),0 2px 4px #26301a14;transition:filter .16s,box-shadow .16s}
+.tail[data-marker=marker-sage]{--tail:#dbe6d4;--tail-line:#c8d8bf}
+.tail[data-marker=marker-ochre]{--tail:#f7e2b3;--tail-line:#ecd096}
+.tail[data-marker=marker-slate]{--tail:#d7e1ec;--tail-line:#c0cfe0}
+.tail[data-marker=marker-lilac]{--tail:#e6dbee;--tail-line:#d4c4e1}
+.tail:hover .tailBar{filter:saturate(1.4) brightness(.97)}
+.tail[data-selected] .tailBar{box-shadow:inset 0 0 0 2px var(--wk-green-deep)}
+.tail[data-sounding] .tailBar{background:linear-gradient(90deg,var(--wk-sun),var(--tail))}
+.tail[data-dragging]{opacity:.3;transition:none}
+.tail[data-overflow] .tailBar{border-radius:0;-webkit-mask-image:linear-gradient(90deg,#000 80%,#0000);mask-image:linear-gradient(90deg,#000 80%,#0000)}
+.tail[data-overflow] .tailText{right:18%}
+.tailText{position:absolute;right:8px;font-size:var(--font-label);font-weight:700;color:var(--wk-text);font-variant-numeric:tabular-nums;pointer-events:none}
+.tail:focus-visible{outline-offset:2px;border-radius:12px}
+.rowTools{display:flex;gap:6px;flex-shrink:0}
+.rowTool{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--wk-soft);color:var(--wk-ink-soft);font-size:var(--font-small);font-weight:700;box-shadow:inset 0 0 0 1px var(--wk-line-strong);transition:background .16s,transform .12s}
+.rowTool::before{content:"";position:absolute;width:44px;height:44px}
+.rowTool{position:relative}
+.rowTool svg{width:var(--icon-inline);height:var(--icon-inline)}
+.rowTool[data-primary]{background:#fff;color:var(--wk-on-fill);box-shadow:inset 0 0 0 2px var(--wk-lime)}
+.rowTool:hover:not(:disabled){background:var(--wk-green-soft);color:var(--wk-green-text)}
+.rowTool:active:not(:disabled){transform:scale(.95)}
+.rowTool:disabled{opacity:.45;cursor:default}
+/* More rows: smaller markers so each row still holds a marker and its name. */
+.field[data-rows="4"]{--mk:clamp(50px,7.6vh,72px)}
+.field[data-rows="5"]{--mk:clamp(44px,6.2vh,60px)}
+.field[data-rows="5"] .placedName{font-size:var(--font-label)}
+.exampleBadge{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+.exampleBadge,.span,.rowTools{flex-shrink:0;max-width:100%}
+.exampleBadge span{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:#ffffffe6;font-size:var(--font-small);font-weight:700;color:var(--wk-green-text);box-shadow:inset 0 0 0 1px var(--wk-green-mid)}
+.exampleBadge span svg{width:15px;height:15px}
+.exampleBadge button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);font-size:var(--font-small);font-weight:700;box-shadow:var(--wk-selected-lift);transition:transform .12s}
+.exampleBadge button:active{transform:scale(.95)}
+/* Field length switch */
+.span{display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:var(--wk-green-soft);box-shadow:inset 0 1px 3px #a5cf3340}
+.span span{padding:0 8px 0 10px;font-size:var(--font-label);font-weight:700;color:var(--wk-green-text);white-space:nowrap}
+.span button{position:relative;min-width:52px;min-height:32px;padding:0 10px;border:0;border-radius:999px;background:none;color:#56615a;font-size:var(--font-small);font-weight:700;font-variant-numeric:tabular-nums;transition:background .16s,color .16s}
+.span button::before{content:"";position:absolute;inset:-6px -1px}
+.span button[aria-checked=true]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+/* Too short for the longest sound: greyed, still tappable so the frog can say why. */
+.span button[aria-disabled=true]{color:#b4baa9;text-decoration:line-through;text-decoration-color:#c9cebf;cursor:not-allowed}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+@keyframes breathe{50%{scale:1.06}}
+@media(--reduced-motion){
+ .placed,.placedMarker{transition:none}
+ .placed[data-sounding] .placedMarker,.dropTarget{animation:none}
+}
+/* Shorter laptop screens (1366 × 768, 1280 × 720): same layout, tighter rhythm, still one screen. */
+@media(--short){
+ .field{padding:8px 18px 6px 10px}
+ .fieldHead{margin-bottom:4px}
+}
+@media(--shorter){
+ .field{--mk:clamp(52px,8.6vh,80px)}
+}
+@media(--one-column){
+ .field{min-height:440px}
+}
+@media(--phone){
+ .field{--mk:50px;min-height:400px;padding:12px 10px 8px 6px;border-radius:22px}
+ .field[data-rows="4"]{--mk:44px}
+ .field[data-rows="5"]{--mk:40px}
+ .fieldGrid{grid-template-columns:30px minmax(0,1fr);gap:4px}
+ .rowButton span{width:22px;height:22px;font-size:var(--font-caption)}
+ .rowButton svg{width:12px;height:12px;padding:3px}
+ /* Narrow field: the number on each marker identifies it; the name shows for the selected one only. */
+ .placedName{display:none;font-size:var(--font-caption);padding:0 6px;max-width:96px}
+ .placed[data-selected] .placedName{display:block}
+ .placed{transform:translate(-50%,-50%)}
+ .fieldHead{flex-wrap:wrap;gap:6px;margin:0 0 8px 34px}
+ .fieldHintSpace{flex-basis:100%;font-size:var(--font-label)}
+ .exampleBadge{flex:1}
+ .exampleBadge span{padding:4px 10px;font-size:var(--font-label)}
+ .ruler span{font-size:var(--font-caption)}
+ .tail{height:18px}
+ .tailBar{height:10px}
+ .tailText{font-size:var(--font-micro);right:4px}
+ .span span{display:none}
+ .span button{min-width:46px}
+}

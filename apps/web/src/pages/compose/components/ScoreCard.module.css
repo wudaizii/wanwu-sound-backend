@@ -1,0 +1,100 @@
+/* 声音曲谱: the score as a taped paper sheet (look from ui.limeCard / ui.tape); the rows are the field's rows. */
+.scoreCard{animation:global(wk-rise) .5s var(--wk-ease) both}
+.loading{margin:auto;font-size:var(--font-body);color:var(--wk-muted)}
+/* Look from ui.limeCard / ui.tape; the cream fades out early so the score lanes sit on white. */
+.scoreCard{--card-cream:14%;--card-white:34%;container-type:inline-size;display:flex;flex-direction:column;min-width:0;min-height:0;padding:16px 20px 14px}
+.scoreHead{display:flex;flex-wrap:wrap;align-items:center;gap:14px;min-height:40px}
+.scoreHead h2{display:flex;align-items:center;gap:7px;flex-shrink:0;margin:0;font-size:var(--font-section);font-weight:800;letter-spacing:.02em}
+.scoreHead h2::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--wk-green-deep)}
+.exampleBadge{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:4px 12px;border-radius:999px;background:#fff;font-size:var(--font-small);font-weight:700;color:var(--wk-green-text);box-shadow:inset 0 0 0 1px var(--wk-green-mid)}
+.exampleBadge svg{width:15px;height:15px}
+.legend{flex:1;min-width:0;display:flex;justify-content:flex-end;gap:6px 16px;flex-wrap:wrap;max-height:40px;overflow:hidden;margin:0;padding:0;list-style:none}
+.legend li{max-width:100%;display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--font-small);font-weight:700;color:var(--wk-text);white-space:nowrap}
+.legend li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.legendMarker{width:2.5em}
+/* A listening question that changes with the piece (not a layout note). */
+.scoreHint{min-width:0;overflow-wrap:anywhere;display:flex;align-items:center;gap:8px;align-self:flex-start;max-width:100%;margin:4px 0 8px;padding:6px 16px 6px 8px;border-radius:999px;background:#fff;box-shadow:0 2px 0 var(--wk-line-strong),0 6px 12px #26301a0d;font-size:var(--font-body);font-weight:700;color:var(--wk-ink-soft)}
+.scoreHint svg{flex-shrink:0;width:22px;height:22px;color:var(--wk-sun-deep)}
+.score{--mk:clamp(52px,8.4vh,76px);flex:1;min-height:calc(var(--rows,3) * (var(--mk) + 20px) + 28px);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px}
+.score[data-rows="4"]{--mk:clamp(46px,7vh,64px)}
+.score[data-rows="5"]{--mk:clamp(40px,5.8vh,54px)}
+/* The score area: the field's rows as soft paper bands. Tapping empty space plays from that moment. */
+.scoreField{position:relative;display:grid;grid-template-rows:repeat(var(--rows),1fr);gap:6px;min-height:0;cursor:pointer}
+.scoreLane{border-radius:30px 46px 36px 52px/24px 30px 28px 36px;background:linear-gradient(100deg,#f3f8e0,#f8fbea 55%,#f1f7da);box-shadow:var(--wk-inset),inset 0 0 0 1px #e8f0cc}
+.scoreLane:nth-child(3n+1){background:linear-gradient(100deg,#ecf8fd,#f4fbfe 60%,#eaf7fc);box-shadow:inset 0 2px 6px #1f4f5c12,inset 0 0 0 1px #d8eef6}
+.scoreLane:nth-child(3n){background:linear-gradient(100deg,#f9f8e6,#fcfbf0 55%,#f6f5de);box-shadow:inset 0 2px 6px #4a40001a,inset 0 0 0 1px #ecebcc}
+/* Past the chosen length (a sound still finishing): a light hatch, labelled. */
+.overrun{position:absolute;top:0;bottom:0;right:0;border-left:2px dashed var(--wk-rule);background:repeating-linear-gradient(135deg,#ffffff00 0 8px,#eef1e866 8px 14px);pointer-events:none}
+.overrun span{position:absolute;top:4px;left:6px;padding:1px 8px;border-radius:999px;background:#ffffffe6;font-size:var(--font-caption);font-weight:700;color:var(--wk-muted);white-space:nowrap}
+.emptyScore{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:default}
+.emptyScore button{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 20px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);font-size:var(--font-body);font-weight:800;box-shadow:var(--wk-selected-lift)}
+.emptyScore svg{width:18px;height:18px}
+.items{position:absolute;inset:0;margin:0;padding:0;list-style:none;pointer-events:none}
+.item{position:absolute;z-index:1;transform:translate(-50%,calc(var(--mk) * -.5 - 4px));pointer-events:auto}
+.itemButton{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0;border:0;background:none;color:inherit}
+.itemButton:focus-visible{outline-offset:2px;border-radius:18px}
+.itemMarker{--marker-size:var(--mk);width:var(--mk);filter:drop-shadow(0 6px 6px #26301a26);transition:transform .16s var(--wk-ease),filter .2s}
+.itemButton:hover .itemMarker{transform:translateY(-2px) scale(1.03)}
+.item[data-sounding] .itemMarker{animation:bob .9s ease-in-out infinite;filter:drop-shadow(0 0 12px #ffd84a) drop-shadow(0 6px 8px #26301a1f)}
+.itemName{max-width:calc(var(--mk) + 70px);padding:1px 9px;border-radius:999px;background:#fff;box-shadow:0 2px 0 var(--wk-line-strong);font-size:var(--font-small);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .2s}
+.itemName small{margin-left:5px;font-size:.92em;font-weight:600;color:var(--wk-muted)}
+.item[data-sounding] .itemName{background:var(--wk-sun)}
+/* 课堂大屏: bigger markers, and the sounding one grows and glows so the back row can follow. */
+:global(:root[data-classroom]) .score{--mk:clamp(64px,10.5vh,100px)}
+:global(:root[data-classroom]) .item[data-sounding] .itemMarker{scale:1.18;filter:drop-shadow(0 0 18px #ffd84a) drop-shadow(0 0 6px #ffd84a) drop-shadow(0 6px 8px #26301a1f)}
+/* Length tail: from the marker centre to the right, as long as the sound is heard (same scale as the ruler). */
+.itemTail{position:absolute;z-index:0;display:flex;align-items:center;justify-content:flex-end;height:14px;border-radius:0 999px 999px 0;background:var(--tail);box-shadow:inset 0 2px 0 #ffffff80,inset 0 -2px 0 var(--tail-line),0 2px 4px #26301a14;transform:translateY(-50%);pointer-events:none;transition:filter .2s}
+.itemTail[data-marker=marker-sage]{--tail:#dbe6d4;--tail-line:#c8d8bf}
+.itemTail[data-marker=marker-ochre]{--tail:#f7e2b3;--tail-line:#ecd096}
+.itemTail[data-marker=marker-slate]{--tail:#d7e1ec;--tail-line:#c0cfe0}
+.itemTail[data-marker=marker-lilac]{--tail:#e6dbee;--tail-line:#d4c4e1}
+.itemTail[data-sounding]{background:linear-gradient(90deg,var(--wk-sun),var(--tail))}
+.itemTail b{padding-right:8px;font-style:normal;font-size:var(--font-caption);font-weight:700;color:var(--wk-text);font-variant-numeric:tabular-nums}
+.playhead{position:absolute;top:-6px;bottom:-6px;z-index:2;width:3px;margin-left:-1.5px;border-radius:3px;background:var(--wk-green-text);box-shadow:0 0 0 3px #c0e64f55;pointer-events:none}
+.playhead::before{content:"";position:absolute;top:-5px;left:50%;width:13px;height:13px;border-radius:50%;background:var(--wk-green-text);box-shadow:0 0 0 3px #fff;transform:translateX(-50%)}
+.playhead[data-moving]{background:var(--wk-sun-deep);box-shadow:0 0 0 3px #ffe57677}
+.playhead[data-moving]::before{background:var(--wk-sun-deep)}
+.scoreRuler{position:relative;height:22px}
+.scoreRuler i{position:absolute;left:0;right:0;top:4px;height:2px;background:var(--wk-rule)}
+.scoreRuler span{position:absolute;top:8px;transform:translateX(-50%);font-size:var(--font-label);font-weight:700;color:#7d8571;font-variant-numeric:tabular-nums;white-space:nowrap}
+.scoreRuler span::before{content:"";position:absolute;left:50%;top:-6px;width:2px;height:6px;background:var(--wk-rule)}
+.scoreRuler span[data-end]{color:var(--wk-ink)}
+/* After saving: the way to the shelf sits in the listening prompt's slot, so nothing moves. */
+.shelfLink{align-self:flex-start;min-height:36px;margin:4px 0 8px}
+.shelfLink button{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);font-size:var(--font-small);font-weight:800;box-shadow:var(--wk-selected-lift)}
+.shelfLink svg{width:16px;height:16px}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+@media(--reduced-motion){
+ .scoreCard{animation:none}
+ .item[data-sounding] .itemMarker{animation:none}
+}
+/* Shorter laptop screens (1366 × 768, 1280 × 720): same layout, tighter rhythm, still one screen. */
+@media(--short){
+ /* One screen first: the score may shrink to its original minimum here (markers scale with the screen height). */
+ .score{min-height:220px}
+ .scoreCard{padding:12px 16px 10px}
+ .scoreHint{margin-bottom:4px}
+}
+@media(--narrow-compose){
+ .legend{display:none}
+}
+@media(--one-column){
+ .legend{display:flex;max-height:none}
+ .score{min-height:380px}
+}
+@media(--phone){
+ .scoreCard{padding:14px 10px 10px;border-radius:22px}
+ .scoreHead{flex-wrap:wrap;gap:8px}
+ .legend{flex-basis:100%;justify-content:flex-start;gap:4px 12px}
+ .legend li{font-size:var(--font-label)}
+ .legendMarker{width:28px}
+ .score{--mk:46px;min-height:340px}
+ .score[data-rows="4"]{--mk:42px}
+ .score[data-rows="5"]{--mk:38px}
+ /* Narrow score: the number on each marker identifies it; names would collide. */
+ .itemName{display:none}
+ .item{transform:translate(-50%,-50%)}
+ .itemTail{height:12px}
+ .itemTail b{font-size:var(--font-micro);padding-right:5px}
+ .scoreRuler span{font-size:var(--font-caption)}
+}

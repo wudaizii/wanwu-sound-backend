@@ -1,0 +1,62 @@
+/* Transport: play / pause · 从头听 · progress · clock; it responds to the score card's width. */
+/* Transport: play / pause · 从头听 · progress · clock */
+.transport{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:6px 16px;margin-top:10px;padding:8px 16px 8px 8px;border-radius:24px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.playButton,.restartButton{min-width:0;max-width:100%;display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 14px 0 0;border:0;background:none;color:var(--wk-ink);font-size:var(--font-control);font-weight:800;white-space:nowrap;transition:transform .12s var(--wk-ease)}
+.playCircle{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);transition:background .16s}
+.playCircle svg{width:22px;height:22px}
+.playButton[aria-pressed=true] .playCircle{background:var(--wk-sun-fill);box-shadow:inset 0 1px 0 #ffffff80,0 8px 18px #ffd84a66}
+.playButton[data-busy] .playCircle{animation:pulse 1s ease-in-out infinite}
+.restartButton{padding:0 14px 0 4px;font-size:var(--font-body);color:var(--wk-text);border-left:1.5px solid var(--wk-line-strong);border-radius:0}
+.restartButton svg{width:30px;height:30px;color:var(--wk-green-text)}
+.playButton:disabled,.restartButton:disabled{opacity:.45;cursor:default}
+.playButton:active:not(:disabled),.restartButton:active:not(:disabled){transform:scale(.96)}
+.progress{min-width:0}
+.progress p{overflow-wrap:anywhere;margin:2px 0 0;font-size:var(--font-label);font-weight:600;color:var(--wk-muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clock{font-size:var(--font-control);font-weight:800;font-variant-numeric:tabular-nums;color:var(--wk-text);white-space:nowrap}
+.clock i{font-style:normal;color:#b3b9ab}
+/* Range sliders (progress, background volume): a filled track and a solid thumb. */
+.progress input{-webkit-appearance:none;appearance:none;display:block;width:100%;height:30px;margin:0;background:none;cursor:pointer;touch-action:none}
+.progress input::-webkit-slider-runnable-track{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--wk-green-deep) var(--fill),#e3e7dc var(--fill))}
+.progress input::-moz-range-track{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--wk-green-deep) var(--fill),#e3e7dc var(--fill))}
+.progress input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-8px;border:4px solid #fff;border-radius:50%;background:var(--wk-green-text);box-shadow:0 3px 8px #26301a40}
+.progress input::-moz-range-thumb{width:18px;height:18px;border:4px solid #fff;border-radius:50%;background:var(--wk-green-text);box-shadow:0 3px 8px #26301a40}
+.progress input:disabled{opacity:.45;cursor:default}
+.progress input:focus-visible{outline:2px solid #668476;outline-offset:2px;border-radius:999px}
+@keyframes pulse{50%{opacity:.4}}
+@media(--reduced-motion){
+ .playButton[data-busy] .playCircle{animation:none}
+}
+@media(--short){
+ .transport{margin-top:6px;padding:6px 14px 6px 6px}
+ .playCircle{width:46px;height:46px}
+ .playButton,.restartButton{min-height:46px;font-size:var(--font-body)}
+}
+@media(--shorter){
+ .progress p{display:none}
+}
+@media(--phone){
+ .transport{grid-template-columns:auto auto 1fr;padding:8px 12px 8px 8px}
+ .progress{grid-column:1/-1;order:3}
+ .progress p{white-space:normal}
+ .clock{justify-self:end;font-size:var(--font-body)}
+}
+@media(--tiny){
+ .restartButton span{display:none}
+}
+/* The transport responds to the score card, independently of the viewport's column layout. */
+@container(max-width:620px){
+ .transport{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:6px 10px;padding:8px}
+ .progress{grid-column:1/-1;order:3}
+ .progress p{white-space:normal}
+ .playButton,.restartButton{gap:6px;padding-right:4px;font-size:var(--font-control)}
+ .playCircle{width:clamp(40px,9cqw,48px);height:clamp(40px,9cqw,48px);flex-shrink:0}
+ .restartButton svg{width:1.6em;height:1.6em}
+ .clock{font-size:var(--font-small)}
+}
+@container(max-width:340px){
+ .transport{grid-template-columns:minmax(0,1fr) auto}
+ .clock{grid-column:2;grid-row:1}
+ .restartButton{grid-column:1/-1;grid-row:2;justify-content:center;border-left:0;border-top:1px solid var(--wk-line-strong);padding:6px 0 0;white-space:normal}
+ .restartButton span{display:inline}
+ .progress{grid-row:3}
+}

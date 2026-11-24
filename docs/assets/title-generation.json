@@ -1,0 +1,12 @@
+{
+ "version":"handwritten-title-v2",
+ "tool":"Built-in imagegen",
+ "reference":"User-approved handwritten homepage concept: exec-cdb46959-b19e-4065-95c2-46162af1886e.png",
+ "assets":[
+  {"source":"assets-source/home/title/lettering-atlas.png","generated":"exec-7d4704e4-bf06-4ede-8dcb-6a9ef0199f20.png","prompt":"Transparent handwritten Chinese glyph atlas, exact five-column two-row regular grid. Row 1: 今 天 ， 你 听. Row 2: 见 了 什 么 ？. Each symbol isolated with generous transparent padding. Match approved black dry charcoal/pencil lettering, subtly curved organic brush strokes, playful irregular proportions and visible texture. No grid lines, labels, background, shadow or decorations."},
+  {"source":"assets-source/home/title/doodles-atlas.png","generated":"exec-0d2ed6a6-1e4f-4fd9-81d7-17f739c9a7f3.png","prompt":"Transparent hand-drawn doodle atlas, exact three-column two-row grid. Row 1: eighth note, paired eighth notes, quarter note. Row 2: imperfect round bubble, loose oval bubble with a small natural gap, lopsided bubble with pencil overlap. Thin soft black freehand pencil texture, irregular contours and pressure, no geometric circles, no polished icons, no background, labels, scene or title."}
+ ],
+ "processing":"Deterministic cell extraction, alpha-bound trim and packed WebP/PNG sprites. Only simple bubble contours are sampled into native SVG; no embedded raster in SVG. Glyph arch/proportions and entrance timings live in config/title.ts. No runtime pixel processing or glyph masks.",
+ "latestDecision":"Follow approved sketch size proportions. Pop in characters in sequence, then keep text still. Only decorations rise and fade in loops, behind letters and under foliage.",
+ "previousVersionArchive":"万物声谱_视觉过程稿/资产修订/2026-10-22-手绘标题弧度与动效/"
+}

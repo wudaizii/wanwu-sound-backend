@@ -1,0 +1,21 @@
+/* 保存这首作品: name, visibility and the share entry. Sheet itself: shared/ui/WorkSheet. */
+.shareButton small{position:absolute;top:-7px;right:-2px;padding:0 6px;border-radius:8px;background:var(--wk-soft);font-size:var(--font-micro);font-weight:700;color:var(--wk-muted);box-shadow:inset 0 0 0 1px var(--wk-line-strong)}
+.saveForm{margin-top:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field span,.visibility legend{font-size:var(--font-body);font-weight:800;color:var(--wk-text)}
+.field input{min-height:52px;padding:0 18px;border:0;border-radius:16px;background:#fff;font:inherit;font-size:var(--font-control-lg);font-weight:700;color:var(--wk-ink);box-shadow:inset 0 0 0 2px var(--wk-line-strong);outline:0}
+.field input:focus{box-shadow:inset 0 0 0 2.5px var(--wk-green-deep)}
+.visibility{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;border:0}
+.visibility legend{margin-bottom:8px;padding:0}
+.visibility label{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px 0 10px;border-radius:999px;font-size:var(--font-body);font-weight:700;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+.visibility label[data-off]{background:var(--wk-soft);color:var(--wk-muted);box-shadow:none}
+.visibility small{font-size:var(--font-caption);font-weight:600}
+.visibility input{position:absolute;opacity:0;pointer-events:none}
+.visibility svg{width:18px;height:18px;color:var(--wk-on-fill)}
+.visibility label[data-off] svg{color:#b3b9ab}
+.visibility label{position:relative}
+.shareButton{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:12px;padding:0 16px;border:0;border-radius:999px;background:var(--wk-soft);color:var(--wk-muted);font-size:var(--font-body);font-weight:700}
+.shareButton svg{width:18px;height:18px}
+@media(--phone){
+ .field input{font-size:max(1rem,var(--font-body))}
+}

@@ -1,0 +1,47 @@
+/* Cascade layers: the reset and tokens (wk-base), then shared controls (wk-ui). Page and component modules stay
+   unlayered, so a page's own rule always wins over a shared one, whatever order the CSS chunks load in. */
+@layer wk-base,wk-ui;
+@import './typography.css' layer(wk-base);
+@layer wk-base{
+:root{color-scheme:light;--ink:#252525;--muted:#757b76;--paper:#fff;font-family:"Heiti SC","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}body{margin:0}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;line-height:var(--line-control);cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #668476;outline-offset:6px}button[hidden],div[hidden]{display:none!important}a{color:inherit}svg{flex-shrink:0}button{touch-action:manipulation}
+/* Work-page tokens (声音诞生 onward) — the approved spring palette:
+   cream #F7FFC5 · pink #FFD4D9 · yellow #FFE576 · lime #C0E64F · sky #9FE8FF.
+   Lime carries every action, yellow means "sounding now", pink marks recording / attention, sky and cream support.
+   These are light colours, so text and icons on any coloured fill use the dark olive ink (--wk-on-fill). */
+:root{
+ --wk-bg:#fff;--wk-soft:#f6f8ef;--wk-surface:#fff;--wk-ink:#26301a;--wk-muted:#7d8571;--wk-line:#ecefe2;--wk-line-strong:#dde3cf;
+ --wk-primary:#26301a;--wk-on-fill:#2f3b10;
+ --wk-cream:#f7ffc5;--wk-pink:#ffd4d9;--wk-yellow:#ffe576;--wk-lime:#c0e64f;--wk-sky:#9fe8ff;
+ --wk-green:#c0e64f;--wk-green-light:#dcf58c;--wk-green-deep:#a5cf33;--wk-green-text:#55720a;--wk-green-soft:#f5fcdc;--wk-green-mid:#e2f4a6;
+ --wk-sun:#ffe576;--wk-sun-deep:#8a6a00;--wk-sun-soft:#fff9da;
+ --wk-alert:#d9566c;--wk-alert-soft:#fff1f3;
+ --wk-radius:24px;--wk-shadow:0 8px 32px #26301a0f,0 1px 2px #26301a0a;
+ --wk-ease:cubic-bezier(.2,.8,.2,1);
+ --wk-green-fill:linear-gradient(180deg,#e2f79a 0%,var(--wk-lime) 58%,#b3dc3c 100%);
+ --wk-green-lift:inset 0 1px 0 #ffffffb3,inset 0 -2px 4px #7fa61a26,0 10px 22px #a5cf3359;
+ /* Selected options: a solid, raised lime piece (top light, bottom shade, soft drop) — never a coloured frame with a
+    pale fill. Text and icons on it use --wk-on-fill. */
+ --wk-selected-fill:linear-gradient(180deg,#e6f9a2 0%,var(--wk-lime) 55%,#b0d93a 100%);
+ --wk-selected-lift:inset 0 2px 0 #ffffffcc,inset 0 -3px 0 #8fb82c73,0 6px 14px #a5cf3366;
+
+ /* Repeated values, named once (2026-10-23). Text: body copy on white and the soft buttons' label. */
+ --wk-text:#4f584a;--wk-ink-soft:#4c5640;
+ /* Surfaces: sunken field (wells, tracks), soft button hover, ruler / timeline grey. */
+ --wk-field:#f3f7e2;--wk-soft-hover:#eef3dc;--wk-rule:#c9cfc0;
+ /* "Sounding now": the yellow fill. */
+ --wk-sun-fill:linear-gradient(180deg,#fff3ad,var(--wk-sun));
+ /* Shadows: outline (white + lime ring) button, sunken well, lime card, white panel, keycap edges. */
+ --wk-outline-lift:inset 0 0 0 3px var(--wk-lime),0 4px 10px #a5cf3326;
+ --wk-inset:inset 0 2px 6px #26301a12;
+ --wk-card-lift:0 14px 34px #a5cf3340,0 2px 0 #8fb82c40;
+ --wk-panel-shadow:var(--wk-shadow),0 0 0 1px #26301a05;
+ --wk-key:0 3px 0 var(--wk-line-strong),0 6px 10px #26301a0a;
+ --wk-key-lg:0 5px 0 var(--wk-line-strong),0 10px 14px #26301a10;
+ /* Decoration: the pink washi tape on lime cards, and the work pages' soft spring backdrop. */
+ --wk-tape:#ffd4d9d9 repeating-linear-gradient(90deg,#ffffff40 0 2px,transparent 2px 6px);
+ --wk-page-bg:radial-gradient(900px 520px at 4% -6%,#e9f7a766,transparent 70%),radial-gradient(760px 520px at 98% 4%,#d8f4ff55,transparent 70%),radial-gradient(900px 600px at 50% 110%,#fff0c455,transparent 70%),#fbfdf4;
+}
+/* Shared entrance: panels rise into place. Modules use it as `animation:global(wk-rise) …`. */
+@keyframes wk-rise{from{opacity:0;transform:translateY(12px)}}
+}

@@ -1,0 +1,4 @@
+.picture{display:block}
+.picture img{display:block;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .24s ease-out;user-select:none;-webkit-user-drag:none}
+.picture[data-state=ready] img{opacity:1}
+@media(--reduced-motion){.picture img{transition:none}}

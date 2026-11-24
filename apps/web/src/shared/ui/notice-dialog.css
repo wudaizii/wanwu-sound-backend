@@ -1,0 +1,2 @@
+.notice-dialog{width:min(390px,calc(100vw - 40px));padding:46px 30px 30px;text-align:center}
+.notice-dialog h2{font-size:var(--font-card-title);font-weight:400;margin:0 0 20px}.notice-copy{font-size:var(--font-body);line-height:1.9;color:#6c786a}.notice-copy p{margin:8px 0}.notice-return{min-height:44px;background:#293329;color:#fff;border:0;padding:10px 28px;margin-top:22px;font-size:var(--font-body)}

@@ -1,0 +1,31 @@
+{
+ "version": "shaping-v3",
+ "level": {
+  "targetRmsDb": -20,
+  "maxBoostDb": 18,
+  "peakCeilingDb": -3,
+  "choiceDb": {"soft": -9, "medium": -3, "loud": 0},
+  "unchosenDb": -3
+ },
+ "intensityTone": {
+  "soft": {"attackSeconds": 0.04, "lowpassHz": 16000, "highShelfDb": -3},
+  "medium": {"attackSeconds": 0.01, "lowpassHz": 16000, "highShelfDb": 0},
+  "loud": {"attackSeconds": 0.003, "lowpassHz": 16000, "highShelfDb": 3}
+ },
+ "pitch": {"semitonesPerStep": 4, "maxSemitones": 6, "shelfDbPerStep": 3},
+ "duration": {"stretchPerStep": 1.6, "minStretch": 0.45, "maxStretch": 2.5, "textureMinStretch": 0.65, "textureMaxStretch": 1.7},
+ "contour": {
+  "unit": {"bendCents": 400, "wave": {"rateHz": 5, "depthCents": 60, "gainDepth": 0.3}},
+  "texture": {"bendCents": 300, "rampDb": 8, "wave": {"rateHz": 0.5, "depthCents": 80, "gainDepth": 0.5}},
+  "sweepClosedHz": 1200,
+  "sweepOpenHz": 16000
+ },
+ "pattern": {
+  "repeat": {"minCount": 3, "gapSeconds": 0.35, "motifMaxSeconds": 2.5, "waveSeconds": 2, "waveGapSeconds": 0.4},
+  "bursts": {"minGroups": 3, "hitsPerGroup": 3, "hitMaxSeconds": 0.8, "innerGapSeconds": 0.08, "groupGapSeconds": 0.7, "gustSeconds": 1.2, "gainJitterDb": 2},
+  "fadeIn": {"portion": 0.7, "fromHz": 800, "seriesFromDb": -18}
+ },
+ "grain": {"seconds": 0.08},
+ "edges": {"unitTailSeconds": 0.1, "unitGapSeconds": 0.05, "releaseMinSeconds": 0.04, "releasePortion": 0.15, "cutFadePortion": 0.4, "textureFadeSeconds": 0.4},
+ "limits": {"cardMaxSeconds": 10, "clipMaxSeconds": 45}
+}

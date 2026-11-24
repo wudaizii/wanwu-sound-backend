@@ -1,0 +1,51 @@
+[
+  {
+    "id": "title-lettering",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/title/lettering.343f834cb9.webp",
+    "bytes": 37732,
+    "sha256": "343f834cb953f0607f2642ab71320a4ef082c9ecd561e9d6e4caf99ab133d030"
+  },
+  {
+    "id": "title-lettering",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/title/lettering.30c402657d.webp",
+    "bytes": 55044,
+    "sha256": "30c402657d0ea84e58e0dbfc996825f765f35e63cd1c08fcbc89eabf93036dc6"
+  },
+  {
+    "id": "title-lettering",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/title/lettering.1a6d35acce.png",
+    "bytes": 74716,
+    "sha256": "1a6d35acce68e77ffb856f52e7584d690122933e7f62e9b19818db4cc2111054"
+  },
+  {
+    "id": "title-bubbles",
+    "tier": "vector",
+    "path": "apps/web/public/media/home/title/bubbles.fcab32461f.svg",
+    "bytes": 2504,
+    "sha256": "fcab32461f5c62028cb78fdb9fe3a4166d80c7bd1f0ac9e43391818648cc7456"
+  },
+  {
+    "id": "title-doodles",
+    "tier": "mobile",
+    "path": "apps/web/public/media/home/title/doodles.223ae61647.webp",
+    "bytes": 3884,
+    "sha256": "223ae616471d7b992da1fb97773fc4fa02453b031aeebcdf2c7cfd84cf8f0b09"
+  },
+  {
+    "id": "title-doodles",
+    "tier": "desktop",
+    "path": "apps/web/public/media/home/title/doodles.a71d2242e6.webp",
+    "bytes": 5844,
+    "sha256": "a71d2242e66753bcbc6bcffed21c36e3f2f0179984ffdc08a5a984e1727dfc6f"
+  },
+  {
+    "id": "title-doodles",
+    "tier": "fallback",
+    "path": "apps/web/public/media/home/title/doodles.59cf176065.png",
+    "bytes": 7485,
+    "sha256": "59cf1760652831f9d6266ede5f52ca6e5eeb04259755db0db66187a02ee7a849"
+  }
+]

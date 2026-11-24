@@ -1,0 +1,97 @@
+/* Side cards: 想听多久 · 课本灵感 · 背景音乐. */
+.card{border-radius:28px;background:#fff;box-shadow:var(--wk-panel-shadow)}
+.srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.volume input{-webkit-appearance:none;appearance:none;display:block;width:100%;height:30px;margin:0;background:none;cursor:pointer;touch-action:none}
+.volume input::-webkit-slider-runnable-track{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--wk-green-deep) var(--fill),#e3e7dc var(--fill))}
+.volume input::-moz-range-track{height:10px;border-radius:999px;background:linear-gradient(90deg,var(--wk-green-deep) var(--fill),#e3e7dc var(--fill))}
+.volume input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-8px;border:4px solid #fff;border-radius:50%;background:var(--wk-green-text);box-shadow:0 3px 8px #26301a40}
+.volume input::-moz-range-thumb{width:18px;height:18px;border:4px solid #fff;border-radius:50%;background:var(--wk-green-text);box-shadow:0 3px 8px #26301a40}
+.volume input:disabled{opacity:.45;cursor:default}
+.volume input:focus-visible{outline:2px solid #668476;outline-offset:2px;border-radius:999px}
+.card{display:flex;flex-direction:column;padding:14px 16px 14px}
+/* The column always ends level with the score: cards share the spare height and keep their last control at the bottom. */
+.card{flex:1 1 auto}
+.card>:last-child{margin-top:auto}
+/* 课本灵感 keeps its own height (text and two button rows read as one block); the other two cards take the spare. */
+.card.fit{flex-grow:0}
+.cardTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cardTitle{min-width:0;flex-wrap:wrap;display:flex;align-items:center;gap:9px;margin:0;font-size:var(--font-control-lg);font-weight:800}
+.cardTitle small{font-size:var(--font-small);font-weight:600;color:var(--wk-muted)}
+/* Card icons are solid paper cut-outs in palette colours (sky · pink · lime) — no backing circle. */
+.badge{display:inline-flex;flex-shrink:0}
+.badge svg{width:32px;height:32px;filter:drop-shadow(0 2px 2px #26301a22);transition:transform .35s var(--wk-ease)}
+.card:hover .badge svg{transform:rotate(-8deg) scale(1.08)}
+.cardLead{margin:4px 0 10px;font-size:var(--font-small);font-weight:500;line-height:1.5;color:var(--wk-muted)}
+.spanOptions{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;min-height:60px;margin-top:10px;padding:6px;border-radius:22px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.spanOption{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;padding:4px;border:0;border-radius:17px;background:#fff;color:var(--wk-ink);box-shadow:var(--wk-key);transition:box-shadow .15s,background .25s,transform .15s var(--wk-ease)}
+.spanOption b{font-size:var(--font-subtitle);font-weight:800;font-variant-numeric:tabular-nums}
+.spanOption small{font-size:var(--font-label);font-weight:600;color:var(--wk-muted)}
+.spanOption small[data-longer]{color:var(--wk-sun-deep)}
+.spanOption:hover{transform:translateY(-2px);box-shadow:var(--wk-key-lg)}
+.spanOption[aria-checked=true]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);transform:translateY(-1px)}
+.spanOption[aria-checked=true] small,.spanOption[aria-checked=true] small[data-longer]{color:#3f4f16}
+.spanOption:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wk-line-strong)}
+/* Too short for the longest sound: greyed and flat, still tappable so the squirrel can say why. */
+.spanOption[aria-disabled=true]{background:var(--wk-soft);color:#b4baa9;box-shadow:none;cursor:not-allowed;transform:none}
+.spanOption[aria-disabled=true] small{color:#b4baa9}
+/* 换几种样子: three small pills above the inspiration buttons. */
+/* The two button rows sit together at the bottom (8px apart); the card's spare height stays under the lead, not between them. */
+.variationRow{display:flex;gap:6px;margin:auto 0 8px}
+.variationRow+.choiceRow{margin-top:0}
+.variationRow button{flex:1 1 0;min-width:0;min-height:34px;padding:0 6px;border:0;border-radius:999px;background:var(--wk-soft);color:var(--wk-ink-soft);font-size:var(--font-small);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .2s}
+.variationRow button[aria-checked=true]{background:var(--wk-pink);color:#6b3a42;box-shadow:inset 0 0 0 2px #f0a9b4}
+.choiceRow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:5px;border-radius:20px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.choiceRow button{min-width:0;overflow-wrap:anywhere;position:relative;min-height:44px;padding:0 4px;border:0;border-radius:15px;background:#fff;color:var(--wk-ink-soft);font-size:var(--font-body);font-weight:700;white-space:nowrap;box-shadow:var(--wk-key);transition:box-shadow .15s,background .25s,transform .15s var(--wk-ease)}
+.choiceRow button:hover{transform:translateY(-2px);box-shadow:var(--wk-key-lg)}
+.choiceRow button[aria-pressed=true]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+.choiceRow button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wk-line-strong)}
+/* On / off switch: a solid pill with a white knob and the word inside. */
+.switch{position:relative;display:flex;align-items:center;flex-shrink:0;width:66px;height:36px;padding:0;border:0;border-radius:999px;background:#dfe3d8;transition:background .2s}
+.switch::before{content:"";position:absolute;inset:-4px}
+.switch i{position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px #26301a33;transition:transform .2s var(--wk-ease)}
+.switch span{position:absolute;right:11px;font-size:var(--font-label);font-weight:800;color:#7d8571}
+.switch[aria-checked=true]{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift)}
+.switch[aria-checked=true] i{transform:translateX(30px)}
+.switch[aria-checked=true] span{right:auto;left:12px;color:var(--wk-on-fill)}
+.trackRow{display:flex;flex-wrap:wrap;gap:6px}
+.trackRow button{display:inline-flex;align-items:center;gap:4px;min-height:38px;padding:0 12px;border:0;border-radius:999px;background:#fff;color:var(--wk-ink-soft);font-size:var(--font-small);font-weight:700;box-shadow:0 3px 0 var(--wk-line-strong),0 4px 8px #26301a0a;transition:box-shadow .15s,background .25s,transform .15s var(--wk-ease)}
+.trackRow button:hover{transform:translateY(-1px)}
+.trackRow button[aria-pressed=true]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+.trackRow button svg{width:14px;height:14px;color:var(--wk-on-fill)}
+.trackRow button[aria-pressed=true] small{color:#3f4f16}
+.trackRow .coming{display:inline-flex;align-items:center;gap:4px;min-height:38px;padding:0 12px;border:0;border-radius:999px;background:var(--wk-soft);color:#a0a796;font-size:var(--font-small);font-weight:700;box-shadow:none}
+.trackRow .coming:hover{transform:none}
+.trackRow .coming svg{width:13px;height:13px;color:inherit}
+/* The background source tag (本地生成 today): quiet while it only says what plays; breathing while AI is asked; a lime
+   outline once an AI background is ready to switch to, filled while the AI one plays. */
+/* The AI chip: shown only once an AI background is ready. */
+.sourceTag{min-height:26px;padding:0 9px;border:0;border-radius:9px;background:#fff;font-size:var(--font-caption);font-weight:700;color:var(--wk-on-fill);box-shadow:inset 0 0 0 2px var(--wk-lime)}
+.sourceTag[aria-pressed=true]{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift)}
+.trackRow small{display:inline-flex;align-items:center;gap:2px;margin-left:2px;font-size:var(--font-caption);font-weight:700;color:var(--wk-muted)}
+.volume{display:flex;align-items:center;gap:10px;margin-top:8px}
+.volume>svg{width:24px;height:24px;color:var(--wk-green-text)}
+.volume input::-webkit-slider-runnable-track{height:8px}
+.volume input::-webkit-slider-thumb{width:22px;height:22px;margin-top:-7px}
+.card[data-off] .trackRow,.card[data-off] .volume{opacity:.5}
+.cardTop+.trackRow{margin-top:12px}
+@media(--reduced-motion){
+ .spanOption,.choiceRow button,.trackRow button,.badge svg{transition:none}
+}
+@media(--short){
+ .card{padding:10px 14px}
+ .cardTitle{font-size:var(--font-control)}
+ .badge svg{width:26px;height:26px}
+ .spanOptions{margin-top:8px}
+ .spanOption{min-height:52px}
+ .spanOption b{font-size:var(--font-control)}
+ .cardLead{margin:4px 0 8px;font-size:var(--font-label)}
+ .choiceRow button{min-width:0;overflow-wrap:anywhere;min-height:40px;font-size:var(--font-small)}
+ .trackRow button{min-height:34px}
+ .volume{margin-top:4px}
+}
+@media(--shorter){
+ .card{padding:8px 14px}
+}
+@media(--phone){
+ .card{border-radius:22px}
+}

@@ -1,0 +1,21 @@
+{
+  "name": "wanwu-shengpu-v2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "万物声谱正式 H5 前端，按页面逐步验收",
+  "engines": { "node": ">=22.22.0" },
+  "workspaces": ["apps/web", "packages/contracts", "packages/sound-rules", "packages/prompts"],
+  "scripts": {
+    "dev": "npm run dev --workspace=@wanwu-v2/web",
+    "typecheck": "npm run typecheck --workspace=@wanwu-v2/web",
+    "test": "node --experimental-strip-types --test apps/web/tests/*.test.ts packages/sound-rules/tests/*.test.ts packages/prompts/tests/*.test.ts",
+    "check:assets": "node scripts/check-assets.mjs",
+    "check:styles": "node scripts/check-styles.mjs",
+    "assets:build": "node scripts/build-assets.mjs && node scripts/build-title-assets.mjs && node scripts/build-art-assets.mjs docs/assets/marker-recipe.json docs/assets/marker-hero-recipe.json && node scripts/build-library-audio.mjs",
+    "assets:library": "node scripts/build-library-audio.mjs",
+    "build": "npm run typecheck && npm run check:assets && npm run check:styles && npm run build --workspace=@wanwu-v2/web",
+    "preview": "npm run preview --workspace=@wanwu-v2/web"
+  },
+  "devDependencies": {"typescript":"6.0.3","@types/node":"24.19.2","sharp":"0.35.5"}
+}

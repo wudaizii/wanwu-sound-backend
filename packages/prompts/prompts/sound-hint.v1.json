@@ -1,0 +1,64 @@
+{
+ "version": "sound-hint-prompt-v1",
+ "task": "sound-hint",
+ "model": "language",
+ "status": "closed",
+ "temperature": 0.7,
+ "lines": [
+  "【任务】孩子刚给一个声音选了「{option}」（{dimension}）。体检说它是{kind}。请写一句联想，帮孩子想到生活里还有什么声音也是这样。",
+  "【要求】",
+  "· 不超过 {hintMax} 个字；先说这个选项是什么样，再给一个孩子熟悉的比喻，可以问一个小问题。",
+  "· 不猜这个声音是什么，不提孩子起的名字。",
+  "· 参考这些本地句子的语气，但不要照抄：",
+  "{examples}",
+  "【返回格式】",
+  "{example}"
+ ],
+ "words": {
+  "dimension": {
+   "pitch": "高低",
+   "duration": "长短",
+   "contour": "变化",
+   "intensity": "轻响",
+   "pattern": "出现方式"
+  },
+  "option": {
+   "pitch": {
+    "low": "低低的",
+    "mid": "中间的",
+    "high": "高高的"
+   },
+   "duration": {
+    "short": "短短的",
+    "medium": "刚刚好",
+    "long": "长长的"
+   },
+   "contour": {
+    "rising": "往上走",
+    "falling": "往下落",
+    "flat": "稳稳的",
+    "wavy": "有起伏"
+   },
+   "intensity": {
+    "soft": "轻轻的",
+    "medium": "刚刚好",
+    "loud": "响亮的"
+   },
+   "pattern": {
+    "once": "出现一次",
+    "repeat": "重复出现",
+    "bursts": "一阵一阵",
+    "fade-in": "慢慢出现"
+   }
+  },
+  "kind": {
+   "one": "单个声音",
+   "series": "一串声音",
+   "texture": "连成一片的声音",
+   "unknown": "还没体检的声音"
+  }
+ },
+ "example": {
+  "text": "高高的声音像吹口哨，一下就飞进耳朵里。"
+ }
+}

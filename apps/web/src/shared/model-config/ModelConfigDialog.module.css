@@ -1,0 +1,12 @@
+.dialog{width:min(760px,calc(100vw - 40px));padding:42px 30px 26px;border:1px solid var(--wk-line-strong);border-radius:24px;color:var(--wk-ink)}
+.notice{margin:22px 0;padding:12px 16px;border-radius:12px;background:var(--wk-green-soft);color:#64714c;font-size:var(--font-label);line-height:1.7}
+.providers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.provider{min-width:0;margin:0;padding:14px 18px 20px;border:1px solid var(--wk-line-strong);border-radius:16px}
+.provider legend{padding:0 6px;font-size:var(--font-control);font-weight:700}.hint{margin:0 0 18px;color:var(--wk-muted);font-size:var(--font-label);line-height:1.6}
+.provider label{display:block;margin:14px 0 7px;font-size:var(--font-label);font-weight:600}.optional{margin-left:5px;color:var(--wk-muted);font-size:var(--font-micro);font-weight:400}
+.provider input{display:block;width:100%;min-width:0;min-height:42px;border:1px solid var(--wk-line-strong);border-radius:9px;padding:10px 11px;background:#fff;color:var(--wk-ink);font:inherit;font-size:var(--font-small);line-height:1.5}.provider input::placeholder{color:#98a18c;font-size:var(--font-caption)}
+.provider input:focus{outline:2px solid var(--wk-lime);outline-offset:1px}
+.keyField{display:flex;align-items:center;gap:6px;min-width:0}.keyField input{flex:1;width:0}.keyField button{flex-shrink:0;min-height:42px;padding:0 7px;border:0;border-radius:8px;background:var(--wk-green-soft);color:#64714c;font-size:var(--font-caption)}
+.error{margin:10px 0 0;color:#ae4455;font-size:var(--font-label);line-height:1.6;overflow-wrap:anywhere}.status{min-height:1.7em;margin:18px 0 10px;color:#64714c;font-size:var(--font-label);line-height:1.7}
+.actions{flex-wrap:wrap;display:flex;justify-content:space-between;align-items:center;gap:12px}.actions button{min-width:0;white-space:normal;max-width:100%;min-height:42px;border:0;border-radius:999px;padding:10px 20px;font-size:var(--font-small);font-weight:600}.clear{background:var(--wk-soft);color:#64714c}.apply{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift);color:var(--wk-on-fill)}
+@media(--sheet-narrow){.dialog{width:calc(100vw - 24px);padding:46px 18px 22px}.providers{grid-template-columns:minmax(0,1fr);gap:18px}.notice{margin:16px 0 20px}.provider{padding:12px 14px 18px}.provider input{font-size:max(1rem,var(--font-control))}.actions button{font-size:var(--font-label);padding:10px 14px}}

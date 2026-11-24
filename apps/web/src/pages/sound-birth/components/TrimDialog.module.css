@@ -1,0 +1,23 @@
+/* 这段声音有点长: pick the part of a long upload to keep. */
+/* 这段声音有点长: pick the part of a long upload to keep. */
+dialog[open].trimSheet{width:min(720px,calc(100vw - 32px))}
+.trimFile{margin:14px 0 10px;text-align:center;font-size:var(--font-small);font-weight:600;color:var(--wk-muted)}
+.trimWave{position:relative;height:132px;margin:0 14px;border-radius:20px;background:var(--wk-field);box-shadow:var(--wk-inset);touch-action:none;cursor:pointer;user-select:none}
+.trimWave svg{position:absolute;inset:12px 0;width:100%;height:calc(100% - 24px)}
+.trimBar{fill:#cdd3c6}
+.trimBarIn{fill:var(--wk-green-text)}
+.trimWindow{position:absolute;top:0;bottom:0;border-radius:14px;background:#c0e64f33;box-shadow:inset 0 0 0 3px var(--wk-green-deep);cursor:grab;touch-action:none}
+.trimWindow:active{cursor:grabbing}
+.trimHandle{position:absolute;top:50%;display:grid;place-items:center;width:28px;height:56px;border-radius:12px;background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift);transform:translate(-50%,-50%);cursor:ew-resize;touch-action:none}
+.trimHandle::before{content:"";position:absolute;inset:-10px -8px}
+.trimHandle[data-edge=start]{left:0}
+.trimHandle[data-edge=end]{left:100%}
+.trimHandle i{width:4px;height:22px;border-radius:2px;background:var(--wk-on-fill);opacity:.55}
+.trimHandle:focus-visible{outline:3px solid var(--wk-ink);outline-offset:2px}
+.trimPlayhead{position:absolute;top:6px;bottom:6px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--wk-sun-deep);pointer-events:none}
+.trimScale{display:flex;justify-content:space-between;margin:6px 14px 0;font-size:var(--font-label);font-weight:700;color:var(--wk-muted);font-variant-numeric:tabular-nums}
+.trimReadout{margin:12px 0 0;text-align:center;font-size:var(--font-control-lg);font-weight:800;font-variant-numeric:tabular-nums}
+.trimTools{display:flex;justify-content:center;margin-top:12px}
+.trimTools>button{min-width:160px}
+.trimCancel{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 22px;border:0;border-radius:999px;background:var(--wk-soft);color:var(--wk-ink-soft);box-shadow:inset 0 0 0 1px var(--wk-line-strong);font-size:var(--font-control);font-weight:600}
+.trimCancel:active{transform:translateY(2px) scale(.985)}

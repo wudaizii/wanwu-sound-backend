@@ -1,0 +1,20 @@
+/* 录音: timer, record button and the take's waveform. */
+.recorder{display:flex;flex-direction:column;align-items:center;margin-top:18px}
+.recorder .recorderWave{margin:0 0 4px}
+.recTime{display:flex;align-items:center;gap:10px;margin:6px 0 24px;font-size:var(--font-timer);font-weight:800;font-variant-numeric:tabular-nums}
+.recTime small{font-size:var(--font-subtitle);font-weight:600;color:var(--wk-muted)}
+.recDot{width:14px;height:14px;border-radius:50%;background:var(--wk-alert);animation:pulse 1.2s ease-in-out infinite}
+.recButton{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:220px;min-height:60px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);font-size:var(--font-control-lg);font-weight:800;box-shadow:var(--wk-selected-lift);transition:transform .12s}
+.recButton:active{transform:scale(.96)}
+.recButton svg{width:22px;height:22px}
+.recButton[data-active]{background:linear-gradient(180deg,#ffe3e7,var(--wk-pink) 60%,#ffc1c9);color:#9c2f45;box-shadow:inset 0 1px 0 #ffffffb3,0 12px 26px #d9566c33}
+.recButton[data-active]::before{content:"";position:absolute;inset:-7px;border-radius:999px;border:3px solid var(--wk-alert);animation:ring 1.4s ease-out infinite}
+.recButton:disabled{background:var(--wk-soft);color:var(--wk-muted);box-shadow:none}
+@keyframes pulse{50%{opacity:.35}}
+@keyframes ring{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.1)}}
+@media(--phone){
+ .recTime{font-size:var(--font-timer)}
+}
+@media(--reduced-motion){
+ .recDot,.recButton[data-active]::before{animation:none}
+}

@@ -1,0 +1,50 @@
+{
+ "version": "sound-markers-v1",
+ "approved": "万物声谱_视觉过程稿/定稿页面参考/2026-10-22-四步流程/system/sound-markers.png",
+ "processing": "Trim transparent padding, resize, encode WebP per tier plus palette PNG fallback. Markers carry no number or name; those are overlaid from live data.",
+ "output": {
+  "publicDir": "/media/shared/markers",
+  "manifest": "apps/web/src/shared/markers/marker-assets.generated.json",
+  "release": "docs/assets/marker-release-manifest.json"
+ },
+ "budgets": {
+  "mobile": 61440,
+  "desktop": 143360,
+  "fallback": 163840
+ },
+ "groups": [
+  {
+   "id": "markers",
+   "scale": {
+    "mobile": 0.3,
+    "desktop": 0.5
+   },
+   "quality": {
+    "mobile": 72,
+    "desktop": 72
+   },
+   "assets": [
+    {
+     "id": "marker-sage",
+     "label": "浅绿弧纹标记",
+     "source": "assets-source/shared/sound-markers/marker-sage.png"
+    },
+    {
+     "id": "marker-ochre",
+     "label": "柔黄圆点标记",
+     "source": "assets-source/shared/sound-markers/marker-ochre.png"
+    },
+    {
+     "id": "marker-slate",
+     "label": "灰蓝斜纹标记",
+     "source": "assets-source/shared/sound-markers/marker-slate.png"
+    },
+    {
+     "id": "marker-lilac",
+     "label": "浅紫回环标记",
+     "source": "assets-source/shared/sound-markers/marker-lilac.png"
+    }
+   ]
+  }
+ ]
+}

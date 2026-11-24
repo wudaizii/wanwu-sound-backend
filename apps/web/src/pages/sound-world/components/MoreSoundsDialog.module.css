@@ -1,0 +1,21 @@
+/* 找更多声音: scope tabs and the list of sounds to add. */
+/* Dialog panel and note line: shared/ui/WorkSheet. */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:20px;padding:4px;border-radius:999px;background:var(--wk-soft)}
+.tabs button{min-height:44px;border:0;border-radius:999px;background:none;color:var(--wk-muted);font-size:var(--font-body);font-weight:700;transition:background .16s,color .16s}
+.tabs button[aria-selected=true]{background:#fff;color:var(--wk-ink);box-shadow:0 4px 12px #26301a14}
+.scopePanel{min-height:240px;margin-top:14px}
+.scopeNote{margin:0 6px 10px;font-size:var(--font-small);font-weight:500;line-height:1.6;color:var(--wk-muted)}
+.scopeList{display:flex;flex-direction:column;gap:4px;margin:0;padding:6px;list-style:none;border-radius:22px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.scopeList li{min-width:0;display:flex;align-items:center;gap:12px;min-height:64px;padding:0 10px;border-radius:16px;background:#fff}
+.scopeMarker{--marker-size:clamp(34px,7vw,46px);width:var(--marker-size)}
+.scopeName{flex:1;min-width:0;font-size:var(--font-control);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scopeListen{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:var(--wk-on-fill);box-shadow:0 3px 0 var(--wk-line-strong);transition:transform .12s}
+.scopeListen svg{width:18px;height:18px}
+.scopeListen[aria-pressed=true]{background:var(--wk-sun-fill);box-shadow:none}
+.scopeListen:active{transform:scale(.92)}
+.scopeAdd{display:inline-flex;align-items:center;gap:6px;min-height:44px;min-width:96px;justify-content:center;padding:0 16px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);font-size:var(--font-body);font-weight:800;box-shadow:var(--wk-selected-lift);transition:transform .12s}
+.scopeAdd svg{width:16px;height:16px}
+.scopeAdd:disabled{background:var(--wk-soft);color:var(--wk-muted);box-shadow:none;cursor:default}
+.scopeAdd:active:not(:disabled){transform:scale(.95)}
+.makeNew{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin-top:12px;border:0;border-radius:999px;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);font-size:var(--font-body);font-weight:800}
+.makeNew svg{width:20px;height:20px}

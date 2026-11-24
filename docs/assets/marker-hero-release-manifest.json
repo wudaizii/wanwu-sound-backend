@@ -1,0 +1,86 @@
+[
+  {
+    "id": "marker-sage",
+    "tier": "mobile",
+    "path": "apps/web/public/media/shared/markers-hero/mobile/marker-sage.82d8b22735.webp",
+    "bytes": 16112,
+    "sha256": "82d8b2273584bd6480e11ffc18dfffd28b61745fee396dcff2daa80514ca6557"
+  },
+  {
+    "id": "marker-sage",
+    "tier": "desktop",
+    "path": "apps/web/public/media/shared/markers-hero/desktop/marker-sage.4ce413fc10.webp",
+    "bytes": 28282,
+    "sha256": "4ce413fc1022f6cf6a877972b1caa9afd6825b023ef3466aca25d064999d57dc"
+  },
+  {
+    "id": "marker-sage",
+    "tier": "fallback",
+    "path": "apps/web/public/media/shared/markers-hero/fallback/marker-sage.1a38ced511.png",
+    "bytes": 37695,
+    "sha256": "1a38ced511bdb2e4171d93eb12a72dc5f815fc24bd979341ca5d3f6abbcde9b0"
+  },
+  {
+    "id": "marker-ochre",
+    "tier": "mobile",
+    "path": "apps/web/public/media/shared/markers-hero/mobile/marker-ochre.4a701e7e2b.webp",
+    "bytes": 19158,
+    "sha256": "4a701e7e2b91137ad83d4ea2bab8f90a943841f1653004aec5ac54224727374d"
+  },
+  {
+    "id": "marker-ochre",
+    "tier": "desktop",
+    "path": "apps/web/public/media/shared/markers-hero/desktop/marker-ochre.5ca27c8e20.webp",
+    "bytes": 33800,
+    "sha256": "5ca27c8e20f8926e29b9d7979855452dbaa1554e7a8df8142890d16d870c6044"
+  },
+  {
+    "id": "marker-ochre",
+    "tier": "fallback",
+    "path": "apps/web/public/media/shared/markers-hero/fallback/marker-ochre.b5e78d16c1.png",
+    "bytes": 40642,
+    "sha256": "b5e78d16c12ceca460b1c0382535cdeac0da5bf0a5e86f1e71d93aaab559681f"
+  },
+  {
+    "id": "marker-slate",
+    "tier": "mobile",
+    "path": "apps/web/public/media/shared/markers-hero/mobile/marker-slate.47179ee417.webp",
+    "bytes": 15830,
+    "sha256": "47179ee4177595d112b52ff8782ba0b83385977dd775572cf108755415d39f7a"
+  },
+  {
+    "id": "marker-slate",
+    "tier": "desktop",
+    "path": "apps/web/public/media/shared/markers-hero/desktop/marker-slate.6816c294e0.webp",
+    "bytes": 29552,
+    "sha256": "6816c294e0b3a60c3811141ea6aade1f5ed87b3c7a8dd4901074751f352ae0fe"
+  },
+  {
+    "id": "marker-slate",
+    "tier": "fallback",
+    "path": "apps/web/public/media/shared/markers-hero/fallback/marker-slate.9005b2b9f0.png",
+    "bytes": 39609,
+    "sha256": "9005b2b9f0fa73711ca079125778c91b001bb577f1b8f6603829167a62ed479a"
+  },
+  {
+    "id": "marker-lilac",
+    "tier": "mobile",
+    "path": "apps/web/public/media/shared/markers-hero/mobile/marker-lilac.ca2a8f80e8.webp",
+    "bytes": 17288,
+    "sha256": "ca2a8f80e87e9d9583af4f17dcfdbcd698e8e018e7d4c4428760e946140fae2d"
+  },
+  {
+    "id": "marker-lilac",
+    "tier": "desktop",
+    "path": "apps/web/public/media/shared/markers-hero/desktop/marker-lilac.6856715a32.webp",
+    "bytes": 31336,
+    "sha256": "6856715a329eed0abc4c418bc6d2ae9a1e317c5af14ed56f0cee5aea397fc57b"
+  },
+  {
+    "id": "marker-lilac",
+    "tier": "fallback",
+    "path": "apps/web/public/media/shared/markers-hero/fallback/marker-lilac.35c66ed025.png",
+    "bytes": 42821,
+    "sha256": "35c66ed0250a3a18c2515b1cd855c0f0b2a5b56dba6343314c963212389432d9"
+  }
+]

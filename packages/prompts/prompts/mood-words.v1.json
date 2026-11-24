@@ -1,0 +1,19 @@
+{
+ "version": "mood-words-prompt-v1",
+ "task": "mood-words",
+ "model": "language",
+ "status": "open",
+ "temperature": 0,
+ "lines": [
+  "【任务】孩子用自己的话写了这首小曲的心情：「{text}」。",
+  "请从下面几种心情里选最接近的一种，用它给背景音乐定色彩。孩子写的话会原样保留，你只负责选。",
+  "{moods}",
+  "如果都不像，或者写的不是心情，nearest 填 null。",
+  "【返回格式】",
+  "{example}"
+ ],
+ "words": {
+  "mood": {"happy": "开心", "calm": "平静", "lively": "活泼", "sad": "悲伤", "angry": "生气", "scared": "害怕", "curious": "好奇"}
+ },
+ "example": {"nearest": "calm"}
+}

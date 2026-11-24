@@ -1,0 +1,17 @@
+{
+ "version": "textbook-match-v1",
+ "weights": {"density": 0.35, "repetition": 0.25, "register": 0.15, "mood": 0.25},
+ "density": {"sparseBelow": 0.6, "busyAbove": 1.6},
+ "repetition": {"lowBelow": 0.3, "highAbove": 0.6},
+ "register": {"lowBelowMidi": 62, "highAboveMidi": 71},
+ "moods": {
+  "happy": {"valence": 0.8, "arousal": 0.5},
+  "lively": {"valence": 0.7, "arousal": 0.9},
+  "calm": {"valence": 0.5, "arousal": -0.7},
+  "sad": {"valence": -0.7, "arousal": -0.5},
+  "angry": {"valence": -0.7, "arousal": 0.8},
+  "scared": {"valence": -0.6, "arousal": 0.4},
+  "curious": {"valence": 0.3, "arousal": 0.3}
+ },
+ "top": 3
+}

@@ -1,0 +1,26 @@
+{
+ "version": "background-v1",
+ "modes": {
+  "major": {"scale": [0, 2, 4, 5, 7, 9, 11], "melody": [0, 2, 4, 7, 9]},
+  "minor": {"scale": [0, 2, 3, 5, 7, 8, 10], "melody": [0, 3, 5, 7, 10]},
+  "pentatonic": {"scale": [0, 2, 4, 5, 7, 9, 11], "melody": [0, 2, 4, 7, 9]},
+  "dorian": {"scale": [0, 2, 3, 5, 7, 9, 10], "melody": [0, 2, 3, 7, 9]}
+ },
+ "moods": {
+  "none": {"tempo": 76, "metre": 4, "mode": "major", "tonic": 60, "progression": [1, 6, 4, 5], "melodyEveryBeats": 1, "accent": 0.3},
+  "happy": {"tempo": 100, "metre": 4, "mode": "major", "tonic": 62, "progression": [1, 5, 6, 4], "melodyEveryBeats": 1, "accent": 0.4},
+  "calm": {"tempo": 68, "metre": 4, "mode": "major", "tonic": 65, "progression": [1, 4, 1, 5], "melodyEveryBeats": 2, "accent": 0.2},
+  "lively": {"tempo": 112, "metre": 2, "mode": "major", "tonic": 67, "progression": [1, 4, 5, 1], "melodyEveryBeats": 0.5, "accent": 0.5},
+  "sad": {"tempo": 60, "metre": 3, "mode": "minor", "tonic": 57, "progression": [1, 6, 4, 5], "melodyEveryBeats": 2, "accent": 0.2},
+  "angry": {"tempo": 96, "metre": 4, "mode": "minor", "tonic": 52, "progression": [1, 6, 4, 5], "melodyEveryBeats": 1, "accent": 0.8},
+  "scared": {"tempo": 72, "metre": 3, "mode": "minor", "tonic": 55, "progression": [1, 4, 1, 5], "melodyEveryBeats": 2, "accent": 0.3},
+  "curious": {"tempo": 88, "metre": 3, "mode": "dorian", "tonic": 62, "progression": [1, 4, 1, 4], "melodyEveryBeats": 1, "accent": 0.3}
+ },
+ "melody": {"liftSemitones": 12, "rangeSemitones": 12, "leapSteps": 2, "minGapBeats": 2, "marginSeconds": 0.15, "noteLengthPortion": 0.9},
+ "bass": {"dropSemitones": 24, "lengthPortion": 0.9},
+ "rhythm": {"two": [1, 0.6], "three": [1, 0.5, 0.5], "four": [1, 0.5, 0.75, 0.5], "accentBoost": 0.3},
+ "ending": {"minRingSeconds": 1.5},
+ "variations": {"stretchFactor": 2, "squeezeFactor": 0.5, "offsetBeats": 0.5, "registerSemitones": 12},
+ "meeting": {"toleranceSeconds": 0.12, "alignShare": 0.5, "answerTurns": 2},
+ "fade": {"inSeconds": 1.2, "outSeconds": 2}
+}

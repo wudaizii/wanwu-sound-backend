@@ -1,0 +1,57 @@
+[
+  {
+    "id": "bird",
+    "source": "user-provided; old demo authorization record: atalas/docs/asset-licenses.md",
+    "license": "User authorization recorded 2026-08-10",
+    "originalPath": "assets-source/audio/home/bird.mp3",
+    "originalSha256": "f72f194cc0317032386f75190412ec2ea23484a1b9cd120e97de66596c3f8e85",
+    "clipPath": "apps/web/public/media/sounds/home/bird.d15a3befe5.mp3",
+    "clipSha256": "d15a3befe5f1bb70477531212a13c3ab51359c4f9ed4736f53bee065dfcb7bd1",
+    "clipBytes": 19700,
+    "modifications": "Trim, mono 32kHz MP3 48kbps, fades 0.04s/0.12s, loudnorm I=-23 TP=-5 LRA=7; see SOURCES.md for trim positions"
+  },
+  {
+    "id": "leaves",
+    "source": "user-provided; old demo authorization record: atalas/docs/asset-licenses.md",
+    "license": "User authorization recorded 2026-08-10",
+    "originalPath": "assets-source/audio/home/leaves.mp3",
+    "originalSha256": "b75ba153778a0b9ce4c68b3feab43da37eb26a5c9433389fd8c5ce3d4af6a0ad",
+    "clipPath": "apps/web/public/media/sounds/home/leaves.d9c187f700.mp3",
+    "clipSha256": "d9c187f700e7a7fb1af5dff0193212ff8ae485162390b01e6715ec94a5c988d2",
+    "clipBytes": 17324,
+    "modifications": "Trim, mono 32kHz MP3 48kbps, fades 0.04s/0.12s, loudnorm I=-23 TP=-5 LRA=7; see SOURCES.md for trim positions"
+  },
+  {
+    "id": "frog",
+    "source": "https://commons.wikimedia.org/wiki/File:Single_Frog_Croak.oga",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "originalPath": "assets-source/audio/home/frog.oga",
+    "originalSha256": "cb7ad91b3943678c50e16f914cf5652e9da0bd782b5efb065d95d89549ff7b89",
+    "clipPath": "apps/web/public/media/sounds/home/frog.62c6cc6b3e.mp3",
+    "clipSha256": "62c6cc6b3e7bd0dcffe97473ac1eda5c506817b7854c5ec77c603df4703dce1c",
+    "clipBytes": 19484,
+    "modifications": "Trim, mono 32kHz MP3 48kbps, fades 0.04s/0.12s, loudnorm I=-23 TP=-5 LRA=7; see SOURCES.md for trim positions"
+  },
+  {
+    "id": "cicada",
+    "source": "https://commons.wikimedia.org/wiki/File:Chorus_Cicada_singing.ogg",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "originalPath": "assets-source/audio/home/cicada.ogg",
+    "originalSha256": "b58bb6545ec080fd75eb68e9f580a96b4a1217c6294e80233f56b49fc6d8b250",
+    "clipPath": "apps/web/public/media/sounds/home/cicada.39f147d9cd.mp3",
+    "clipSha256": "39f147d9cd664559c28d03ac674b124b180c41e048587b0b304999effdb49271",
+    "clipBytes": 19700,
+    "modifications": "Trim, mono 32kHz MP3 48kbps, fades 0.04s/0.12s, loudnorm I=-23 TP=-5 LRA=7; see SOURCES.md for trim positions"
+  },
+  {
+    "id": "drop",
+    "source": "https://commons.wikimedia.org/wiki/File:Water_drops_dripping.ogg",
+    "license": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "originalPath": "assets-source/audio/home/drop.ogg",
+    "originalSha256": "2fb744ec4ced2f478ddbec51b0115796747f4c00b232e34964a38323e05a6ccc",
+    "clipPath": "apps/web/public/media/sounds/home/drop.2100519b1a.mp3",
+    "clipSha256": "2100519b1a12f14d645c6eb0af7702e5e814e5a1b3f329b7cf1a643c8684e680",
+    "clipBytes": 17324,
+    "modifications": "Trim, mono 32kHz MP3 48kbps, fades 0.04s/0.12s, loudnorm I=-23 TP=-5 LRA=7; see SOURCES.md for trim positions"
+  }
+]

@@ -1,0 +1,115 @@
+/* 声音的样子: the five rows of options, progress pips and the back / 做好了 actions. */
+.editor{animation:global(wk-rise) .5s var(--wk-ease) both}
+.editor{animation-delay:.12s}
+/* Guided scrolling lands below the sticky flow header. */
+.editor,.row{scroll-margin-top:84px}
+.editor{position:relative;z-index:3;flex:1;min-height:0;display:flex;flex-direction:column;padding:18px clamp(14px,2vw,26px) 4px;border-radius:34px;background:#fff;box-shadow:0 -6px 14px -6px #26301a1f,var(--wk-panel-shadow)}
+.editorHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:0 6px 8px 62px}
+.editorHead h2{width:max-content;margin:0;font-size:var(--font-card-title);font-weight:800;letter-spacing:.02em;line-height:1.2}
+.editorHead p{margin:4px 0 0;font-size:var(--font-small);font-weight:500;color:var(--wk-muted)}
+.progress{display:flex;align-items:center;flex-shrink:0;gap:12px;padding:8px 16px 8px 13px;border-radius:999px;background:var(--wk-green-soft);box-shadow:inset 0 1px 3px #a5cf3340;white-space:nowrap}
+.progress b{font-size:var(--font-body);font-weight:600;color:var(--wk-green-text);font-variant-numeric:tabular-nums}
+.pips{display:flex;gap:5px}
+.pips i{width:15px;height:15px;border-radius:50%;background:#dfe9bb;transition:background .3s,transform .4s var(--wk-ease)}
+.pips i[data-on]{background:var(--wk-green-deep);box-shadow:inset 0 2px 0 #ffffff80;transform:scale(1.15)}
+/* Rows share the panel's height evenly, so it fills its column instead of leaving a gap. */
+.rows{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:4px}
+.row{--tone:var(--wk-green-text);position:relative;display:grid;grid-template-columns:minmax(170px,22%) minmax(0,1fr);align-items:center;gap:10px;padding:6px 8px 6px 10px;border-radius:26px;transition:background .3s,box-shadow .3s,transform .35s var(--wk-ease)}
+.row[data-dimension=duration]{--tone:var(--wk-sun-deep)}
+.row[data-dimension=contour]{--tone:#5d7ba0}
+.row[data-dimension=intensity]{--tone:var(--wk-alert)}
+.row[data-dimension=pattern]{--tone:#8b6aa3}
+.row::before{content:"";position:absolute;left:-3px;top:18%;bottom:18%;width:6px;border-radius:6px;background:var(--wk-green-deep);opacity:0;transform:scaleY(.3);transition:opacity .25s,transform .35s var(--wk-ease)}
+.row[data-active]{background:linear-gradient(90deg,#f6fbdd,#fff 70%);box-shadow:0 12px 26px #26301a14,0 1px 0 var(--wk-line-strong);transform:translateX(5px)}
+.row[data-active]::before{opacity:1;transform:none}
+.rowLabel{display:flex;align-items:center;gap:12px;min-width:0}
+.rowIcon{flex-shrink:0;width:40px;height:40px;filter:drop-shadow(0 2px 2px #26301a22);transition:transform .35s var(--wk-ease)}
+.row[data-active] .rowIcon{transform:scale(1.14) rotate(-5deg)}
+.rowLabel b{display:block;font-size:var(--font-section);font-weight:700;line-height:1.2;white-space:nowrap}
+.row[data-done] .rowLabel b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:8px;border-radius:50%;background:var(--wk-green-deep);vertical-align:middle}
+.rowLabel small{display:block;margin-top:3px;font-size:var(--font-label);line-height:1.35;color:var(--wk-muted);opacity:0;transform:translateY(-3px);transition:opacity .25s,transform .3s var(--wk-ease)}
+.row[data-active] .rowLabel small,.row:hover .rowLabel small{opacity:1;transform:none}
+/* Options are little pads pressed into a tray. */
+.tray{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:9px;padding:6px;border-radius:24px;background:var(--wk-field);box-shadow:var(--wk-inset)}
+.choice{min-width:0;position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:clamp(48px,6.2vh,58px);padding:0 8px;border:0;border-radius:19px;background:#fff;box-shadow:var(--wk-key);font-size:var(--font-body);font-weight:600;color:var(--wk-ink-soft);white-space:nowrap;transition:transform .15s var(--wk-ease),box-shadow .15s,background .25s}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--wk-key-lg)}
+.choice:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wk-line-strong)}
+.choice[aria-checked=true]{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift);color:var(--wk-on-fill);font-weight:700;transform:translateY(-1px);animation:pop .45s var(--wk-ease)}
+.tick{flex-shrink:0;width:17px;height:17px}
+.choice[aria-checked=true]{--tone:var(--wk-on-fill)}
+.actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0 16px}
+/* Back: ui.pill + ui.back. 做好了: ui.pill + ui.forward, with its own states — pale green until something is chosen,
+   then the lime action that breathes. */
+.finish{min-width:250px;padding:0 28px;font-size:var(--font-subtitle);background:var(--wk-green-mid);color:var(--wk-green-text)}
+/* 再做一个 sits beside 做好了 on the right, quieter (white with a lime ring). */
+.another{margin-left:auto;padding:0 22px;font-size:var(--font-control);white-space:nowrap}
+.finish[data-ready]{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);animation:ready 1.8s ease-in-out infinite}
+.finish[aria-disabled=true]{background:var(--wk-soft);color:var(--wk-muted);box-shadow:none;cursor:default;animation:none}
+@keyframes pop{0%{transform:scale(.88)}55%{transform:scale(1.08)}100%{transform:translateY(-1px)}}
+@keyframes ready{0%,100%{box-shadow:var(--wk-selected-lift)}50%{box-shadow:var(--wk-selected-lift),0 0 0 6px #c0e64f40}}
+@media(--short){
+ .editor{padding-top:14px}
+ .editorHead{padding-bottom:4px}
+ .editorHead h2{font-size:var(--font-card-title)}
+ .row{padding:4px 8px 4px 10px}
+ .rowIcon{width:36px;height:36px}
+ .rowLabel b{font-size:var(--font-control-lg)}
+ .choice{min-height:46px;font-size:var(--font-body)}
+ .actions{padding:8px 0 12px}
+ .backButton,.finish,.another{min-height:48px;font-size:var(--font-control)}
+}
+@media(--shorter){
+ .rowLabel small{display:none}
+ .choice{min-height:44px}
+}
+@media(--narrow){
+ .row{grid-template-columns:minmax(132px,19%) minmax(0,1fr)}
+ .rowLabel b{font-size:var(--font-control-lg)}
+ .rowLabel small{font-size:var(--font-caption)}
+ .rowIcon{width:34px;height:34px}
+ .choice{flex-direction:column;gap:1px;padding:4px 2px;font-size:var(--font-body)}
+ .tick{display:none}
+ .finish{min-width:0}
+}
+/* Tablets in landscape (1024 × 768): stacked options make the five rows taller than the panel, so on short screens
+   keep the diagram beside the word, a little smaller, the option keys a touch lower, and drop the rows' small hint
+   (as on short laptops). */
+@media(--tablet-short){
+ .rowLabel small{display:none}
+ .tray{padding:4px}
+ .choice{flex-direction:row;gap:4px;min-height:42px;padding:0 4px}
+}
+@media(--one-column){
+ .editor{order:5}
+ .editorHead{padding-left:6px}
+ .row[data-active]{transform:none}
+}
+@media(--phone){
+ .editor{padding:18px 12px 0;border-radius:24px}
+ .editorHead{flex-direction:column;align-items:stretch;gap:12px;padding:0 4px 8px}
+ .editorHead h2{font-size:var(--font-section)}
+ .progress{justify-content:space-between}
+ .row{grid-template-columns:1fr;gap:6px;padding:8px 6px}
+ .row::before{display:none}
+ .rowLabel small{display:none}
+ .rowLabel b{font-size:var(--font-control)}
+ .rowIcon{width:32px;height:32px}
+ .tray{gap:6px;padding:5px}
+ .choice{min-height:64px;padding:6px 2px;border-radius:16px;font-size:var(--font-small)}
+ .actions{position:sticky;bottom:0;z-index:2;margin:0 -12px;padding:12px 12px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#ffffff00,#fff 28%);border-radius:0 0 24px 24px}
+ .backButton{display:none}
+ .finish{flex:1;min-height:54px;font-size:var(--font-control)}
+ .another{min-height:54px;padding:0 18px}
+}
+@media(--tiny){
+ .choice{font-size:var(--font-label)}
+ .tray{gap:4px;padding:4px}
+ /* Both no longer fit side by side: 做好了 on top, 再做一个 under it, each the full width. */
+ .actions{flex-direction:column-reverse;align-items:stretch;gap:8px}
+ .another{margin-left:0;min-height:46px}
+}
+@media(--reduced-motion){
+ .editor,.choice[aria-checked=true],.finish[data-ready]{animation:none}
+ .choice,.finish,.backButton,.row,.row::before,.rowIcon,.rowLabel small,.pips i{transition:none}
+}
+[data-entry-motion=still] .editor{animation:none}

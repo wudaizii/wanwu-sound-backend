@@ -1,0 +1,50 @@
+{
+ "version": "sound-markers-hero-v1",
+ "approved": "万物声谱_视觉过程稿/定稿页面参考/2026-10-22-四步流程/system/sound-markers.png",
+ "processing": "Same four marker originals, larger tiers for the animated sound character on 声音诞生 (eyes and arms are drawn live in SVG). Trim transparent padding, resize, WebP per tier plus palette PNG fallback. No number or name baked in.",
+ "output": {
+  "publicDir": "/media/shared/markers-hero",
+  "manifest": "apps/web/src/shared/markers/marker-hero-assets.generated.json",
+  "release": "docs/assets/marker-hero-release-manifest.json"
+ },
+ "budgets": {
+  "mobile": 81920,
+  "desktop": 143360,
+  "fallback": 184320
+ },
+ "groups": [
+  {
+   "id": "markers-hero",
+   "scale": {
+    "mobile": 0.7,
+    "desktop": 1
+   },
+   "quality": {
+    "mobile": 74,
+    "desktop": 76
+   },
+   "assets": [
+    {
+     "id": "marker-sage",
+     "label": "浅绿弧纹标记",
+     "source": "assets-source/shared/sound-markers/marker-sage.png"
+    },
+    {
+     "id": "marker-ochre",
+     "label": "柔黄圆点标记",
+     "source": "assets-source/shared/sound-markers/marker-ochre.png"
+    },
+    {
+     "id": "marker-slate",
+     "label": "灰蓝斜纹标记",
+     "source": "assets-source/shared/sound-markers/marker-slate.png"
+    },
+    {
+     "id": "marker-lilac",
+     "label": "浅紫回环标记",
+     "source": "assets-source/shared/sound-markers/marker-lilac.png"
+    }
+   ]
+  }
+ ]
+}

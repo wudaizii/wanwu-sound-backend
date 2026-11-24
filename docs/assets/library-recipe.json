@@ -1,0 +1,32 @@
+{
+  "version": "library-v1",
+  "note": "声音库示例声音：整段原件只转格式（单声道 MP3），不截取、不淡入淡出、不改响度；节选由孩子在声音诞生 / 万物声场里自己做。新增一段声音：把原件放进 assets-source/audio/，在 sounds 里加一条，运行 npm run assets:library。preset 是项目给示例写的五项（页面标为示例），可以不写。",
+  "encode": {"channels": 1, "sampleRate": 32000, "bitrate": "48k"},
+  "maxBytesPerSound": 524288,
+  "sounds": [
+    {"id": "bird", "source": "assets-source/audio/home/bird.mp3", "label": "鸟鸣", "by": "旧版项目授权录音",
+     "license": "用户授权公开使用（2026-08-10）", "sourceUrl": null, "licenseUrl": null,
+     "preset": {"pitch": "high", "duration": "short", "contour": "rising", "intensity": "medium", "pattern": "repeat"}},
+    {"id": "frog", "source": "assets-source/audio/home/frog.oga", "label": "蛙鸣", "by": "MichaeltheFox8621",
+     "license": "CC BY-SA 4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Single_Frog_Croak.oga", "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+     "preset": {"pitch": "low", "duration": "medium", "contour": "flat", "intensity": "medium", "pattern": "bursts"}},
+    {"id": "cicada", "source": "assets-source/audio/home/cicada.ogg", "label": "蝉鸣", "by": "Siobhan Leachman",
+     "license": "CC0 1.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chorus_Cicada_singing.ogg", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+     "preset": {"pitch": "high", "duration": "long", "contour": "wavy", "intensity": "soft", "pattern": "fade-in"}},
+    {"id": "drop", "source": "assets-source/audio/home/drop.ogg", "label": "滴水声", "by": "ZooFari",
+     "license": "CC BY-SA 3.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Water_drops_dripping.ogg", "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+     "preset": {"pitch": "mid", "duration": "short", "contour": "falling", "intensity": "soft", "pattern": "once"}},
+    {"id": "leaves", "source": "assets-source/audio/home/leaves.mp3", "label": "风吹树叶", "by": "旧版项目授权录音",
+     "license": "用户授权公开使用（2026-08-10）", "sourceUrl": null, "licenseUrl": null,
+     "preset": {"pitch": "mid", "duration": "long", "contour": "wavy", "intensity": "soft", "pattern": "fade-in"}},
+    {"id": "cow", "source": "assets-source/audio/home/cow.mp3", "label": "牛叫", "by": "旧版项目授权录音",
+     "license": "用户授权公开使用（2026-08-10）", "sourceUrl": null, "licenseUrl": null,
+     "preset": {"pitch": "low", "duration": "medium", "contour": "falling", "intensity": "loud", "pattern": "once"}},
+    {"id": "apple", "source": "assets-source/audio/home/falling apple.mp3", "label": "苹果落地", "by": "旧版项目授权录音",
+     "license": "用户授权公开使用（2026-08-10）", "sourceUrl": null, "licenseUrl": null,
+     "preset": {"pitch": "mid", "duration": "short", "contour": "falling", "intensity": "medium", "pattern": "once"}},
+    {"id": "bicycle", "source": "assets-source/audio/home/bicycle.mp3", "label": "自行车", "by": "旧版项目授权录音",
+     "license": "用户授权公开使用（2026-08-10）", "sourceUrl": null, "licenseUrl": null,
+     "preset": {"pitch": "high", "duration": "medium", "contour": "flat", "intensity": "medium", "pattern": "repeat"}}
+  ]
+}

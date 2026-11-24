@@ -1,0 +1,999 @@
+{
+  "version": "library-v1",
+  "sounds": [
+    {
+      "id": "bird",
+      "label": "鸟鸣",
+      "by": "旧版项目授权录音",
+      "url": "/media/sounds/library/bird.d36e03aaf2.mp3",
+      "bytes": 357048,
+      "durationMs": 59508,
+      "preset": {
+        "pitch": "high",
+        "duration": "short",
+        "contour": "rising",
+        "intensity": "medium",
+        "pattern": "repeat"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 59508,
+        "silent": false,
+        "main": {
+          "startMs": 590,
+          "endMs": 59460
+        },
+        "units": [
+          {
+            "startMs": 6060,
+            "endMs": 6250,
+            "peakDb": -27.1
+          },
+          {
+            "startMs": 6250,
+            "endMs": 6470,
+            "peakDb": -28.1
+          },
+          {
+            "startMs": 6530,
+            "endMs": 6710,
+            "peakDb": -24.6
+          },
+          {
+            "startMs": 6790,
+            "endMs": 6850,
+            "peakDb": -30.2
+          },
+          {
+            "startMs": 6850,
+            "endMs": 7000,
+            "peakDb": -27.9
+          },
+          {
+            "startMs": 7000,
+            "endMs": 7080,
+            "peakDb": -28.5
+          },
+          {
+            "startMs": 7170,
+            "endMs": 7300,
+            "peakDb": -28.2
+          },
+          {
+            "startMs": 7300,
+            "endMs": 7380,
+            "peakDb": -28
+          },
+          {
+            "startMs": 7380,
+            "endMs": 7460,
+            "peakDb": -30.4
+          },
+          {
+            "startMs": 11230,
+            "endMs": 11430,
+            "peakDb": -24.4
+          },
+          {
+            "startMs": 11890,
+            "endMs": 12040,
+            "peakDb": -26
+          },
+          {
+            "startMs": 12040,
+            "endMs": 12140,
+            "peakDb": -25.4
+          },
+          {
+            "startMs": 12140,
+            "endMs": 12290,
+            "peakDb": -27.3
+          },
+          {
+            "startMs": 12290,
+            "endMs": 12390,
+            "peakDb": -24.9
+          },
+          {
+            "startMs": 12390,
+            "endMs": 12530,
+            "peakDb": -28.6
+          },
+          {
+            "startMs": 12530,
+            "endMs": 12630,
+            "peakDb": -26.1
+          },
+          {
+            "startMs": 12630,
+            "endMs": 12780,
+            "peakDb": -29.4
+          },
+          {
+            "startMs": 12780,
+            "endMs": 12890,
+            "peakDb": -24.7
+          },
+          {
+            "startMs": 12890,
+            "endMs": 13030,
+            "peakDb": -29.6
+          },
+          {
+            "startMs": 13030,
+            "endMs": 14130,
+            "peakDb": -25.9
+          },
+          {
+            "startMs": 16230,
+            "endMs": 16390,
+            "peakDb": -29.3
+          },
+          {
+            "startMs": 17450,
+            "endMs": 17870,
+            "peakDb": -30.4
+          },
+          {
+            "startMs": 18250,
+            "endMs": 18440,
+            "peakDb": -30.4
+          },
+          {
+            "startMs": 19020,
+            "endMs": 19160,
+            "peakDb": -30.1
+          },
+          {
+            "startMs": 19160,
+            "endMs": 19500,
+            "peakDb": -28.9
+          },
+          {
+            "startMs": 19700,
+            "endMs": 19870,
+            "peakDb": -30.5
+          },
+          {
+            "startMs": 26820,
+            "endMs": 27260,
+            "peakDb": -28.9
+          },
+          {
+            "startMs": 27260,
+            "endMs": 27510,
+            "peakDb": -30
+          },
+          {
+            "startMs": 27510,
+            "endMs": 27770,
+            "peakDb": -28.3
+          },
+          {
+            "startMs": 27770,
+            "endMs": 28200,
+            "peakDb": -27
+          },
+          {
+            "startMs": 28200,
+            "endMs": 28550,
+            "peakDb": -25.1
+          },
+          {
+            "startMs": 28550,
+            "endMs": 28800,
+            "peakDb": -26.7
+          },
+          {
+            "startMs": 28800,
+            "endMs": 29080,
+            "peakDb": -27.2
+          },
+          {
+            "startMs": 29080,
+            "endMs": 29250,
+            "peakDb": -27.5
+          },
+          {
+            "startMs": 29250,
+            "endMs": 29330,
+            "peakDb": -30
+          },
+          {
+            "startMs": 29330,
+            "endMs": 29410,
+            "peakDb": -30
+          },
+          {
+            "startMs": 33140,
+            "endMs": 33810,
+            "peakDb": -23.2
+          },
+          {
+            "startMs": 33810,
+            "endMs": 34040,
+            "peakDb": -23.8
+          },
+          {
+            "startMs": 34040,
+            "endMs": 34210,
+            "peakDb": -24.7
+          },
+          {
+            "startMs": 34210,
+            "endMs": 34400,
+            "peakDb": -25.6
+          },
+          {
+            "startMs": 34400,
+            "endMs": 34750,
+            "peakDb": -25.9
+          },
+          {
+            "startMs": 39110,
+            "endMs": 39620,
+            "peakDb": -26.4
+          },
+          {
+            "startMs": 39990,
+            "endMs": 40140,
+            "peakDb": -25.8
+          },
+          {
+            "startMs": 40140,
+            "endMs": 40320,
+            "peakDb": -30.2
+          },
+          {
+            "startMs": 40320,
+            "endMs": 40480,
+            "peakDb": -28.7
+          },
+          {
+            "startMs": 40480,
+            "endMs": 40640,
+            "peakDb": -27.4
+          },
+          {
+            "startMs": 40640,
+            "endMs": 40850,
+            "peakDb": -27.6
+          },
+          {
+            "startMs": 40850,
+            "endMs": 40970,
+            "peakDb": -30.2
+          },
+          {
+            "startMs": 40970,
+            "endMs": 41100,
+            "peakDb": -29.4
+          },
+          {
+            "startMs": 41370,
+            "endMs": 41510,
+            "peakDb": -30.1
+          },
+          {
+            "startMs": 41510,
+            "endMs": 42010,
+            "peakDb": -29.7
+          },
+          {
+            "startMs": 44890,
+            "endMs": 45340,
+            "peakDb": -27.6
+          },
+          {
+            "startMs": 45340,
+            "endMs": 45520,
+            "peakDb": -27.6
+          },
+          {
+            "startMs": 45520,
+            "endMs": 45670,
+            "peakDb": -27.7
+          },
+          {
+            "startMs": 45670,
+            "endMs": 46260,
+            "peakDb": -29.1
+          },
+          {
+            "startMs": 46260,
+            "endMs": 46420,
+            "peakDb": -26.8
+          },
+          {
+            "startMs": 46420,
+            "endMs": 46550,
+            "peakDb": -28.7
+          },
+          {
+            "startMs": 46550,
+            "endMs": 47160,
+            "peakDb": -26
+          },
+          {
+            "startMs": 52370,
+            "endMs": 52870,
+            "peakDb": -26.2
+          },
+          {
+            "startMs": 52870,
+            "endMs": 52980,
+            "peakDb": -30.2
+          },
+          {
+            "startMs": 52980,
+            "endMs": 53180,
+            "peakDb": -21.7
+          },
+          {
+            "startMs": 53180,
+            "endMs": 53390,
+            "peakDb": -27
+          },
+          {
+            "startMs": 53770,
+            "endMs": 54370,
+            "peakDb": -30.1
+          },
+          {
+            "startMs": 58830,
+            "endMs": 59310,
+            "peakDb": -28.8
+          }
+        ],
+        "kind": "texture",
+        "unitMs": 200,
+        "lengthBand": "short",
+        "loudnessDb": -36.7,
+        "peakDb": -15.3,
+        "brightnessHz": 2897,
+        "band": "high"
+      }
+    },
+    {
+      "id": "frog",
+      "label": "蛙鸣",
+      "by": "MichaeltheFox8621",
+      "url": "/media/sounds/library/frog.3664d8b801.mp3",
+      "bytes": 26568,
+      "durationMs": 4428,
+      "preset": {
+        "pitch": "low",
+        "duration": "medium",
+        "contour": "flat",
+        "intensity": "medium",
+        "pattern": "bursts"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 4428,
+        "silent": false,
+        "main": {
+          "startMs": 110,
+          "endMs": 4180
+        },
+        "units": [
+          {
+            "startMs": 110,
+            "endMs": 390,
+            "peakDb": -6
+          },
+          {
+            "startMs": 1380,
+            "endMs": 1650,
+            "peakDb": -6.8
+          },
+          {
+            "startMs": 2600,
+            "endMs": 2870,
+            "peakDb": -7.9
+          },
+          {
+            "startMs": 3880,
+            "endMs": 4180,
+            "peakDb": -6.7
+          }
+        ],
+        "kind": "series",
+        "unitMs": 280,
+        "lengthBand": "short",
+        "loudnessDb": -11.7,
+        "peakDb": 2,
+        "brightnessHz": 2394,
+        "band": "mid"
+      }
+    },
+    {
+      "id": "cicada",
+      "label": "蝉鸣",
+      "by": "Siobhan Leachman",
+      "url": "/media/sounds/library/cicada.4098876741.mp3",
+      "bytes": 141480,
+      "durationMs": 23580,
+      "preset": {
+        "pitch": "high",
+        "duration": "long",
+        "contour": "wavy",
+        "intensity": "soft",
+        "pattern": "fade-in"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 23580,
+        "silent": false,
+        "main": {
+          "startMs": 450,
+          "endMs": 23580
+        },
+        "units": [
+          {
+            "startMs": 450,
+            "endMs": 1050,
+            "peakDb": -20.8
+          },
+          {
+            "startMs": 1050,
+            "endMs": 1740,
+            "peakDb": -12.6
+          },
+          {
+            "startMs": 1740,
+            "endMs": 2450,
+            "peakDb": -12.5
+          },
+          {
+            "startMs": 2450,
+            "endMs": 3200,
+            "peakDb": -11
+          },
+          {
+            "startMs": 3200,
+            "endMs": 3850,
+            "peakDb": -11.3
+          },
+          {
+            "startMs": 3850,
+            "endMs": 4410,
+            "peakDb": -10.5
+          },
+          {
+            "startMs": 4410,
+            "endMs": 4480,
+            "peakDb": -13.6
+          },
+          {
+            "startMs": 4480,
+            "endMs": 5130,
+            "peakDb": -10.4
+          },
+          {
+            "startMs": 5130,
+            "endMs": 5670,
+            "peakDb": -10
+          },
+          {
+            "startMs": 5670,
+            "endMs": 6280,
+            "peakDb": -10.6
+          },
+          {
+            "startMs": 6280,
+            "endMs": 6360,
+            "peakDb": -13.5
+          },
+          {
+            "startMs": 6360,
+            "endMs": 6940,
+            "peakDb": -10.4
+          },
+          {
+            "startMs": 6940,
+            "endMs": 7000,
+            "peakDb": -14.5
+          },
+          {
+            "startMs": 7000,
+            "endMs": 7080,
+            "peakDb": -16.1
+          },
+          {
+            "startMs": 7080,
+            "endMs": 7750,
+            "peakDb": -10.7
+          },
+          {
+            "startMs": 7750,
+            "endMs": 8310,
+            "peakDb": -10.9
+          },
+          {
+            "startMs": 8310,
+            "endMs": 8940,
+            "peakDb": -9.5
+          },
+          {
+            "startMs": 8940,
+            "endMs": 9640,
+            "peakDb": -10
+          },
+          {
+            "startMs": 9640,
+            "endMs": 10160,
+            "peakDb": -10
+          },
+          {
+            "startMs": 10160,
+            "endMs": 10770,
+            "peakDb": -10.6
+          },
+          {
+            "startMs": 10770,
+            "endMs": 10840,
+            "peakDb": -14
+          },
+          {
+            "startMs": 10840,
+            "endMs": 11390,
+            "peakDb": -9.9
+          },
+          {
+            "startMs": 11390,
+            "endMs": 11460,
+            "peakDb": -13.2
+          },
+          {
+            "startMs": 11460,
+            "endMs": 12060,
+            "peakDb": -9.9
+          },
+          {
+            "startMs": 12060,
+            "endMs": 12140,
+            "peakDb": -12.2
+          },
+          {
+            "startMs": 12140,
+            "endMs": 12730,
+            "peakDb": -10.1
+          },
+          {
+            "startMs": 12730,
+            "endMs": 12920,
+            "peakDb": -12.4
+          },
+          {
+            "startMs": 12920,
+            "endMs": 13420,
+            "peakDb": -10
+          },
+          {
+            "startMs": 13420,
+            "endMs": 13560,
+            "peakDb": -12.5
+          },
+          {
+            "startMs": 13560,
+            "endMs": 14080,
+            "peakDb": -9.2
+          },
+          {
+            "startMs": 14080,
+            "endMs": 14260,
+            "peakDb": -12.2
+          },
+          {
+            "startMs": 14260,
+            "endMs": 14740,
+            "peakDb": -10
+          },
+          {
+            "startMs": 14740,
+            "endMs": 14880,
+            "peakDb": -12.7
+          },
+          {
+            "startMs": 14880,
+            "endMs": 15400,
+            "peakDb": -9.8
+          },
+          {
+            "startMs": 15400,
+            "endMs": 15530,
+            "peakDb": -13.2
+          },
+          {
+            "startMs": 15530,
+            "endMs": 16070,
+            "peakDb": -10.2
+          },
+          {
+            "startMs": 16070,
+            "endMs": 16250,
+            "peakDb": -12.7
+          },
+          {
+            "startMs": 16250,
+            "endMs": 16750,
+            "peakDb": -10.5
+          },
+          {
+            "startMs": 16750,
+            "endMs": 16890,
+            "peakDb": -12.5
+          },
+          {
+            "startMs": 16890,
+            "endMs": 17420,
+            "peakDb": -10.2
+          },
+          {
+            "startMs": 17420,
+            "endMs": 17490,
+            "peakDb": -13.9
+          },
+          {
+            "startMs": 17490,
+            "endMs": 17580,
+            "peakDb": -18.1
+          },
+          {
+            "startMs": 17580,
+            "endMs": 18400,
+            "peakDb": -10.8
+          },
+          {
+            "startMs": 18400,
+            "endMs": 19070,
+            "peakDb": -10.9
+          },
+          {
+            "startMs": 19070,
+            "endMs": 19140,
+            "peakDb": -14.7
+          },
+          {
+            "startMs": 19140,
+            "endMs": 19820,
+            "peakDb": -10.5
+          },
+          {
+            "startMs": 19820,
+            "endMs": 20390,
+            "peakDb": -9.8
+          },
+          {
+            "startMs": 20390,
+            "endMs": 21070,
+            "peakDb": -9.8
+          },
+          {
+            "startMs": 21070,
+            "endMs": 21720,
+            "peakDb": -10.9
+          },
+          {
+            "startMs": 21720,
+            "endMs": 22380,
+            "peakDb": -10.6
+          },
+          {
+            "startMs": 22380,
+            "endMs": 22450,
+            "peakDb": -14.2
+          },
+          {
+            "startMs": 22450,
+            "endMs": 23110,
+            "peakDb": -10.1
+          },
+          {
+            "startMs": 23110,
+            "endMs": 23190,
+            "peakDb": -12.9
+          },
+          {
+            "startMs": 23190,
+            "endMs": 23580,
+            "peakDb": -12.7
+          }
+        ],
+        "kind": "texture",
+        "unitMs": 540,
+        "lengthBand": "medium",
+        "loudnessDb": -14.3,
+        "peakDb": 2.1,
+        "brightnessHz": 8298,
+        "band": "high"
+      }
+    },
+    {
+      "id": "drop",
+      "label": "滴水声",
+      "by": "ZooFari",
+      "url": "/media/sounds/library/drop.8a422105fa.mp3",
+      "bytes": 101304,
+      "durationMs": 16884,
+      "preset": {
+        "pitch": "mid",
+        "duration": "short",
+        "contour": "falling",
+        "intensity": "soft",
+        "pattern": "once"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 16884,
+        "silent": false,
+        "main": {
+          "startMs": 160,
+          "endMs": 16460
+        },
+        "units": [
+          {
+            "startMs": 160,
+            "endMs": 280,
+            "peakDb": -39.8
+          },
+          {
+            "startMs": 1950,
+            "endMs": 2070,
+            "peakDb": -35.1
+          },
+          {
+            "startMs": 3740,
+            "endMs": 3940,
+            "peakDb": -37
+          },
+          {
+            "startMs": 5530,
+            "endMs": 5630,
+            "peakDb": -36.3
+          },
+          {
+            "startMs": 7330,
+            "endMs": 7520,
+            "peakDb": -34.7
+          },
+          {
+            "startMs": 9130,
+            "endMs": 9280,
+            "peakDb": -36.5
+          },
+          {
+            "startMs": 10920,
+            "endMs": 11020,
+            "peakDb": -36.4
+          },
+          {
+            "startMs": 12730,
+            "endMs": 12830,
+            "peakDb": -34.2
+          },
+          {
+            "startMs": 14530,
+            "endMs": 14610,
+            "peakDb": -41.2
+          },
+          {
+            "startMs": 16340,
+            "endMs": 16460,
+            "peakDb": -39.8
+          }
+        ],
+        "kind": "series",
+        "unitMs": 120,
+        "lengthBand": "short",
+        "loudnessDb": -41.9,
+        "peakDb": -17.2,
+        "brightnessHz": 1579,
+        "band": "mid"
+      }
+    },
+    {
+      "id": "leaves",
+      "label": "风吹树叶",
+      "by": "旧版项目授权录音",
+      "url": "/media/sounds/library/leaves.bc0b25e9f8.mp3",
+      "bytes": 114264,
+      "durationMs": 19044,
+      "preset": {
+        "pitch": "mid",
+        "duration": "long",
+        "contour": "wavy",
+        "intensity": "soft",
+        "pattern": "fade-in"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 19044,
+        "silent": false,
+        "main": {
+          "startMs": 560,
+          "endMs": 17800
+        },
+        "units": [
+          {
+            "startMs": 560,
+            "endMs": 5100,
+            "peakDb": -31.1
+          },
+          {
+            "startMs": 5100,
+            "endMs": 7600,
+            "peakDb": -27.9
+          },
+          {
+            "startMs": 7600,
+            "endMs": 13900,
+            "peakDb": -30.3
+          },
+          {
+            "startMs": 14240,
+            "endMs": 17800,
+            "peakDb": -28.7
+          }
+        ],
+        "kind": "texture",
+        "unitMs": 4540,
+        "lengthBand": "long",
+        "loudnessDb": -34.6,
+        "peakDb": -17.1,
+        "brightnessHz": 5607,
+        "band": "high"
+      }
+    },
+    {
+      "id": "cow",
+      "label": "牛叫",
+      "by": "旧版项目授权录音",
+      "url": "/media/sounds/library/cow.3caf1db5ca.mp3",
+      "bytes": 7776,
+      "durationMs": 1296,
+      "preset": {
+        "pitch": "low",
+        "duration": "medium",
+        "contour": "falling",
+        "intensity": "loud",
+        "pattern": "once"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 1296,
+        "silent": false,
+        "main": {
+          "startMs": 70,
+          "endMs": 1200
+        },
+        "units": [
+          {
+            "startMs": 70,
+            "endMs": 1200,
+            "peakDb": -16.2
+          }
+        ],
+        "kind": "one",
+        "unitMs": 1130,
+        "lengthBand": "medium",
+        "loudnessDb": -21.8,
+        "peakDb": -7.8,
+        "brightnessHz": 1037,
+        "band": "mid"
+      }
+    },
+    {
+      "id": "apple",
+      "label": "苹果落地",
+      "by": "旧版项目授权录音",
+      "url": "/media/sounds/library/apple.521c3e4f7c.mp3",
+      "bytes": 22248,
+      "durationMs": 3708,
+      "preset": {
+        "pitch": "mid",
+        "duration": "short",
+        "contour": "falling",
+        "intensity": "medium",
+        "pattern": "once"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 3708,
+        "silent": false,
+        "main": {
+          "startMs": 300,
+          "endMs": 2740
+        },
+        "units": [
+          {
+            "startMs": 300,
+            "endMs": 490,
+            "peakDb": -9.8
+          },
+          {
+            "startMs": 490,
+            "endMs": 630,
+            "peakDb": -25.5
+          },
+          {
+            "startMs": 630,
+            "endMs": 880,
+            "peakDb": -29.5
+          },
+          {
+            "startMs": 880,
+            "endMs": 1360,
+            "peakDb": -33.5
+          },
+          {
+            "startMs": 1360,
+            "endMs": 1620,
+            "peakDb": -38.7
+          },
+          {
+            "startMs": 1750,
+            "endMs": 1810,
+            "peakDb": -43.7
+          },
+          {
+            "startMs": 1980,
+            "endMs": 2740,
+            "peakDb": -10.7
+          }
+        ],
+        "kind": "series",
+        "unitMs": 250,
+        "lengthBand": "short",
+        "loudnessDb": -24.3,
+        "peakDb": -0.8,
+        "brightnessHz": 3013,
+        "band": "high"
+      }
+    },
+    {
+      "id": "bicycle",
+      "label": "自行车",
+      "by": "旧版项目授权录音",
+      "url": "/media/sounds/library/bicycle.fe67e84c2a.mp3",
+      "bytes": 34344,
+      "durationMs": 5724,
+      "preset": {
+        "pitch": "high",
+        "duration": "medium",
+        "contour": "flat",
+        "intensity": "medium",
+        "pattern": "repeat"
+      },
+      "analysis": {
+        "rules": "analysis-v2",
+        "durationMs": 5724,
+        "silent": false,
+        "main": {
+          "startMs": 40,
+          "endMs": 5680
+        },
+        "units": [
+          {
+            "startMs": 40,
+            "endMs": 660,
+            "peakDb": -34.6
+          },
+          {
+            "startMs": 660,
+            "endMs": 5680,
+            "peakDb": -27.2
+          }
+        ],
+        "kind": "texture",
+        "unitMs": 5020,
+        "lengthBand": "long",
+        "loudnessDb": -31.7,
+        "peakDb": -12.3,
+        "brightnessHz": 5506,
+        "band": "high"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+ "version":"handwritten-title-v2",
+ "atlases":[
+  {"id":"lettering","source":"assets-source/home/title/lettering-atlas.png","columns":5,"rows":2,"labels":["今","天","，","你","听","见","了","什","么","？"],"mobileTile":128,"desktopTile":160,"scales":{"2":0.40}},
+  {"id":"doodles","source":"assets-source/home/title/doodles-atlas.png","columns":3,"rows":2,"labels":["eighth-note","paired-notes","quarter-note","round-bubble","oval-bubble","loop-bubble"],"mobileTile":72,"desktopTile":96,"scales":{}}
+ ],
+ "processing":"Extract independent cells; trim alpha padding; retain original ink shapes; pack compressed transparent atlases. Curved placement and animation are configured separately."
+}

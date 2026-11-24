@@ -1,0 +1,38 @@
+/* The character's stage: the sound character, its speech bubble and the group tag. */
+.spirit{animation:fade .6s .15s var(--wk-ease) both}
+.stage{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:10px 0 18px 4%}
+.stage[data-mode=card] .spirit{width:var(--spirit-w,300px)}
+.bubble{position:relative;z-index:6;align-self:flex-start;max-width:min(96%,460px);margin:0 0 10px 2%;padding:11px 18px;border-radius:22px 22px 22px 6px;background:#fff;box-shadow:0 8px 22px #26301a1c,0 1px 0 var(--wk-line-strong);font-size:var(--font-body);font-weight:600;line-height:1.5;transform-origin:12% 100%;animation:bubbleIn .45s var(--wk-ease)}
+.bubble[data-tone=error]{background:#fff1f3;color:#b23a50}
+.bubble[data-tone=error]::after{background:#fff1f3}
+.bubble::after{content:"";position:absolute;left:30px;bottom:-8px;z-index:-1;width:18px;height:18px;border-radius:3px;background:#fff;box-shadow:3px 3px 4px #26301a10;transform:rotate(45deg) skew(8deg,8deg)}
+.groupTag{position:absolute;right:4px;bottom:14px;z-index:6;padding:4px 12px;border-radius:999px;background:#ffffffd9;box-shadow:inset 0 0 0 1.5px var(--wk-green-mid);font-size:var(--font-label);font-weight:700;color:var(--wk-green-text)}
+/* While a local sound's info is checked, the form takes the stage; the character waits small next to its bubble. */
+.stage[data-mode=edit]{justify-content:flex-start;align-items:stretch;padding:14px 0 0}
+.stageRow{display:flex;align-items:flex-end;justify-content:flex-end;gap:10px;padding:0 8px 8px 4px}
+.stageRow .bubble{margin:0 0 18px;flex:0 1 auto;border-radius:22px 22px 6px 22px;font-size:var(--font-body);padding:9px 15px}
+.stageRow .bubble::after{left:auto;right:22px}
+.stage[data-mode=edit] .spirit{width:108px}
+@keyframes fade{from{opacity:0}}
+@keyframes bubbleIn{0%{transform:scale(.9) translateY(6px);opacity:0}100%{transform:none;opacity:1}}
+@media(--short){
+ .bubble{font-size:var(--font-body);padding:9px 15px}
+}
+@media(--shorter){
+ .stage[data-mode=edit]{padding-top:6px}
+ .stageRow{padding-bottom:2px}
+ .stage[data-mode=edit] .spirit{width:88px}
+}
+@media(--one-column){
+ .stage{order:4}
+ .stage{align-items:center;padding:4px 0 26px}
+ .stage[data-mode=card] .spirit{width:min(64vw,300px)}
+ .bubble{align-self:center;margin-left:0;text-align:center;border-radius:22px}
+ .bubble::after{left:50%;margin-left:-9px}
+ .groupTag{right:auto;left:0;bottom:6px}
+ .stage[data-mode=edit]{padding:0}
+}
+@media(--reduced-motion){
+ .spirit,.bubble{animation:none}
+}
+[data-entry-motion=still] .spirit,[data-entry-motion=still] .bubble{animation:none}

@@ -1,0 +1,10 @@
+{
+ "compilerOptions": {
+  "target":"ES2022","lib":["ES2023","DOM","DOM.Iterable"],"module":"ESNext","moduleResolution":"bundler",
+  "jsx":"react-jsx","strict":true,"noUncheckedIndexedAccess":true,"noFallthroughCasesInSwitch":true,
+  "noUnusedLocals":true,"noUnusedParameters":true,"skipLibCheck":true,"noEmit":true,
+  "resolveJsonModule":true,"verbatimModuleSyntax":true,"isolatedModules":true,"allowImportingTsExtensions":true,
+  "types":["vite/client","node"]
+ },
+ "include":["src","tests","vite.config.ts","../../packages/sound-rules/src","../../packages/sound-rules/tests","../../packages/prompts/src","../../packages/prompts/tests"]
+}

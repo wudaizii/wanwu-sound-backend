@@ -1,0 +1,38 @@
+/* Work-page header (万物声场 · 万物成曲 · 作品书架), in 声音诞生's language: a bold title, and the guide animal as a paper
+   sticker standing on its own soft shadow (no backing disc) with a white speech bubble. Values that differ per page are
+   variables the page sets on its own class:
+   --art / --art-fit / --art-phone   the animal's size: normal, short laptop screens (`fit`), phones
+   --intro-margin / --intro-margin-fit   space around the header */
+.intro{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:var(--intro-margin,14px 0 12px);animation:global(wk-rise) .5s var(--wk-ease) both}
+.introText{min-width:0}
+.intro h1{margin:0;font-size:var(--font-page-title);line-height:var(--line-title);font-weight:800;letter-spacing:.02em}
+.introText p{line-height:var(--line-body);margin:5px 0 0;font-size:var(--font-body);font-weight:500;color:var(--wk-muted)}
+.guidePanel{display:flex;align-items:center;gap:12px;flex:0 1 auto;min-width:0}
+.guideBubble{min-width:0;overflow-wrap:anywhere;position:relative;max-width:min(600px,46vw);margin:0;padding:11px 18px;border-radius:22px 22px 6px 22px;background:#fff;box-shadow:0 8px 22px #26301a1c,0 1px 0 var(--wk-line-strong);font-size:var(--font-body);font-weight:600;line-height:1.5;transform-origin:88% 100%;animation:bubbleIn .45s var(--wk-ease)}
+.guideBubble[data-tone=error]{background:#fff1f3;color:#b23a50}
+.guideBubble[data-tone=error]::after{background:#fff1f3}
+.guideBubble::after{content:"";position:absolute;right:-7px;bottom:10px;z-index:-1;width:16px;height:16px;border-radius:3px;background:#fff;box-shadow:3px 3px 4px #26301a10;transform:rotate(45deg) skew(8deg,8deg)}
+.mascot{position:relative;flex-shrink:0;display:grid;place-items:center;width:76px;height:76px;animation:hop .5s var(--wk-ease)}
+/* The ground the guide stands on. */
+.mascot::after{content:"";position:absolute;left:14%;right:14%;bottom:2px;z-index:-1;height:12px;border-radius:50%;background:radial-gradient(ellipse at center,#4a5a2a33 0%,#4a5a2a00 70%);filter:blur(2px)}
+/* The animal faces the bubble on its left on desktop (mirrored), on its right on phones (natural). */
+.mascotArt{transform:scaleX(-1);width:var(--art,68px);height:var(--art,68px);filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 4px 6px #1f2a222b)}
+
+@keyframes bubbleIn{0%{transform:scale(.9) translateY(6px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes hop{0%{transform:translateY(0)}35%{transform:translateY(-8px) rotate(-6deg)}70%{transform:translateY(0) rotate(3deg)}100%{transform:none}}
+@media(--reduced-motion){.intro,.guideBubble,.mascot{animation:none}}
+
+/* One-screen pages on shorter laptop screens (1366 × 768, 1280 × 720): tighter, still one screen. */
+@media(--short){
+ .intro[data-fit]{margin:var(--intro-margin-fit,10px 0 10px)}.intro[data-fit] h1{font-size:var(--font-page-title-fit)}.intro[data-fit] .introText p{font-size:var(--font-small);margin-top:2px}
+ .intro[data-fit] .mascot{width:58px;height:58px}.intro[data-fit] .mascotArt{width:var(--art-fit,48px);height:var(--art-fit,48px)}
+ .intro[data-fit] .guideBubble{font-size:var(--font-small);padding:8px 14px}
+}
+@media(--shorter){.intro[data-fit] .introText p{display:none}}
+@media(--one-column){
+ .intro{flex-direction:column;align-items:stretch;margin:16px 2px 12px;gap:10px}
+ .intro h1{font-size:var(--font-page-title)}.introText p{font-size:var(--font-small)}
+ .guidePanel{width:100%;flex-direction:row-reverse;justify-content:flex-end}
+ .guideBubble{max-width:none;flex:1;font-size:var(--font-small);border-radius:22px 22px 22px 6px;transform-origin:12% 100%}.guideBubble::after{right:auto;left:-7px}
+ .mascot{width:clamp(48px,7vw,60px);height:clamp(48px,7vw,60px)}.mascotArt{width:var(--art-phone,46px);height:var(--art-phone,46px);transform:none}
+}

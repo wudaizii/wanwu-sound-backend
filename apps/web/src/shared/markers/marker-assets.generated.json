@@ -1,0 +1,130 @@
+{
+  "version": "sound-markers-v1",
+  "assets": {
+    "marker-sage": {
+      "label": "浅绿弧纹标记",
+      "group": "markers",
+      "crop": {
+        "left": 61,
+        "top": 116,
+        "width": 540,
+        "height": 478
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers/mobile/marker-sage.ba5d28d6d1.webp",
+          "width": 162,
+          "height": 143,
+          "bytes": 4478
+        },
+        "desktop": {
+          "url": "/media/shared/markers/desktop/marker-sage.00aa82993a.webp",
+          "width": 270,
+          "height": 239,
+          "bytes": 8764
+        },
+        "fallback": {
+          "url": "/media/shared/markers/fallback/marker-sage.803a6734f7.png",
+          "width": 162,
+          "height": 143,
+          "bytes": 8526
+        }
+      }
+    },
+    "marker-ochre": {
+      "label": "柔黄圆点标记",
+      "group": "markers",
+      "crop": {
+        "left": 20,
+        "top": 116,
+        "width": 548,
+        "height": 478
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers/mobile/marker-ochre.7330ea3c4e.webp",
+          "width": 164,
+          "height": 143,
+          "bytes": 5310
+        },
+        "desktop": {
+          "url": "/media/shared/markers/desktop/marker-ochre.5b6d60234e.webp",
+          "width": 274,
+          "height": 239,
+          "bytes": 10196
+        },
+        "fallback": {
+          "url": "/media/shared/markers/fallback/marker-ochre.923e98d31a.png",
+          "width": 164,
+          "height": 143,
+          "bytes": 8855
+        }
+      }
+    },
+    "marker-slate": {
+      "label": "灰蓝斜纹标记",
+      "group": "markers",
+      "crop": {
+        "left": 61,
+        "top": 44,
+        "width": 541,
+        "height": 482
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers/mobile/marker-slate.14abb2b34e.webp",
+          "width": 162,
+          "height": 144,
+          "bytes": 4354
+        },
+        "desktop": {
+          "url": "/media/shared/markers/desktop/marker-slate.df7cd51747.webp",
+          "width": 271,
+          "height": 241,
+          "bytes": 8790
+        },
+        "fallback": {
+          "url": "/media/shared/markers/fallback/marker-slate.ec023b41b2.png",
+          "width": 162,
+          "height": 144,
+          "bytes": 7222
+        }
+      }
+    },
+    "marker-lilac": {
+      "label": "浅紫回环标记",
+      "group": "markers",
+      "crop": {
+        "left": 24,
+        "top": 45,
+        "width": 548,
+        "height": 482
+      },
+      "variants": {
+        "mobile": {
+          "url": "/media/shared/markers/mobile/marker-lilac.c67cc80519.webp",
+          "width": 164,
+          "height": 144,
+          "bytes": 4658
+        },
+        "desktop": {
+          "url": "/media/shared/markers/desktop/marker-lilac.fd4534c738.webp",
+          "width": 274,
+          "height": 241,
+          "bytes": 9192
+        },
+        "fallback": {
+          "url": "/media/shared/markers/fallback/marker-lilac.58b60beed6.png",
+          "width": 164,
+          "height": 144,
+          "bytes": 9099
+        }
+      }
+    }
+  },
+  "totals": {
+    "mobile": 18800,
+    "desktop": 36942,
+    "fallback": 33702
+  }
+}

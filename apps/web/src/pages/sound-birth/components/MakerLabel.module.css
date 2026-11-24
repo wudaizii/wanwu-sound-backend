@@ -1,0 +1,9 @@
+/* The maker name written on the character (editable). */
+.makerButton{position:relative;margin:-10px 0;padding:10px 0;border:0;background:none;font:inherit;letter-spacing:inherit;color:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.makerButton::before{content:"";position:absolute;inset:0 -12px}
+.makerButton::after{content:"";display:block;height:0;margin-top:2px;border-bottom:1px dashed #2f353066}
+.makerButton:hover::after,.makerButton:focus-visible::after{border-bottom-style:solid;border-color:#2f3530}
+.makerInput{width:5.6em;padding:2px 4px;border:0;border-bottom:1.5px solid var(--wk-green);border-radius:4px 4px 0 0;background:#ffffffe6;font:inherit;letter-spacing:.06em;text-align:right;color:var(--wk-ink);outline:0}
+@media(--phone){
+ .makerInput{font-size:max(1rem,var(--font-body))}
+}

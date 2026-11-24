@@ -1,0 +1,26 @@
+/* Shared work-page controls (声音诞生 onward). They live in the wk-ui cascade layer, so any unlayered page rule wins:
+   the shared class gives the look, the page's own class gives size and placement. Pair them in markup, e.g.
+   `${ui.pill} ${ui.back} ${styles.backButton}`. */
+@layer wk-ui{
+/* Pill button: shape, type, motion and press. A colour variant (go / outline / back) is added on top. */
+.pill{min-width:0;max-width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border:0;border-radius:999px;font-size:var(--font-control-lg);font-weight:700;letter-spacing:.02em;line-height:var(--line-control);white-space:nowrap;transition:transform .15s var(--wk-ease),box-shadow .2s,background .2s,color .16s,filter .2s}
+.pill svg{width:20px;height:20px;flex-shrink:0;transition:transform .2s var(--wk-ease)}
+.pill:active:not(:disabled):not([aria-disabled=true]){transform:translateY(2px) scale(.985)}
+/* go: the solid lime action. outline: white with a lime ring. back: the quiet way back. */
+.go{background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift)}
+.go:hover:not(:disabled){filter:brightness(1.03)}
+.outline{background:#fff;color:var(--wk-on-fill);box-shadow:var(--wk-outline-lift)}
+.outline:hover:not([aria-disabled=true]){background:var(--wk-green-soft)}
+.back{background:var(--wk-soft);color:var(--wk-ink-soft);box-shadow:inset 0 0 0 1px var(--wk-line-strong);font-weight:600}
+.back:hover{background:var(--wk-soft-hover)}
+/* States shared by every variant: sounding now (yellow) and not available yet. */
+.pill[aria-pressed=true]{background:var(--wk-sun-fill);color:var(--wk-on-fill);box-shadow:inset 0 1px 0 #ffffff80,0 8px 18px #ffd84a59}
+.pill[aria-disabled=true]{background:var(--wk-soft);color:var(--wk-muted);box-shadow:none;filter:none;cursor:default}
+/* A "go on" button: its trailing arrow leans forward on hover. */
+.forward:hover:not([aria-disabled=true]) svg:last-child{transform:translateX(4px)}
+
+/* Lime paper card with a pink tape strip. Pages may move the cream / white stops and resize or tilt the tape. */
+.limeCard{position:relative;border:3px solid var(--wk-lime);border-radius:30px;background:linear-gradient(180deg,var(--wk-green-mid) 0%,var(--wk-cream) var(--card-cream,34%),#fff var(--card-white,100%));box-shadow:var(--wk-card-lift)}
+.tape{position:absolute;top:-13px;left:50%;width:var(--tape-w,92px);height:var(--tape-h,26px);margin-left:calc(var(--tape-w,92px) / -2);border-radius:4px;background:var(--wk-tape);box-shadow:0 1px 3px #26301a1a;transform:rotate(var(--tape-tilt,2.5deg));pointer-events:none}
+}
+@media(--reduced-motion){@layer wk-ui{.pill,.pill svg{transition:none}}}

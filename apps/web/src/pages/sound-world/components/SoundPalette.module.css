@@ -1,0 +1,79 @@
+/* SoundPalette owns its panel, cards, scrolling, and responsive sizing.
+   On desktop size containment prevents the number of sounds from setting the workspace height:
+   the palette stretches to the stage beside it. On stacked layouts its own height is capped.
+   Only the list scrolls; the title and footer never shrink. */
+.palette{contain:size;position:relative;min-width:0;animation:global(wk-rise) .5s var(--wk-ease) .05s both;display:flex;flex-direction:column;min-height:0;padding:20px 14px 12px;--tape-w:84px;--tape-h:24px;--tape-tilt:-2deg}
+.palette h2{flex-shrink:0;display:flex;align-items:center;gap:7px;margin:0 6px 12px;font-size:var(--font-section);font-weight:800;letter-spacing:.02em}
+.palette h2::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--wk-green-deep)}
+.paletteList{line-height:var(--line-control);flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;margin:0;padding:4px 8px 8px 4px;list-style:none;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#9bb66a #ffffff80}
+.paletteItem{position:relative;flex-shrink:0}
+.pick{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;width:100%;min-height:96px;padding:8px 12px 8px 8px;border:0;border-radius:22px;background:#fff;color:inherit;text-align:left;box-shadow:0 3px 0 var(--wk-line-strong),0 6px 12px #26301a0d;transition:box-shadow .16s,transform .15s var(--wk-ease),background .2s;touch-action:manipulation}
+.pick:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--wk-line-strong),0 10px 16px #26301a12}
+.pick:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wk-line-strong)}
+.paletteItem[data-selected] .pick{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift);transform:translateY(-1px)}
+.paletteItem[data-selected] .pickText small,.paletteItem[data-selected] .listen{color:#3f4f16}
+.paletteItem[data-selected] .pickText em{background:#ffffffa6}
+.paletteItem[data-selected] .listenIcon{background:#fff;box-shadow:0 3px 8px #7fa61a40}
+.paletteMarker{--marker-size:clamp(60px,6vw,76px);width:var(--marker-size)}
+.paletteItem[data-selected] .paletteMarker{animation:pop .32s var(--wk-ease)}
+.pickText{display:flex;flex-direction:column;gap:2px;min-width:0;padding-bottom:40px}
+.pickText b{font-size:var(--font-control);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pickText small{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:18px;font-size:var(--font-label);font-weight:600;color:var(--wk-muted)}
+.pickText em{padding:1px 8px;border-radius:10px;background:var(--wk-soft);font-style:normal;font-weight:700}
+/* 试听 sits on the card but is its own button: listening never selects, selecting never plays. */
+.listen{position:absolute;left:96px;bottom:10px;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px 0 4px;border:0;border-radius:999px;background:none;color:var(--wk-muted);font-size:var(--font-body);font-weight:700;transition:color .16s}
+.listen::before{content:"";position:absolute;inset:-3px -2px}
+/* Solid play button (no outlined ring). */
+.listenIcon{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--wk-selected-fill);color:var(--wk-on-fill);box-shadow:var(--wk-selected-lift);transition:background .16s,color .16s,box-shadow .16s}
+.listen svg{width:16px;height:16px}
+.listen:hover{color:var(--wk-ink)}.listen:hover .listenIcon{filter:brightness(1.05)}
+.listen[aria-pressed=true] .listenIcon{background:var(--wk-sun-fill);box-shadow:0 4px 10px #ffd84a66}
+.listen[data-waiting] .listenIcon{animation:pulse 1s ease-in-out infinite}
+.paletteFoot{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:12px}
+/* 课本灵感 + background switch: one white row — a pink book (opens 课本灵感) and a speaker switch (背景音乐). No small
+   text inside: the frog explains what was chosen. */
+.inspirationRow{display:flex;align-items:center;gap:6px;width:100%;min-height:52px;padding:6px 8px 6px 6px;border-radius:18px;background:#fff;box-shadow:var(--wk-key)}
+.inspiration{flex:1;min-width:0;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px 0 0;border:0;border-radius:14px;background:none;color:var(--wk-ink);text-align:left;transition:transform .15s var(--wk-ease)}
+.inspiration b{font-size:var(--font-body);font-weight:800;white-space:nowrap}
+.inspiration:hover{transform:translateY(-1px)}.inspiration:active{transform:translateY(1px)}
+.inspirationCheck{width:16px;height:16px;color:var(--wk-green-text)}
+.inspirationBadge{display:inline-flex;flex-shrink:0;padding-left:4px}
+.inspirationBadge svg{width:34px;height:34px;filter:drop-shadow(0 2px 2px #26301a22)}
+/* 背景音乐 switch: grey with a muted speaker when off, green with a speaker when on. */
+.switch{position:relative;flex-shrink:0;width:62px;height:34px;padding:0;border:0;border-radius:999px;background:#dfe3d8;transition:background .2s}
+.switch::before{content:"";position:absolute;inset:-5px -3px}
+.switch i{position:absolute;top:4px;left:4px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;color:#8b9380;box-shadow:0 2px 6px #26301a33;transition:transform .2s var(--wk-ease),color .2s}
+.switch i svg{width:15px;height:15px}
+.switch[aria-checked=true]{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift)}
+.switch[aria-checked=true] i{transform:translateX(28px);color:var(--wk-on-fill)}
+.more{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;border:0;border-radius:999px;background:#fff;color:var(--wk-on-fill);font-size:var(--font-control);font-weight:700;box-shadow:var(--wk-outline-lift);transition:box-shadow .16s,transform .15s var(--wk-ease)}
+.more svg{width:20px;height:20px}.more:hover{background:var(--wk-green-soft)}.more:active{transform:translateY(2px) scale(.985)}
+.scopes{flex-wrap:wrap;display:flex;justify-content:space-around;margin:-2px 0 0}
+.scopes button{min-width:44px;min-height:36px;padding:0 6px;border:0;background:none;color:var(--wk-muted);font-size:var(--font-small);font-weight:600}
+.scopes button:hover{color:var(--wk-green-text)}
+.scopes button+button{position:relative}.scopes button+button::before{content:"";position:absolute;left:-8px;top:50%;width:3px;height:3px;border-radius:50%;background:var(--wk-line-strong)}
+
+/* Keep keyboard focus inside the scrolling viewport. */
+.pick:focus-visible,.listen:focus-visible{outline-offset:-3px}
+.paletteList:focus-visible{outline:2px solid #668476;outline-offset:-2px;border-radius:16px}
+@keyframes pop{0%{transform:scale(.93)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes pulse{50%{opacity:.4}}
+@media(--short){
+ .palette{padding:14px 12px 10px}.palette h2{font-size:var(--font-control-lg);margin-bottom:8px}
+ .pick{min-height:82px}.paletteMarker{--marker-size:62px;width:62px}.listen{left:82px;bottom:6px}.pickText{padding-bottom:36px}
+ .more{min-height:46px;font-size:var(--font-body)}.scopes{margin-top:2px}
+ .inspirationRow{min-height:46px}.inspirationBadge svg{width:28px;height:28px}
+}
+@media(--one-column){
+ .palette{--palette-height:clamp(340px,60dvh,460px);contain:none;height:var(--palette-height);padding:14px 12px 10px}
+}
+@media(--phone){
+ .palette{border-radius:22px}.palette h2{font-size:var(--font-control)}
+ .pick{min-height:78px;gap:8px}.paletteMarker{--marker-size:56px;width:56px}.listen{left:70px;bottom:4px;font-size:var(--font-small)}.pickText{padding-bottom:36px}.pickText b{font-size:var(--font-body)}
+ .pickText small{white-space:nowrap;font-size:var(--font-caption);gap:4px}.pickText em{padding:0 5px}
+ .paletteFoot{gap:8px}.more{min-height:46px;font-size:var(--font-body)}
+}
+@media(--reduced-motion){
+ .palette,.paletteItem[data-selected] .paletteMarker,.listen[data-waiting] .listenIcon{animation:none}
+ .pick,.inspiration,.switch,.switch i{transition:none}
+}

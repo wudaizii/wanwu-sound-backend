@@ -1,0 +1,337 @@
+{
+  "version": "approved-ui-source-assets-v1",
+  "date": "2026-10-22",
+  "scope": "Source images only; no runtime or published derivatives",
+  "tool": "Built-in imagegen for transparent reconstruction; sharp only for lossless atlas cell extraction and QA composites",
+  "referenceDirectory": "../万物声谱_视觉过程稿/定稿页面参考/2026-10-22-四步流程",
+  "assets": [
+    {
+      "id": "start-scene-card",
+      "path": "assets-source/start/illustrations/start-card.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-14f825a2-0756-49a2-9ab3-ad72dd753297.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Extract one specific illustration group from the supplied approved Chinese UI mockup as a separate production source artwork on GENUINELY TRANSPARENT RGBA background. The reference is the exact edit target, not loose inspiration. Preserve its poses, proportions, colors, textured torn-paper collage material, object-contact relationships and the group's own complete botanical base. Reconstruct obscured/ragged boundaries only where needed for a clean transparent edge. No white rectangle, no white matte, no checkerboard pixels, no background forest, no UI, no headings, labels, radio buttons, borders or controls. Do not restyle or invent additional characters. Keep all subject parts fully visible with transparent padding of at least5% around the complete group. No clipped tips, no outside shadows or floor stretching to canvas edges; group's own small stones/grass remain. Paper white/ivory on physical objects must stay opaque, only surrounding background transparent. Crisp high-resolution flat paper artwork, no depth effects beyond reference. Output ONE isolated group filling about80% canvas in a landscape composition. TARGET: LEFT illustration station ONLY: the orange paper squirrel with expressive face and bushy curled tail, leaning from the gray stone beside a large upright slightly angled ivory paper sound-card with one green leaf, two black music marks and a handdrawn dark waveform; include its small layered sage leaves, tiny white/yellow daisies, scattered stone and small grass island under squirrel/card. Preserve the squirrel's feet and hands contacting the stone/card as in approved reference. Exclude center blue waterdrop, recorder, the inter-station trail beyond the left station, every UI title, every floating heading. Squirrel should retain exactly2 eyes, normal limbs and tail shape. Do not include any document/page labels. This cutout is the complete left scene group, not squirrel alone.",
+      "bytes": 2461312,
+      "sha256": "624675aba925c3e4385c16d7163a295d666032957e34ffe429f49fa4b0a2d5ae",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.414944330851237,
+      "alphaBounds": {
+        "left": 55,
+        "top": 18,
+        "width": 1435,
+        "height": 989
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "start-scene-upload",
+      "path": "assets-source/start/illustrations/start-upload.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-0f24b1db-90dc-47e0-a82d-6ae598f2cc27.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Extract one specific illustration group from the supplied approved Chinese UI mockup as a separate production source artwork on GENUINELY TRANSPARENT RGBA background. The reference is the exact edit target, not loose inspiration. Preserve its poses, proportions, colors, textured torn-paper collage material, object-contact relationships and the group's own complete botanical base. Reconstruct obscured/ragged boundaries only where needed for a clean transparent edge. No white rectangle, no white matte, no checkerboard pixels, no background forest, no UI, no headings, labels, radio buttons, borders or controls. Do not restyle or invent additional characters. Keep all subject parts fully visible with transparent padding of at least5% around the complete group. No clipped tips, no outside shadows or floor stretching to canvas edges; group's own small stones/grass remain. Paper white/ivory on physical objects must stay opaque, only surrounding background transparent. Crisp high-resolution flat paper artwork, no depth effects beyond reference. Output ONE isolated group filling about80% canvas in a landscape composition. TARGET: MIDDLE illustration station ONLY: the smiling blue faceted paper waterdrop with small arms/legs on the left, the ivory paper envelope behind it and the upright gray paper field recorder / microphone with fluffy gray top and small orange record button on the right. Keep the small layered leaves/grass/stones under and immediately behind these objects. Preserve exact positions and body poses from middle station, waterdrop standing on ground rather than floating, microphone standing naturally. Keep its small black handdrawn sound-emphasis marks near recorder if present. Exclude the squirrel/card station, books/bird station and all connecting trail outside this small group. No UI or printed text. This is the full recorder/envelope/waterdrop grouped cutout, not a photo-realistic new recorder.",
+      "bytes": 2236331,
+      "sha256": "6a51771a396e50d6e8b97b31179026a74425ebb9cc64edb504b7423c9450ec1e",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.5614287058512369,
+      "alphaBounds": {
+        "left": 134,
+        "top": 113,
+        "width": 1321,
+        "height": 822
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "start-scene-library",
+      "path": "assets-source/start/illustrations/start-library.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-4ccf12dd-4ef1-4f0a-ae70-5a8958d5f942.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Extract one specific illustration group from the supplied approved Chinese UI mockup as a separate production source artwork on GENUINELY TRANSPARENT RGBA background. The reference is the exact edit target, not loose inspiration. Preserve its poses, proportions, colors, textured torn-paper collage material, object-contact relationships and the group's own complete botanical base. Reconstruct obscured/ragged boundaries only where needed for a clean transparent edge. No white rectangle, no white matte, no checkerboard pixels, no background forest, no UI, no headings, labels, radio buttons, borders or controls. Do not restyle or invent additional characters. Keep all subject parts fully visible with transparent padding of at least5% around the complete group. No clipped tips, no outside shadows or floor stretching to canvas edges; group's own small stones/grass remain. Paper white/ivory on physical objects must stay opaque, only surrounding background transparent. Crisp high-resolution flat paper artwork, no depth effects beyond reference. Output ONE isolated group filling about80% canvas in a landscape composition. TARGET: RIGHT illustration station ONLY: the yellow textured paper bird with orange beak perched on the top edges of an ivory nature sound-card/book collection. Keep upright/slightly fanned cards/books with green leaf cover, pale blue water picture and gray mountain picture, little black waveform on front cover, small black musical notes near the bird, small layered sage leaves/daisies/grass/stone base. Preserve the original bird posture, wings and foot contacts with top of books. No extra limbs, no new animals. Exclude the center microphone/envelope/waterdrop and all other scene groups or UI. This is the full bird/books island cutout, not the bird alone.",
+      "bytes": 2310024,
+      "sha256": "2c99cd6bc1ff1ceb285ea0351a9b2934916c6e4794b9a0897eb6c49503eef872",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.5111172993977865,
+      "alphaBounds": {
+        "left": 92,
+        "top": 51,
+        "width": 1352,
+        "height": 937
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "start-corner-pond",
+      "path": "assets-source/start/environment/corner-pond-left.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-4c7b0804-caa9-4042-beca-dd00bd453f2d.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the LOWER LEFT INSIDE-MODAL corner decoration from this exact approved UI: the small turquoise paper pond with ripple rings, gray stones, a few upright reeds/grass, sparse pale sage leaves forming a triangular lower-left corner composition. It is the small sparse decoration inside white modal bottom-left, NOT the faded dense homepage forest outside the modal and NOT any of the three center stations. Preserve its flat torn-paper textures, restrained translucency, pale natural colors and relative arrangement. Output ONE standalone isolated decoration on GENUINELY TRANSPARENT RGBA background. All tips and visible leaf edges complete, gentle natural cut-paper contours, no rectangular white matte, no shadows beyond group, no animals, no daisies added, no UI, no text, no border. No decorative glowing haze. Keep water turquoise, plants green and pale, stones opaque gray; do not replace actual paper materials with transparency. Allow clear transparent margin around the whole group, wider landscape image. Intended for anchoring at bottom-left of a modal with left/bottom allowed to extend out of its viewport later. Reconstruct only the hidden continuation needed to finish a clean cutout; match this small sparse pond rather than making a rich forest.",
+      "bytes": 1060152,
+      "sha256": "c9b998b02c91c0f500a05cbaaed4c95c1339466a2f33cea178315f347e9d5b8a",
+      "width": 1774,
+      "height": 887,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.6526159520774204,
+      "alphaBounds": {
+        "left": 54,
+        "top": 85,
+        "width": 1631,
+        "height": 776
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "start-corner-fern",
+      "path": "assets-source/start/environment/corner-fern-right.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-80352895-8b10-467c-86c2-3e645fdd6ca5.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the LOWER RIGHT INSIDE-MODAL corner decoration from this exact approved UI: sparse pale sage layered paper fern fronds, a few broad light green leaves and tall thin grasses, a light asymmetrical triangular cluster rising from bottom-right. It is the light plant patch in the white modal lower right, NOT the faded homepage foliage outside it and NOT the bird/books middle-right island. Preserve flat textured torn-paper material, paper-vein patterns, light greens and soft layering; right corner stays visually lighter than left pond corner. Output ONE isolated plant decoration on GENUINELY TRANSPARENT RGBA background. No pond, no water, no animals, no flowers added, no text, no UI/button/frame, no white rectangle or checkerboard pixels, no glowing haze. Complete visible tips, clean semitransparent leaf contours with transparent padding around entire group. Intended to sit at bottom-right of modal later; no need to draw a modal or surrounding page. Reconstruct only small hidden continuations required to obtain a usable standalone cutout.",
+      "bytes": 1072420,
+      "sha256": "57b6196ea1cbc8b6995bb9054a0c397c488c1b2e21fc9600797da053a45453ac",
+      "width": 1465,
+      "height": 1073,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.7184920592005446,
+      "alphaBounds": {
+        "left": 553,
+        "top": 97,
+        "width": 898,
+        "height": 942
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "start-heading",
+      "path": "assets-source/start/title/start-heading.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-ad59de20-a4f4-422a-a04d-dcbd6cf01d74.png",
+      "reference": "01-home-start-dialog.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Extract ONLY the exact central BLACK HAND-DRAWN HEADLINE from approved UI onto GENUINELY TRANSPARENT RGBA. Exact text, one line: '这一次，想从哪里开始？'. Preserve the original playful dry-charcoal rough texture, slightly irregular character angles and subtle baseline rhythm. Do not change wording or make it neat typeface, no extra letters or duplicated characters. Keep the few small sage green paper leaf accents immediately to left/right of headline if visible, as part of this heading group, all other area transparent. NO brand above, NO gray subtitle below, NO modal border, NO × close, NO scene illustration, no button or background plants. A wide isolated heading asset with transparent padding, fully visible punctuation, nothing clipped. High-resolution readable exact Chinese lettering. No drop shadow, halo, white rectangle or checkerboard pattern. Return only this isolated headline group.",
+      "bytes": 435068,
+      "sha256": "0bf5943b7eaf3013c9b0a4ffcecd22f2c8d3413bafdcc03dd970a2f0a0e9fa3b",
+      "width": 2172,
+      "height": 724,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.8732696651506364,
+      "alphaBounds": {
+        "left": 61,
+        "top": 257,
+        "width": 2064,
+        "height": 202
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sound-marker-atlas",
+      "path": "assets-source/shared/sound-markers/masters/markers-atlas.png",
+      "generatedOriginal": "/Users/hahaking/.codex/generated_images/01a16298-73be-7613-99ee-0bf7e362bce1/exec-42ce5fb9-7b79-49a9-85ba-5633f6310001.png",
+      "reference": "system/sound-markers.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Create ONE SQUARE TRANSPARENT 2x2 production sprite atlas containing the FOUR EXACT neutral folded-paper marker artworks in the TOP ROW of this reference. Reference image is target, preserve its common smooth irregular rounded paper-pebble silhouette, top-right pale folded flap, gentle paper fiber texture and colors. Crucial remove ALL printed numbers01/02/03/04 from artwork cleanly, filling those small digit areas with matching paper texture. Numbers and names will be added dynamically in interface, never baked into PNG. Keep the non-numeric identity motifs: TOP LEFT sage marker with TWO shallow curved strokes; TOP RIGHT soft ochre marker with THREE tiny round dots; BOTTOM LEFT muted gray-blue marker with TWO parallel diagonal dashes; BOTTOM RIGHT dusty lavender marker with ONE loose loop. Color / motif / fold identical to reference, no animals/faces/source objects, no new semantic symbols. Each marker centered in its own exact quarter of a square canvas, same scale and footprint, no overlap between cells, at least15% cell padding on all sides. All four complete shapes visible and opaque except natural antialiased contour. Background throughout genuinely transparent RGBA, no white checkerboard pixels, no label, no text, no lines, no page UI or bottom application examples. No outer glow, no huge floor shadow. This is one four-cell atlas for deterministic slicing into individual files. Use square canvas, two rows and two columns exactly. Flat tactile paper, not shiny3D or clay.",
+      "bytes": 1710761,
+      "sha256": "477b7e3e14c70ced27f6ced65be4568c863c34c46861f1e2a786767224bf0293",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.482427523789901,
+      "alphaBounds": {
+        "left": 67,
+        "top": 122,
+        "width": 1126,
+        "height": 1026
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sound-marker-sage",
+      "path": "assets-source/shared/sound-markers/marker-sage.png",
+      "parent": "assets-source/shared/sound-markers/masters/markers-atlas.png",
+      "operation": "lossless-grid-cell-extract",
+      "rect": {
+        "left": 0,
+        "top": 0,
+        "width": 627,
+        "height": 627
+      },
+      "bytes": 426802,
+      "sha256": "1e2daacac01b86a2f6c7d55468d185f63bb51cb9be61a24e3d6cafc443947e2b",
+      "width": 627,
+      "height": 627,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.49201152802260834,
+      "alphaBounds": {
+        "left": 67,
+        "top": 122,
+        "width": 528,
+        "height": 466
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sound-marker-ochre",
+      "path": "assets-source/shared/sound-markers/marker-ochre.png",
+      "parent": "assets-source/shared/sound-markers/masters/markers-atlas.png",
+      "operation": "lossless-grid-cell-extract",
+      "rect": {
+        "left": 627,
+        "top": 0,
+        "width": 627,
+        "height": 627
+      },
+      "bytes": 486555,
+      "sha256": "48fd0ad59a99c3e6c63d9507e0f675aadfa2affd6d2464edbc25988822e5aa74",
+      "width": 627,
+      "height": 627,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.486903789850151,
+      "alphaBounds": {
+        "left": 26,
+        "top": 122,
+        "width": 536,
+        "height": 466
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sound-marker-slate",
+      "path": "assets-source/shared/sound-markers/marker-slate.png",
+      "parent": "assets-source/shared/sound-markers/masters/markers-atlas.png",
+      "operation": "lossless-grid-cell-extract",
+      "rect": {
+        "left": 0,
+        "top": 627,
+        "width": 627,
+        "height": 627
+      },
+      "bytes": 430893,
+      "sha256": "5774295a6507bcf0e6e7f6dd7d614e0dc72571497c0804a8f2131bd8ced9b2f0",
+      "width": 627,
+      "height": 627,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.47684856624670274,
+      "alphaBounds": {
+        "left": 67,
+        "top": 50,
+        "width": 529,
+        "height": 470
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sound-marker-lilac",
+      "path": "assets-source/shared/sound-markers/marker-lilac.png",
+      "parent": "assets-source/shared/sound-markers/masters/markers-atlas.png",
+      "operation": "lossless-grid-cell-extract",
+      "rect": {
+        "left": 627,
+        "top": 627,
+        "width": 627,
+        "height": 627
+      },
+      "bytes": 436171,
+      "sha256": "349d623ebbeb030564a5083ea451861e4eef7dd5a5940cb16018456f5f982b2d",
+      "width": 627,
+      "height": 627,
+      "hasAlpha": true,
+      "transparentPixelFraction": 0.47394621104014206,
+      "alphaBounds": {
+        "left": 30,
+        "top": 51,
+        "width": 536,
+        "height": 470
+      },
+      "opaqueBoundaryPixels": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "reuse": [
+    {
+      "id": "start-upper-left",
+      "path": "assets-source/home/environment/env-upper-left.png",
+      "usage": "Reuse existing upper-left twig in modal; do not duplicate or overwrite"
+    },
+    {
+      "id": "home-scene",
+      "path": "assets-source/home",
+      "usage": "Existing homepage character/environment/opening/title sources unchanged; scene remains behind modal"
+    }
+  ],
+  "dynamicOverlays": [
+    "sound source number",
+    "sound name",
+    "parameter values",
+    "score durations and playback position"
+  ],
+  "nextStage": [
+    "Build responsive WebP and PNG derivatives and release manifests when implementing pages",
+    "Render controls, simple line icons, field contours, score tails, playhead and progress bar using SVG/CSS and actual data"
+  ]
+}

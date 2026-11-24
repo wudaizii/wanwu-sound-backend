@@ -1,0 +1,65 @@
+/* 万物声场 · structure from 03-sound-world.png: guide + title (shared/ui/WorkIntro) → 选一个声音 | the field (rows only spread sounds out; time runs left → right on a seconds ruler)
+   → mood → back · listen · finish. Visual language of 声音诞生: soft ground, a taped paper card, white panels with
+   pressed trays and raised pads, solid icons, lime for every action and choice, yellow only for "sounding now".
+   Placed markers have little faces that light up while they sound. Desktop fills one screen; phones stack and scroll. */
+/* Page layout and the footer actions; each component keeps its own look and responsive rules in components/*.module.css. */
+/* 万物声场 · structure from 03-sound-world.png: guide + title (shared/ui/WorkIntro) → 选一个声音 | the field (rows only spread sounds out; time runs left → right on a seconds ruler)
+   → mood → back · listen · finish. Visual language of 声音诞生: soft ground, a taped paper card, white panels with
+   pressed trays and raised pads, solid icons, lime for every action and choice, yellow only for "sounding now".
+   Placed markers have little faces that light up while they sound. Desktop fills one screen; phones stack and scroll. */
+.shell{min-height:100vh;min-height:100dvh;color:var(--wk-ink);
+ background:var(--wk-page-bg)}
+.shell[data-dragging]{cursor:grabbing;user-select:none}
+.page{position:relative;z-index:1;display:flex;flex-direction:column;max-width:1320px;min-height:calc(100dvh - 64px);margin:0 auto;padding:0 32px 20px}
+.stageColumn{animation:global(wk-rise) .5s var(--wk-ease) .1s both}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(260px,300px) minmax(0,1fr);gap:20px;align-items:stretch}
+.stageColumn{display:flex;flex-direction:column;min-width:0;min-height:0}
+/* Back on the left, 听听这段声音 in the centre, 摆好了 on the right — one centre line, natural widths. */
+.actions{container-type:inline-size;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;padding:12px 0 0 14px}
+/* Looks from ui.pill + ui.back / ui.go / ui.outline; here only size and place. */
+.backButton,.playAll,.finish{min-height:54px}
+.backButton{justify-self:start}
+.playAll{min-width:min(260px,100%)}
+.playIcon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#ffffffb3}
+.playIcon svg{width:17px;height:17px}
+.playAll[data-busy] .playIcon{animation:pulse 1s ease-in-out infinite}
+.playAll:disabled{opacity:.5;cursor:progress}
+.finish{justify-self:end}
+.backButton:active,.playAll:active:not(:disabled),.finish:active:not([aria-disabled=true]){transform:translateY(2px) scale(.985)}
+.dragGhost{position:fixed;z-index:50;transform:translate(-50%,-50%) rotate(-6deg) scale(1.08);pointer-events:none;filter:drop-shadow(0 16px 18px #26301a38)}
+.ghostMarker{--marker-size:72px;width:72px}
+@keyframes pulse{50%{opacity:.4}}
+@media(--reduced-motion){
+ .stageColumn{animation:none}
+ .playAll[data-busy] .playIcon{animation:none}
+ .backButton,.playAll,.finish{transition:none}
+}
+@media(--short){
+ .actions{padding-top:8px}
+ .backButton,.playAll,.finish{min-height:48px;font-size:var(--font-body)}
+}
+@media(--narrow){
+ .playAll{min-width:0}
+ .backButton,.playAll,.finish{padding:0 18px}
+}
+@media(--one-column){
+ .page{min-height:0;padding:0 20px 32px}
+ .workspace{grid-template-columns:minmax(0,1fr);gap:16px}
+ .actions{grid-template-columns:auto 1fr auto}
+}
+@media(--phone){
+ .page{padding:0 14px 0}
+ /* Actions stay reachable at the bottom of the screen. */
+ .actions{position:sticky;bottom:0;z-index:5;grid-template-columns:auto 1fr;gap:8px;margin:0 -14px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#ffffff00,#fff 26%)}
+ .backButton{width:52px;padding:0;font-size:0;gap:0}
+ .backButton svg{width:20px;height:20px}
+ .playAll{min-height:52px;font-size:var(--font-body)}
+ .finish{grid-column:1/-1;order:-1;min-height:44px;font-size:var(--font-body);justify-self:stretch}
+}
+@container(max-width:600px){
+ .actions{grid-template-columns:auto minmax(0,1fr)}
+ .backButton,.playAll,.finish{white-space:normal}
+ .finish{grid-column:1/-1;grid-row:1;justify-self:stretch}
+ .backButton{grid-column:1;grid-row:2}
+ .playAll{grid-column:2/-1;grid-row:2}
+}
