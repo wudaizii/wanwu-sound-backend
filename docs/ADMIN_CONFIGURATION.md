@@ -6,7 +6,7 @@
 
 - 正式入口：`https://wanwu.proterm.ink/admin/settings`。
 - 后端直接入口：`/api/v1/admin/settings/page`，须通过正式 H5 同源访问。
-- 使用网站管理员账号；普通老师、匿名访客不能读取或修改配置。
+- 使用网站管理员账号；当前登录名为 `guohaha`（2026-11-24 更名，原账号及密码保留）。普通老师、匿名访客不能读取或修改配置。
 - 业务云端模式关闭时，专用管理登录仍要求 HTTPS、真实管理员 Session、Origin、CSRF 和限流。
 
 ## 配置源和生效方式
