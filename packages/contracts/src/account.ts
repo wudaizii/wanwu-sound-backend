@@ -1,4 +1,3 @@
-// Account contracts: teacher accounts, invitations, registration and login forms.
 export type AccountRole = 'teacher' | 'admin';
 export type AccountStatus = 'active' | 'disabled';
 export type AccountView = {
@@ -15,23 +14,25 @@ export type InvitationView = {
   redeemedAt: string | null;
   revokedAt: string | null;
 };
-export const PASSWORD_MIN = 15;
-export const PASSWORD_MAX = 128;
+export const PASSWORD_MIN = 12,
+  PASSWORD_MAX = 128;
 export function loginUsername(value: unknown): string | null {
   return typeof value === 'string' && /^[a-zA-Z0-9_-]{3,32}$/.test(value)
     ? value.toLowerCase()
     : null;
 }
 export function validPassword(value: unknown): value is string {
-  // No lone surrogate halves; length counted in characters.
   return (
     typeof value === 'string' &&
     !/[\uD800-\uDFFF]/u.test(value) &&
     [...value].length >= PASSWORD_MIN &&
-    [...value].length <= PASSWORD_MAX
+    [...value].length <= PASSWORD_MAX &&
+    /\p{Lu}/u.test(value) &&
+    /\p{Ll}/u.test(value) &&
+    /\p{Nd}/u.test(value) &&
+    /[\p{P}\p{S}]/u.test(value)
   );
 }
-/** A plain object with exactly these keys, no more and no fewer. */
 export function exactObject(
   value: unknown,
   keys: readonly string[],

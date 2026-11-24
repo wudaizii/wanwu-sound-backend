@@ -61,7 +61,7 @@ test(
         owner.db,
         passwords,
         'runtime_admin',
-        'a disposable maximum worker proof password',
+        'A disposable maximum worker proof password_123',
       );
       const actor = { id: account.id, authVersion: 1, role: account.role },
         context = { pool: database.pool, boss, store, origin: 'https://example.invalid' },

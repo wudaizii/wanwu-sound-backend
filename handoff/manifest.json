@@ -13,7 +13,7 @@
     },
     {
       "path": "packages/contracts/src/account.ts",
-      "sha256": "5de20e05005291312115616ab198b7555f44a51723f50c2abf7234352c5df82a"
+      "sha256": "6e4cf594eb6fa17e2438cf087e3afbc3e98fa0400c409b13993bdb019339e61f"
     },
     {
       "path": "packages/contracts/src/api.ts",

@@ -55,7 +55,7 @@ test(
         owner.db,
         passwords,
         'operations_admin',
-        'a disposable operations proof password',
+        'A disposable operations proof password_123',
       );
       const actor = {
         id: account.id,

@@ -25,7 +25,7 @@ test(
     await chmod(directory, 0o700);
     const origin = 'https://settings.example.invalid',
       key = randomBytes(32).toString('hex');
-    const password = 'a disposable settings administrator passphrase';
+    const password = 'A disposable settings administrator passphrase_123';
     let app: Awaited<ReturnType<typeof buildApp>> | undefined;
     const proof: string[] = [];
     try {

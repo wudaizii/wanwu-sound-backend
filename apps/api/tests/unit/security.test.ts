@@ -10,7 +10,7 @@ import { dedicatedDatabaseUrl, readConfig } from '../../src/config.ts';
 import { Passwords, randomToken, tokenDigest, sameToken } from '../../src/security.ts';
 import { parseApiFailure } from '@wanwu-v2/contracts/api';
 
-const password = 'a disposable fifteen plus character passphrase';
+const password = 'A disposable test passphrase_123';
 test('registration validates exact fields, independent username, passphrases and invitation shape', () => {
   const invitationCode = randomToken();
   assert.equal(
@@ -30,12 +30,28 @@ test('registration validates exact fields, independent username, passphrases and
   assert.equal(parseLogin({ username: 'teacher', password, role: 'admin' }), null);
   assert.equal(exactObject({}, ['username']), false);
 });
-test('passwords preserve whitespace and Unicode, refuse excess length and unpaired surrogates', () => {
-  assert.equal(validPassword(' 一句可以用来作为口令的中文句子 '), true);
-  assert.equal(validPassword('x'.repeat(128)), true);
-  assert.equal(validPassword('x'.repeat(129)), false);
-  assert.equal(validPassword('😀'.repeat(15)), true);
-  assert.equal(validPassword('x'.repeat(15) + '\uD800'), false);
+test('new passwords require twelve Unicode characters and all four categories without restricting the character set', () => {
+  assert.equal(validPassword('Abcdefgh_123'), true);
+  assert.equal(validPassword(' 一句中文密码 Aa1_ '), true);
+  assert.equal(validPassword('Ab1' + '😀'.repeat(9)), true);
+  assert.equal(validPassword('Ab1_' + 'x'.repeat(124)), true);
+  for (const invalid of [
+    'Abcdefg_123',
+    'abcdefgh_123',
+    'ABCDEFGH_123',
+    'Abcdefgh____',
+    'Abcdefgh1234',
+    'Abcdefgh 123',
+    'x'.repeat(128),
+    '😀'.repeat(15),
+    'Ab1_' + 'x'.repeat(125),
+    'Abcdefgh_123' + '\uD800',
+  ])
+    assert.equal(validPassword(invalid), false);
+  assert.ok(
+    parseLogin({ username: 'teacher', password: 'old-short' }),
+    'Existing login passwords are not revalidated as new passwords',
+  );
 });
 test('only explicit dedicated database roles/names and HTTPS session configuration are accepted', () => {
   assert.throws(() =>

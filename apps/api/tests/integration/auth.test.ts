@@ -19,8 +19,8 @@ import { mediaBoss } from '../../src/jobs/mediaQueue.ts';
 import { auditFoundation } from '../../src/maintenance/foundationAudit.ts';
 
 const origin = 'https://voiceatalass.netlify.app',
-  password = 'a disposable teacher test passphrase';
-const adminPassword = 'a disposable administrator passphrase';
+  password = 'A disposable teacher test passphrase_123';
+const adminPassword = 'A disposable administrator passphrase_123';
 let app: Awaited<ReturnType<typeof buildApp>>,
   owner: ReturnType<typeof openDatabase>,
   database: ReturnType<typeof openDatabase>,
@@ -217,6 +217,52 @@ test('cloud drafts are account-owned, readable on another device, and reject sta
     'if-match': etag,
   });
   assert.equal((await secondDevice.send('GET', `/api/v1/works/${id}`)).body.title, '草稿乙');
+});
+
+test('twelve-character mixed passwords work across entry points and existing short passwords still log in', async () => {
+  const invitation = await invited(),
+    client = await new Client().start();
+  const username = `policy_${randomUUID().slice(0, 8)}`;
+  await client.send(
+    'POST',
+    '/api/v1/auth/register',
+    { username, password: 'abcdefgh_123', invitationCode: invitation.code },
+    400,
+  );
+  const registered = await client.send(
+    'POST',
+    '/api/v1/auth/register',
+    { username, password: 'Abcdefgh_123', invitationCode: invitation.code },
+    201,
+  );
+  await client.send(
+    'POST',
+    '/api/v1/auth/change-password',
+    { oldPassword: 'Abcdefgh_123', password: 'Abcdefgh1234' },
+    400,
+  );
+  const invalidReset = await client.send(
+    'POST',
+    '/api/v1/auth/reset-password',
+    { token: randomToken(), password: 'Abcdefgh1234' },
+    400,
+  );
+  assert.equal(invalidReset.body.reason, 'invalid-request');
+  // Seed an existing legacy account; new registration/password changes cannot create this password.
+  const passwords = new Passwords();
+  await passwords.ready();
+  await owner.pool.query('UPDATE accounts SET password_hash=$1 WHERE id=$2', [
+    await passwords.hash('legacy123'),
+    registered.body.account.id,
+  ]);
+  const legacy = await new Client().start();
+  await legacy.send('POST', '/api/v1/auth/login', { username, password: 'legacy123' });
+  await legacy.send(
+    'POST',
+    '/api/v1/auth/change-password',
+    { oldPassword: 'legacy123', password: 'Qwertyui_123' },
+    204,
+  );
 });
 
 test('registration establishes a real PostgreSQL session, secure host-only cookie, and a minimal account view', async () => {
@@ -450,7 +496,7 @@ test('changing password invalidates all devices and the old password', async () 
     second = await new Client().start(),
     oldCookie = normal.client.cookie;
   await second.send('POST', '/api/v1/auth/login', { username: normal.username, password });
-  const next = 'a different disposable long passphrase';
+  const next = 'Abcdefgh_123';
   await normal.client.send(
     'POST',
     '/api/v1/auth/change-password',
@@ -490,7 +536,7 @@ test('reset links are single-use, expire, replace old links, and revoke prior se
   await visitor.send(
     'POST',
     '/api/v1/auth/reset-password',
-    { token: current, password: 'a reset disposable long passphrase' },
+    { token: current, password: 'Resetpass_12' },
     204,
   );
   await normal.client.send('GET', '/api/v1/auth/me', undefined, 401);
@@ -646,7 +692,7 @@ test('one reset credential racing in two sessions can change the password only o
           'x-forwarded-proto': 'https',
           'x-csrf-token': client.csrf,
         },
-        payload: { token: secret, password: `a disposable racing passphrase ${i}` },
+        payload: { token: secret, password: `A disposable racing passphrase_${i}` },
       });
       return response.statusCode;
     }),

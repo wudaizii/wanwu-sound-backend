@@ -10,7 +10,7 @@
 
 账号使用独立的登录用户名和显示昵称字段；用户名 3–32 位 ASCII 字母、数字、下划线或短横线，统一小写。目前昵称初值为用户名，个人资料编辑入口尚未做。
 
-密码默认 15–128 个 Unicode 字符，支持空格和口令句，不裁切、不去空格、不强制字符类别。首版无 MFA，采用 [OWASP 的长度建议](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls)；尚未接泄露口令查询服务，不宣称完成所有身份安全标准。
+按用户于 2026-11-24 确认的规则，新密码至少 12 个 Unicode 字符，须同时含大写、小写、数字和特殊字符。支持中文、空格及 Unicode 字符，不裁切、不去空格、不限制具体字符种类；特殊字符按 Unicode 标点或符号识别，下划线和 emoji 均可，纯空格不算特殊字符。原有 128 字符处理上限保留。注册、改密、重置及首个管理员创建共用验证函数；登录只核对原密码散列，既有测试账号不强制改密。首版无 MFA，尚未接泄露口令查询服务。
 散列为 Argon2id（19 MiB、2 次、并行度 1），最多同时运行两个密码任务，另容纳四个排队任务，超出返回 429。
 
 会话使用 `@fastify/session` 与 PostgreSQL 存储：
