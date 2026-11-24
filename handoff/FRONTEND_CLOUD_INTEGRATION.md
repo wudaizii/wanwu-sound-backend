@@ -4,13 +4,15 @@
 
 ## 给人和 Claude Code 的入口
 
-- [前端独立交付分支](https://github.com/wudaizii/wanwu-sound-backend/tree/codex/frontend-cloud-integration-20261124)：分支祖先是原前端仓库，树内仅有前端和共享包。
+- [前端独立交付分支](https://github.com/wudaizii/wanwu-sound-backend/tree/codex/frontend-cloud-integration-20261124)：以原前端 main 的相同内容快照为独立起点，树内仅有前端和共享包。
 - [前端完整合并说明](https://github.com/wudaizii/wanwu-sound-backend/blob/codex/frontend-cloud-integration-20261124/docs/development/CLOUD_INTEGRATION_HANDOFF.md)：源码基线、两个提交如何选、跨仓库取回命令、适配入口和测试边界。
 - [后端配套分支](https://github.com/wudaizii/wanwu-sound-backend/tree/codex/backend-cloud-ai-integration-20261124)：在后端 `f0fe9ce` 上的增量。
 
-前端账号没有原仓库推送权限，且 GitHub 浏览器连接未成功，故用同一个个人仓库的**不同分支**传递代码。不是把前端放回后端 main，也不是已经创建 fork；不要把前端交付分支合进后端。作者在实际最新前端仓库中 fetch 后，选择 merge 或 cherry-pick。
+前端账号没有原仓库推送权限，且 GitHub 浏览器连接未成功，故用同一个个人仓库的**不同分支**传递代码。不是把前端放回后端 main，也不是已经创建 fork；不要把前端交付分支合进后端。作者在实际最新前端仓库中 fetch 后，cherry-pick 所需增量到自己的集成分支，再正常提交 PR／合并。
 
-前端原 main 为 `35000af`；恢复提交 `3d4965a` 来自本地 `536cc4f` 的已有账号／云端代码，并整理为独立前端工作区。前端分支顶端提交 `d505cfa` 是本次功能。作者已有账号适配器时应跳过恢复提交，只取增量，保留其最新 AI／音乐页面源码。我们没有拿到线上后续功能的可编辑源码，不据此声称本分支能完整替代线上前端。
+前端原 main 为 `35000af`；交付根快照 `fd40eb1` 与它内容树完全一致，随后恢复提交 `0d3c2c5` 与原本地恢复提交 `3d4965a` 内容树一致，来自本地 `536cc4f` 的已有账号／云端代码，并整理为独立前端工作区。前端分支顶端提交 `8b70e76` 是本次功能。快照交付避免传输大量旧图片历史，原完整来源历史保留在本地 `codex/frontend-source-history-20261124`；请按前端说明 cherry-pick，不直接 merge 整条交付历史。
+
+作者已有账号适配器时应跳过恢复提交，只取功能增量，保留其最新 AI／音乐页面源码。我们没有拿到线上后续功能的可编辑源码，不据此声称本分支能完整替代线上前端。
 
 只 cherry-pick 功能提交时，仍须检查作者的独立前端是否已有 `packages/audio-engine` workspace、`esbuild@0.28.2` 和 `playwright@1.64.1`。缺少时按前端交接中的依赖基线步骤补齐，更新其自己的锁文件；浏览器测试不能再依赖后端／worker 的源码。
 
