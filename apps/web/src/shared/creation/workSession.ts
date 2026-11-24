@@ -26,6 +26,7 @@ export class WorkSession{
  subscribe=(listener:()=>void)=>{this.listeners.add(listener);return()=>{this.listeners.delete(listener);};};
  /** Provenance of a unit's source, kept so later steps can trace and play it. */
  source(id:string){return this.sources.get(id)??null;}
+ registerSources(sources:readonly SoundSource[]){for(const source of sources)this.sources.set(source.id,source);}
 
  /** The child's own work; an untouched example arrangement does not count as one. */
  private own(){return this.arrangement?.origin==='child'?this.arrangement:null;}
@@ -90,8 +91,15 @@ export class WorkSession{
  }
 
  /** 再来一首: start a new, empty work. Recordings stay in the source archive; shelved works stay on the shelf. */
- reset(){
+ reset(forgetSources=false){
+  if(forgetSources)this.sources.clear();
   this.arrangement=null;this.composeSettings=DEFAULT_COMPOSE_SETTINGS;this.lastMadeId=null;this.emit();
+ }
+ /** Hydrate an authorized cloud draft with its own source metadata and a useful return-to-last-card target. */
+ restoreDraft(arrangement:Arrangement,settings:ComposeSettings,sources:readonly SoundSource[]){
+  if(!parseArrangement(arrangement)||!parseComposeSettings(settings))return false;
+  this.arrangement=arrangement;this.composeSettings=settings;this.sources=new Map(sources.map(source=>[source.id,source]));
+  this.lastMadeId=arrangement.units.at(-1)?.id??null;this.emit();return true;
  }
 
  private nextFree(work:Arrangement){

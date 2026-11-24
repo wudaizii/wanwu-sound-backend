@@ -9,9 +9,10 @@ import {decodeAudio,loadAudio} from '../../../shared/audio/loadAudio';
 import {EXAMPLE_TIMEOUT_MS,exampleSourceUrl} from '../../../shared/creation/exampleSounds';
 import {FILE_MAX_BYTES,birthCopy} from '../config/copy';
 import {sessionArchive} from '../../../shared/creation/sourceArchive';
+import type {LocalOriginal} from '../../../shared/creation/sourceArchive';
 import {exampleLibraryItem,libraryGroups} from '../services/soundLibrary';
 import type {LibraryItem} from '../services/soundLibrary';
-import type {SoundLibraryService} from '../../../shared/creation/soundLibrary';
+import type {SoundLibraryService,SoundLibraryList} from '../../../shared/creation/soundLibrary';
 import {services} from '../../../app/services';
 import type {SoundHint,SoundHintProvider} from '../services/soundHints';
 import {baseName,describeExcerpt,describeLocal} from './localSource';
@@ -24,6 +25,7 @@ import {useLibraryItems} from './useLibraryItems';
 import {useRecording} from './useRecording';
 import {useShapedPreview} from './useShapedPreview';
 import {useTrimUpload} from './useTrimUpload';
+import {useCloud} from '../../../shared/cloud/CloudProvider';
 
 export type {FinishResult,FinishThen,FinishedSound} from './useFinish';
 export type {CompareTarget} from './useShapedPreview';
@@ -42,7 +44,10 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
  const local=useSyncExternalStore(sessionArchive.subscribe,sessionArchive.list);
  // The library's examples come through the shared port (the same list 万物声场 offers).
  const [examples,setExamples]=useState<readonly LibraryItem[]>([]);
- useEffect(()=>{let live=true;void sounds.list().then(list=>{if(live)setExamples(list.examples.map(exampleLibraryItem));});return()=>{live=false;};},[sounds]);
+ const [cloudEntries,setCloudEntries]=useState<SoundLibraryList['entries']>([]);
+ const {accountId}=useCloud();
+ useEffect(()=>{let live=true;void sounds.list().then(list=>{if(live){setExamples(list.examples.map(exampleLibraryItem));setCloudEntries(list.entries??[]);}});return()=>{live=false;};},[sounds,accountId]);
+ useEffect(()=>{const canonical=local.find(source=>source.id===state.source?.id&&source.kind==='uploaded');if(canonical&&canonical!==state.source)dispatch({type:'source-update',source:canonical});},[local,state.source]);
  const [playing,setPlaying]=useState<string|null>(null);
  const [progress,setProgress]=useState(0);
  const [blocked,setBlocked]=useState(false);
@@ -55,7 +60,7 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
  const latest=useRef(state);latest.current=state;
 
  const notify=useCallback<Notify>((area,text,tone='error')=>dispatch({type:'notice',notice:{tone,area,text}}),[]);
- const bufferOf=(id:string)=>buffers.current.get(id)??sessionArchive.buffer(id);
+ const bufferOf=(id:string)=>sessionArchive.buffer(id)??buffers.current.get(id)??null;
  const sourceBuffer=state.source?bufferOf(state.source.id):null;
 
  const preview=useShapedPreview(player,playing,notify,()=>{const source=latest.current.source;return {source,buffer:source&&bufferOf(source.id)||null};},sourceBuffer??null,state.shape);
@@ -66,13 +71,13 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
   // Nothing to hear (声音体检 found no sound): tell the child right away; the recording itself is kept.
   if(analysisOf(buffer).silent)notify('bar',birthCopy.silent,'info');
  };
- const archiveAndUse=(source:SoundSource,buffer:AudioBuffer)=>{sessionArchive.save(source,buffer);useSource(source,buffer);};
- const recording=useRecording(player,playing,notify,take=>archiveAndUse(describeLocal('local-recording',birthCopy.defaultRecordingName,take.buffer,take.mimeType),take.buffer));
- const trimming=useTrimUpload(player,playing,({label,part,mimeType,range,from})=>
-  archiveAndUse(from?describeExcerpt(from,range,part):describeLocal('local-file',label,part,mimeType),part));
+ const archiveAndUse=(source:SoundSource,buffer:AudioBuffer,original?:LocalOriginal)=>{sessionArchive.save(source,buffer,original);useSource(source,buffer);};
+ const recording=useRecording(player,playing,notify,take=>archiveAndUse(describeLocal('local-recording',birthCopy.defaultRecordingName,take.buffer,take.mimeType),take.buffer,{blob:take.original}));
+ const trimming=useTrimUpload(player,playing,({label,part,mimeType,range,from,original,rawDurationMs})=>
+  archiveAndUse(from?describeExcerpt(from,range,part):describeLocal('local-file',label,part,mimeType),part,original?{blob:original,selection:range,rawDurationMs}:undefined));
  /** Longer than a source may be: the child picks the part to keep (the original is untouched). */
- const openTrim=(buffer:AudioBuffer,label:string,mimeType:string,from:SoundSource|null)=>{
-  trimming.start(buffer,label,mimeType,from);
+ const openTrim=(buffer:AudioBuffer,label:string,mimeType:string,from:SoundSource|null,original:Blob|null=null)=>{
+  trimming.start(buffer,label,mimeType,from,original);
   dispatch({type:'reading',reading:false});dispatch({type:'notice',notice:null});dispatch({type:'dialog',dialog:'trim'});
  };
  const tooLong=(buffer:AudioBuffer)=>buffer.duration*1000>SOUND_SOURCE_MAX_MS+SOUND_SOURCE_SLACK_MS;
@@ -121,10 +126,10 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
   dispatch({type:'reading',reading:true});
   try{
    const buffer=await decodeAudio(await file.arrayBuffer());
-   const label=cleanSourceText(baseName(file.name))??birthCopy.defaultRecordingName,mimeType=file.type||'audio/*';
+   const label=cleanSourceText(baseName(file.name))??birthCopy.defaultRecordingName,mimeType=file.type||'application/octet-stream';
    if(buffer.duration*1000>TRIM_FILE_MAX_MS){dispatch({type:'reading',reading:false});return notify('bar',birthCopy.tooLong);}
-   if(tooLong(buffer))return openTrim(buffer,label,mimeType,null);
-   archiveAndUse(describeLocal('local-file',label,buffer,mimeType),buffer);
+   if(tooLong(buffer))return openTrim(buffer,label,mimeType,null,file);
+   archiveAndUse(describeLocal('local-file',label,buffer,mimeType),buffer,{blob:file,rawDurationMs:buffer.duration*1000});
   }catch{dispatch({type:'reading',reading:false});notify('bar',birthCopy.fileUnreadable);}
  };
  const openRecord=()=>{recording.open();dispatch({type:'notice',notice:null});dispatch({type:'dialog',dialog:'record'});};
@@ -160,7 +165,7 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
   void preview.play(shape,'current',true);
  };
  const updateSource=(field:ProvenanceField,value:string)=>{
-  const source=latest.current.source;if(!source||source.kind==='example')return;
+  const source=latest.current.source;if(!source||source.kind==='example'||source.kind==='uploaded')return;
   const clean=field==='recordedOn'?(/^\d{4}-\d{2}-\d{2}$/.test(value)?value:null):cleanSourceText(value);
   const next:SoundSource=field==='label'?{...source,label:clean??''}:{...source,provenance:{...source.provenance,[field]:clean}};
   sessionArchive.update(next);dispatch({type:'source-update',source:next});
@@ -180,7 +185,7 @@ export function useSoundBirth(markerIndex:number,onFinish:(sound:FinishedSound,t
  const displayBuffer=shown==='current'&&currentBuffer?currentBuffer:sourceBuffer;
  const showingCurrent=!!currentBuffer&&displayBuffer===currentBuffer;
  return {
-  state,dispatch,playing,loadingId:library.loadingId,blocked,lastChosen,hint,local,groups:useMemo(()=>libraryGroups(examples,local),[examples,local]),
+  state,dispatch,playing,loadingId:library.loadingId,blocked,lastChosen,hint,local,groups:useMemo(()=>libraryGroups(examples,local,cloudEntries),[examples,local,cloudEntries]),
   wave:{buffer:displayBuffer,original:sourceBuffer??null,target:showingCurrent?'current' as const:'original' as const,progress:playing===(showingCurrent?'current':'original')?progress:0},
   record:{phase:recording.phase,ms:recording.ms,take:recording.take?.buffer??null,progress:playing==='take'?progress:0},
   trim:trim&&{buffer:trim.buffer,label:trim.label,range:trim.range,playing:playing==='trim',progress:playing==='trim'?progress:0},

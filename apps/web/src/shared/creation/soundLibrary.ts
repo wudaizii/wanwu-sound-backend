@@ -9,8 +9,9 @@
 // Uploading a source is shared/creation/sourceArchive.ts.
 import {exampleSounds} from './exampleSounds.ts';
 import type {ExampleSound} from './exampleSounds.ts';
+import type {SoundSource} from '@wanwu-v2/contracts/sound';
 
-export type SoundLibraryList={origin:'bundled'|'server';examples:readonly ExampleSound[]};
+export type SoundLibraryList={origin:'bundled'|'server';examples:readonly ExampleSound[];entries?:readonly {scope:'mine'|'teachers';source:SoundSource;url:string}[]};
 export type SoundLibraryService={list():Promise<SoundLibraryList>};
 
 export const bundledSoundLibrary:SoundLibraryService={async list(){return {origin:'bundled',examples:exampleSounds};}};

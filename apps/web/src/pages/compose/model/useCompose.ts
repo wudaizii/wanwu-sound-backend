@@ -108,7 +108,7 @@ export function useCompose(repository:ComposeRepository=services.composeReposito
   return true;
  };
  const share=async()=>{const result=await repository.share(latest.current.arrangement?.id??'');if(result.status==='unavailable')notify('share-off','info');};
- const startNew=async()=>{playback.pause();await repository.startNew();};
+ const startNew=async()=>{playback.pause();try{await repository.startNew();return true;}catch{notify('save-failed');return false;}};
 
  return {
   state,layout,instruments,comingInstruments,chosen:music.chosen,parts:music.parts,entries,entry:music.track,matches,teachingOpen,backgroundPlan,

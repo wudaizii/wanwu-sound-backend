@@ -28,13 +28,14 @@ export function SoundInfo({birth}:{birth:Birth}){
    <div className={styles.groupField}>
     <Field birth={birth} field="group" label={copy.group} hint={copy.groupHint} value={source.provenance.group} options={birth.suggestions.group}/>
     {birth.suggestions.group.length>0&&<div className={styles.chips} aria-label="已有分组">
-     {birth.suggestions.group.slice(0,6).map(group=><button key={group} type="button" aria-pressed={source.provenance.group===group} onClick={()=>birth.updateSource('group',group)}>{group}</button>)}
+     {birth.suggestions.group.slice(0,6).map(group=><button key={group} type="button" disabled={source.kind==='uploaded'} aria-pressed={source.provenance.group===group} onClick={()=>birth.updateSource('group',group)}>{group}</button>)}
     </div>}
    </div>
    <Field birth={birth} field="recordedBy" label={copy.recordedBy} hint={copy.recordedByHint} value={source.provenance.recordedBy} missing={missing.includes('recordedBy')} options={birth.suggestions.recordedBy}/>
    <Field birth={birth} field="recordedOn" label={copy.recordedOn} value={source.provenance.recordedOn} missing={missing.includes('recordedOn')} type="date"/>
    <Field birth={birth} field="place" label={copy.place} hint={copy.placeHint} value={source.provenance.place} missing={missing.includes('place')} options={birth.suggestions.place}/>
-   <div className={styles.infoRow}><span>{copy.visibility}</span><b>{copy.visibilityLocal}</b></div>
+   <div className={styles.infoRow}><span>{copy.visibility}</span><b>{source.kind==='uploaded'?'已上传私有原件 · 入库需另行确认':copy.visibilityLocal}</b></div>
+   {source.kind==='uploaded'&&<p className={styles.infoNote}>已保存原件的采集信息只读；声卡名字和五维选择仍可编辑。</p>}
    <div className={styles.confirmRow}>
     <p className={styles.infoSummary} data-tone={infoNotice?.tone}>
      {infoNotice?.text??(missing.length?copy.privacy:copy.archived([source.provenance.group,source.provenance.recordedBy,source.provenance.place].filter(Boolean).join(' · ')))}
@@ -54,7 +55,7 @@ function Field({birth,field,label,hint,value,missing=false,options,type='text'}:
  const commit=(next:string)=>{if(next!==(value??''))birth.updateSource(field,next);};
  return <label className={styles.field} data-missing={missing||undefined}>
   <span>{label}</span>
-  <input name={field} type={type} value={draft} placeholder={hint} maxLength={type==='text'?SOURCE_TEXT_MAX:undefined} list={list} autoComplete="off"
+  <input name={field} type={type} value={draft} readOnly={birth.state.source?.kind==='uploaded'} placeholder={hint} maxLength={type==='text'?SOURCE_TEXT_MAX:undefined} list={list} autoComplete="off"
    onChange={event=>{setDraft(event.currentTarget.value);if(type==='date')commit(event.currentTarget.value);}}
    onBlur={event=>commit(event.currentTarget.value)}
    onKeyDown={event=>{if(event.key==='Enter')event.currentTarget.blur();}}/>

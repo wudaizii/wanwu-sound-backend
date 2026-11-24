@@ -40,14 +40,14 @@ export const worldCopy={
  // More sounds
  moreDialog:{
   title:'找更多声音',description:'加进来的声音会出现在左边，可以反复摆放。',
-  scopes:{example:'示例',mine:'我的',class:'班级',public:'公共'} satisfies Record<LibraryScope,string>,
+  scopes:{example:'示例',mine:'个人',teachers:'老师共享',class:'班级',public:'公共'} satisfies Record<LibraryScope,string>,
   add:'加进来',added:'已加入',
   exampleNote:'大家都能用的示例声音。',
-  mineNote:'你在声音诞生做好的声音。',
-  mineEmpty:'还没有自己做的声音。',
+  mineNote:'登录后展示老师已试听确认入库的声卡；访客展示本页做好的声音。',
+  mineEmpty:'这个范围里还没有可选声卡。',
   makeNew:'去声音诞生做一个新声音',
-  unavailable:{'needs-account':'班级声音库还没有开放。','needs-review':'公共声音库还没有开放。'},
-  sessionOnly:'摆放只保存在这次打开的页面里。',
+  unavailable:{'needs-account':'请先用受邀老师账号登录；个人和老师共享库都需要试听确认。','needs-review':'首版不提供公众素材库。'},
+  sessionOnly:'访客摆放仅保留在本页；登录后的保存状态以上方云端栏为准。',
  },
  clipEditor:{
   title:(name:string)=>`剪一剪「${name}」`,

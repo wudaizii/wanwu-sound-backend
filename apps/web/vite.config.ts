@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
-import {media} from './src/styles/breakpoints';
+import {media} from './src/styles/breakpoints.ts';
 
 /** `@media (--short)` → the query named in src/styles/breakpoints.ts, so every page shares one list of screen tiers. */
 const customMedia={

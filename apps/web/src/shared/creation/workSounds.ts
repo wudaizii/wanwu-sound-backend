@@ -9,6 +9,7 @@ import {renderShaped} from '../audio/renderShaped';
 import {analysisOf} from '../audio/soundAnalysis';
 import {exampleSourceUrl} from './exampleSounds';
 import {sessionArchive} from './sourceArchive';
+import {authorizedSource} from '../audio/authorizedSource';
 
 /** The recording only existed in an earlier visit (e.g. after a refresh) — it cannot be found any more. */
 export class MissingAudioError extends Error{}
@@ -33,7 +34,7 @@ export class WorkSoundBank{
   if(local)return Promise.resolve(this.learn(sourceId,local));
   const inFlight=this.pending.get(sourceId);if(inFlight)return inFlight;
   const url=exampleSourceUrl(sourceId);
-  if(!url)return Promise.reject(new MissingAudioError());
+  if(!url){const cloud=authorizedSource(sourceId);return cloud?cloud.then(buffer=>this.learn(sourceId,buffer)):Promise.reject(new MissingAudioError());}
   const controller=new AbortController();this.loads.add(controller);
   const request=loadAudio(url,{signal:controller.signal,timeoutMs:this.timeoutMs})
    .then(buffer=>this.learn(sourceId,buffer))

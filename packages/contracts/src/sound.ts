@@ -201,7 +201,8 @@ export function isSoundSource(value:unknown):value is SoundSource{
  const s=value as Record<string,unknown>,p=s.provenance as Record<string,unknown>|null;
  if(typeof s.id!=='string'||!s.id||!SOUND_SOURCE_KINDS.includes(s.kind as SoundSourceKind)||typeof s.label!=='string')return false;
  if(!finite(s.durationMs)||s.durationMs<=0||(s.kind!=='example'&&s.durationMs>SOUND_SOURCE_MAX_MS+SOUND_SOURCE_SLACK_MS))return false;
- if(typeof s.mimeType!=='string'||!s.mimeType.startsWith('audio/'))return false;
+ // MIME is only a browser/file hint. The server validates real container/codec bytes before ready.
+ if(typeof s.mimeType!=='string'||! /^(?:audio\/|video\/(?:mp4|webm)(?:;|$)|application\/(?:octet-stream|ogg)(?:;|$))/.test(s.mimeType))return false;
  return !!p&&typeof p==='object'&&['recordedBy','recordedOn','place','group','provenanceUrl'].every(key=>text(p[key]));
 }
 

@@ -65,7 +65,7 @@ export const birthCopy={
  // Record dialog
  recordDialog:{title:'录一段声音',description:`最长 ${SOUND_SOURCE_MAX_MS/1000} 秒，录好后先听一听再用。`,start:'开始录音',stop:'停止',retake:'重录',use:'用这段声音',starting:'正在打开麦克风…'},
  // Library dialog
- libraryDialog:{title:'从声音库挑选',description:'先试听，再选用。',pick:'选用',current:'当前',scopes:'班级和公共声音库还未开放。'},
+ libraryDialog:{title:'从声音库挑选',description:'先试听，再选用。',pick:'选用',current:'当前',scopes:'本页临时声音不等于已入库；个人和老师共享库需要老师登录并试听确认。'},
  reading:'正在读取声音…',
  defaultRecordingName:'我的录音',
  errors:{

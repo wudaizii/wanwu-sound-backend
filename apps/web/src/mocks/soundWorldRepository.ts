@@ -16,6 +16,7 @@ export const mockSoundWorldRepository:SoundWorldRepository={
    case 'example':return {status:'ready',units:(await bundledSoundLibrary.list()).examples.map(example=>exampleUnit(example.id,0))};
    case 'mine':return {status:'ready',units:workSession.current()?.units.filter(unit=>unit.input!=='example-preset')??[]};
    case 'class':return {status:'unavailable',reason:'needs-account'};
+   case 'teachers':return {status:'unavailable',reason:'needs-account'};
    case 'public':return {status:'unavailable',reason:'needs-review'};
   }
  },

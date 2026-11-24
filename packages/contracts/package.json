@@ -6,6 +6,9 @@
  "description": "前后端共用的数据契约（类型 + 校验），源码直接以 TypeScript 发布给工作区使用",
  "exports": {
   "./sound": "./src/sound.ts",
+  "./account": "./src/account.ts",
+  "./api": "./src/api.ts",
+  "./cloud": "./src/cloud.ts",
   "./arrangement": "./src/arrangement.ts",
   "./work": "./src/work.ts",
   "./textbook": "./src/textbook.ts",

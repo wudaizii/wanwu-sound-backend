@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import {Logo} from './Logo';
+import {AccountEntry} from '../account/AccountEntry';
 import styles from './FlowHeader.module.css';
 
 type Step={id:string;label:string;path:string|null};
@@ -26,5 +27,6 @@ export function FlowHeader({steps,current,onNavigate,aside}:{steps:readonly Step
   </nav>
   {index>=0&&<p className={styles.compact} aria-hidden="true">{index+1} / {steps.length}</p>}
   <div className={styles.aside}>{aside}</div>
+  <AccountEntry className={styles.account}/>
  </header>;
 }

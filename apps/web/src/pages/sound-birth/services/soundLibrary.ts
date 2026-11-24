@@ -5,7 +5,7 @@ import {EXAMPLE_PROVENANCE_URL,exampleSourceId} from '../../../shared/creation/e
 import type {ExampleSound} from '../../../shared/creation/exampleSounds.ts';
 import type {ArchiveSnapshot} from '../../../shared/creation/sourceArchive.ts';
 
-export type LibraryItem={source:SoundSource;url:string|null};
+export type LibraryItem={source:SoundSource;url:string|null;cloud?:boolean};
 export type LibraryGroup={id:string;title:string;note:string;items:LibraryItem[]};
 
 export const EXAMPLE_GROUP='示例声音';
@@ -18,11 +18,12 @@ export const exampleLibraryItem=(example:ExampleSound):LibraryItem=>({
 });
 
 /** Examples first, then local sources grouped by their 分组 (ungrouped last). Parts of examples are not listed again. */
-export function libraryGroups(examples:readonly LibraryItem[],local:ArchiveSnapshot):LibraryGroup[]{
+export function libraryGroups(examples:readonly LibraryItem[],local:ArchiveSnapshot,cloud:readonly {scope:'mine'|'teachers';source:SoundSource;url:string}[]=[]):LibraryGroup[]{
  const byGroup=new Map<string,LibraryItem[]>();
  for(const source of local){
-  if(source.kind==='example')continue;const key=source.provenance.group??'';byGroup.set(key,[...(byGroup.get(key)??[]),{source,url:null}]);}
+  if(source.kind==='example'||cloud.some(entry=>entry.source.id===source.id))continue;const key=source.provenance.group??'';byGroup.set(key,[...(byGroup.get(key)??[]),{source,url:null}]);}
  const groups=[...byGroup.entries()].sort(([a],[b])=>a===''?1:b===''?-1:a.localeCompare(b,'zh-Hans-CN'))
-  .map(([group,items])=>({id:`local:${group}`,title:group||'未分组',note:'本机 · 未上传',items}));
- return [{id:'examples',title:EXAMPLE_GROUP,note:'随网页提供 · 可查看来源与许可',items:[...examples]},...groups];
+  .map(([group,items])=>({id:`local:${group}`,title:group||'本页未分组',note:'本页临时声音 · 不等于已入库',items}));
+ const saved:LibraryGroup[]=(['mine','teachers'] as const).map(scope=>({id:scope,title:scope==='mine'?'个人素材库':'老师共享素材库',note:'已试听确认',items:cloud.filter(entry=>entry.scope===scope).map(entry=>({source:entry.source,url:entry.url,cloud:true}))}));
+ return [{id:'examples',title:EXAMPLE_GROUP,note:'随网页提供 · 可查看来源与许可',items:[...examples]},...saved.filter(group=>group.items.length),...groups];
 }

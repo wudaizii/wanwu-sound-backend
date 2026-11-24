@@ -5,11 +5,11 @@
   "type": "module",
   "description": "万物声谱正式 H5 前端，按页面逐步验收",
   "engines": { "node": ">=22.22.0" },
-  "workspaces": ["apps/web", "packages/contracts", "packages/sound-rules", "packages/prompts"],
+  "workspaces": ["apps/web", "packages/contracts", "packages/sound-rules", "packages/prompts", "packages/audio-engine"],
   "scripts": {
     "dev": "npm run dev --workspace=@wanwu-v2/web",
     "typecheck": "npm run typecheck --workspace=@wanwu-v2/web",
-    "test": "node --experimental-strip-types --test apps/web/tests/*.test.ts packages/sound-rules/tests/*.test.ts packages/prompts/tests/*.test.ts",
+    "test": "node --experimental-strip-types --test apps/web/tests/*.test.ts packages/sound-rules/tests/*.test.ts packages/prompts/tests/*.test.ts packages/audio-engine/tests/*.test.ts",
     "check:assets": "node scripts/check-assets.mjs",
     "check:styles": "node scripts/check-styles.mjs",
     "assets:build": "node scripts/build-assets.mjs && node scripts/build-title-assets.mjs && node scripts/build-art-assets.mjs docs/assets/marker-recipe.json docs/assets/marker-hero-recipe.json && node scripts/build-library-audio.mjs",
@@ -17,5 +17,5 @@
     "build": "npm run typecheck && npm run check:assets && npm run check:styles && npm run build --workspace=@wanwu-v2/web",
     "preview": "npm run preview --workspace=@wanwu-v2/web"
   },
-  "devDependencies": {"typescript":"6.0.3","@types/node":"24.19.2","sharp":"0.35.5"}
+  "devDependencies": {"typescript":"6.0.3","@types/node":"24.19.2","sharp":"0.35.5","playwright":"1.64.1","esbuild":"0.28.2"}
 }

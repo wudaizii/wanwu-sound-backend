@@ -125,7 +125,7 @@ test('library: examples first, then this device grouped by 分组, ungrouped las
  archive.save(at('r1',null,'小林'),fake);archive.save(at('r2','秋天的后山','小周'),fake);archive.save(at('r3','秋天的后山','小林'),fake);
  const exampleItem={url:'/x.mp3',source:example};
  const groups=libraryGroups([exampleItem],archive.list());
- assert.deepEqual(groups.map(group=>group.title),['示例声音','秋天的后山','未分组']);
+ assert.deepEqual(groups.map(group=>group.title),['示例声音','秋天的后山','本页未分组']);
  assert.equal(groups[1]!.items.length,2);
  assert.ok(groups[0]!.items.every(item=>item.source.kind==='example'&&item.source.provenance.provenanceUrl));
  assert.deepEqual(archive.recent('recordedBy'),['小林','小周']);

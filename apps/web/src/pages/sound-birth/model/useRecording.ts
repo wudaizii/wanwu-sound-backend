@@ -8,7 +8,7 @@ import {birthCopy} from '../config/copy';
 import type {Notify} from './localSource';
 
 export type RecordPhase='idle'|'starting'|'recording'|'review';
-export type Take={buffer:AudioBuffer;mimeType:string};
+export type Take={buffer:AudioBuffer;mimeType:string;original:Blob};
 
 /** The recording dialog: idle → starting → recording → review → use / retake. The take stays in memory until used. */
 export function useRecording(player:SequencePlayer,playing:string|null,notify:Notify,onUse:(take:Take)=>void){
@@ -40,7 +40,7 @@ export function useRecording(player:SequencePlayer,playing:string|null,notify:No
   try{
    const blob=await active.stop();
    const buffer=await decodeAudio(await blob.arrayBuffer());
-   setTake({buffer,mimeType:blob.type||'audio/webm'});setPhase('review');
+   setTake({buffer,mimeType:blob.type||'audio/webm',original:blob});setPhase('review');
   }catch(reason){setPhase('idle');notify('bar',birthCopy.errors[reason instanceof RecorderError?reason.reason:'failed']);}
  }
  const listen=()=>{if(!take)return;if(playing==='take')return player.stop();void player.playOne('take',take.buffer,originalGainOf(take.buffer));};

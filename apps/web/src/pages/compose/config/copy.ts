@@ -92,7 +92,7 @@ export const composeCopy={
  notices:{
   'need-event':'声场里还没有声音，先回声场摆一摆吧。',
   'example-save':'这是示例摆放。回声场自己摆一摆，再来保存吧。',
-  'share-off':'分享需要账号、班级空间和审核，暂未开放。',
+  'share-off':'请先用受邀老师账号登录，正式保存并试听确认后，才可发布免登录作品链接。',
   'save-failed':'没能放进书架，再试一次吧。',
   'load-failed':'网络有点慢，声音没加载出来，再点一次试试。',
   'no-audio':'这个浏览器不能播放声音。',

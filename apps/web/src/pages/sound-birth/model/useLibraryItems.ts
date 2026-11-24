@@ -8,6 +8,7 @@ import type {SoundSource} from '@wanwu-v2/contracts/sound';
 import {birthCopy} from '../config/copy';
 import type {LibraryItem} from '../services/soundLibrary';
 import type {Notify} from './localSource';
+import {authorizedSource} from '../../../shared/audio/authorizedSource';
 
 /** 从声音库挑选: load an item once (one request at a time), preview it, or take it as the source. */
 export function useLibraryItems(player:SequencePlayer,playing:string|null,notify:Notify,cache:{get:(id:string)=>AudioBuffer|null|undefined;set:(id:string,buffer:AudioBuffer)=>void},
@@ -21,6 +22,7 @@ export function useLibraryItems(player:SequencePlayer,playing:string|null,notify
   notify('bar',reason instanceof AudioLoadError&&reason.reason==='decode'?birthCopy.fileUnreadable:birthCopy.slowNetwork);
  };
  const itemBuffer=async(item:LibraryItem)=>{
+  if(item.cloud){const pending=authorizedSource(item.source.id);if(!pending)throw new AudioLoadError('network');const buffer=await pending;cache.set(item.source.id,buffer);return buffer;}
   const cached=cache.get(item.source.id);if(cached)return cached;
   if(!item.url)throw new AudioLoadError('network');
   loads.current?.abort();const controller=new AbortController();loads.current=controller;

@@ -9,7 +9,7 @@ export const shelfCopy={
  subtitle:'这次打开以来放进书架的小曲子，都在这里。',
  bubble:(count:number)=>count?`书架上有 ${count} 首小曲子，点「听一听」就能听，点「打开曲谱」回到万物成曲。`:'书架还空着。做完一首，点「保存这首作品」就会放到这里。',
  sessionBadge:'仅本次打开期间保留 · 刷新就没了',
- accountNote:'保存到账号、分享给班级还没有开放。',
+ accountNote:'登录后可主动保存到账号书架，并另行试听确认分享。',
  empty:'还没有作品',
  emptyHint:'在万物成曲点「保存这首作品」，它就会出现在这里。',
  makeOne:'去做一首',goCompose:'回到万物成曲',

@@ -5,7 +5,7 @@ import type {Classroom} from './classroom';
 
 const copy={library:'声音库',shelf:'作品书架',classroomOn:'大屏',classroomOff:'退出大屏',classroomLabel:'课堂大屏：全屏、大字、大按钮',
  libraryTitle:'声音库在万物声场里',
- libraryBody:['回到万物声场，点「找更多声音」，就能加示例声音和自己做的声音。','班级和公共声音库还没有开放。'],
+ libraryBody:['回到万物声场，点「找更多声音」，就能加示例声音和自己做的声音。','受邀老师登录后，可在上方「素材确认」将声音加入个人或老师共享库。两种库都需要试听确认。'],
  goWorld:'去万物声场',stay:'留在这里'};
 
 /**

@@ -19,7 +19,8 @@ test('an uploaded source is a source; a recording may run past the limit only by
  assert.equal(isSoundSource({...uploaded,durationMs:SOUND_SOURCE_MAX_MS+SOUND_SOURCE_SLACK_MS+1}),false,'longer than 45 s');
  assert.ok(isSoundSource({...uploaded,kind:'example',durationMs:90_000}),'bundled examples are whole recordings');
  assert.equal(isSoundSource({...uploaded,kind:'cloud'}),false,'unknown kind');
- assert.equal(isSoundSource({...uploaded,mimeType:'video/mp4'}),false,'not audio');
+ assert.ok(isSoundSource({...uploaded,mimeType:'video/mp4'}),'a browser MIME hint cannot replace real server audio validation');
+ assert.equal(isSoundSource({...uploaded,mimeType:'text/html'}),false,'non-media hint');
  assert.equal(isSoundSource({...uploaded,provenance:{...uploaded.provenance,place:3}}),false,'provenance is text or null');
 });
 

@@ -17,8 +17,8 @@ import type {ComposeSettings} from '@wanwu-v2/contracts/work';
 import type {SoundUnitDraft} from '@wanwu-v2/contracts/sound';
 import type {SaveResult} from '../../../shared/creation/workSession';
 
-export type LibraryScope='example'|'mine'|'class'|'public';
-export const libraryScopes:readonly LibraryScope[]=['example','mine','class','public'];
+export type LibraryScope='example'|'mine'|'teachers'|'class'|'public';
+export const libraryScopes:readonly LibraryScope[]=['example','mine','teachers'];
 /** `needs-account`: class spaces need teacher sign-in; `needs-review`: public sounds need review and licensing. */
 export type ScopeResult={status:'ready';units:SoundUnitDraft[]}|{status:'unavailable';reason:'needs-account'|'needs-review'};
 

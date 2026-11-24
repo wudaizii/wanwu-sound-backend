@@ -71,7 +71,7 @@ export function ComposePage({onNavigate}:{onNavigate:(path:string)=>void}){
  const text=guideText(compose);
  const savedNote=compose.state.lastAction==='saved'&&compose.shelved;
  const requestSave=()=>{if(compose.canSave())setDialog('save');};
- const startAgain=async()=>{setDialog(null);await compose.startNew();onNavigate('/create');};
+ const startAgain=async()=>{if(await compose.startNew()){setDialog(null);onNavigate('/create');}};
  const again=()=>{
   const arrangement=compose.state.arrangement;
   // Only the child's own, unshelved piece would be lost; an example or an empty field just moves on.

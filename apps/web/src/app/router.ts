@@ -2,22 +2,28 @@
 import {useCallback,useEffect,useState} from 'react';
 
 /** `lab`: 调音台, `lab-prompts`: 提示词台 — only built in development or a preview build (the app falls back to home elsewhere). */
-export type Route={page:'home'}|{page:'sound-birth'}|{page:'sound-world'}|{page:'compose'}|{page:'works'}|{page:'lab'}|{page:'lab-prompts'};
+export type Route={page:'home'}|{page:'sound-birth'}|{page:'sound-world'}|{page:'compose'}|{page:'works'}|{page:'lab'}|{page:'lab-prompts'}|{page:'reset-password'}|{page:'admin'}|{page:'share';token:string};
 
 export function parseRoute(pathname:string):Route{
  const path=pathname.replace(/\/+$/,'');
+ const share=/^\/share\/([A-Za-z0-9_-]{1,128})$/.exec(path);if(share)return {page:'share',token:share[1]!};
+ if(path==='/admin')return {page:'admin'};
  if(path==='/world')return {page:'sound-world'};
  if(path==='/compose')return {page:'compose'};
  if(path==='/works')return {page:'works'};
  if(path==='/create')return {page:'sound-birth'};
+ if(path==='/reset-password')return {page:'reset-password'};
  if(path==='/lab/sound-rules')return {page:'lab'};
  if(path==='/lab/prompts')return {page:'lab-prompts'};
  return {page:'home'};
 }
 export function routeHref(route:Route){
+ if(route.page==='share')return `/share/${route.token}`;
+ if(route.page==='admin')return '/admin';
  if(route.page==='sound-world')return '/world';
  if(route.page==='compose')return '/compose';
  if(route.page==='works')return '/works';
+ if(route.page==='reset-password')return '/reset-password';
  if(route.page==='lab')return '/lab/sound-rules';
  if(route.page==='lab-prompts')return '/lab/prompts';
  return route.page==='home'?'/':'/create';

@@ -1,0 +1,19 @@
+.dialog{width:min(520px,calc(100vw - 40px));padding:42px 28px 26px;border:1px solid var(--wk-line-strong);border-radius:24px;color:var(--wk-ink)}
+.notice{margin:20px 0;padding:12px 16px;border-radius:12px;background:var(--wk-green-soft);color:var(--wk-ink-soft);font-size:var(--font-label);line-height:var(--line-body)}
+.hint{margin:7px 0 16px;color:var(--wk-muted);font-size:var(--font-label);line-height:var(--line-body)}
+.tabs,.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:18px 0}
+.tabs button,.primary,.secondary{min-width:0;max-width:100%;min-height:44px;padding:10px 20px;border:0;border-radius:999px;font-size:var(--font-control);line-height:var(--line-control);white-space:normal}
+.tabs button,.secondary{background:var(--wk-soft);color:var(--wk-ink-soft)}
+.tabs button[aria-pressed=true],.primary{background:var(--wk-selected-fill);box-shadow:var(--wk-selected-lift);color:var(--wk-on-fill)}
+.form fieldset{min-width:0;margin:0;padding:0;border:0}
+.form label{display:block;margin:16px 0 7px;font-size:var(--font-control);font-weight:600}
+.form input{display:block;min-width:0;width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--wk-line-strong);border-radius:9px;background:#fff;color:var(--wk-ink);font:inherit;font-size:max(1rem,var(--font-control));line-height:var(--line-control)}
+.form input:focus{outline:2px solid var(--wk-lime);outline-offset:1px}
+.form button:disabled,.actions button:disabled,.tabs button:disabled,.secondary:disabled{cursor:wait;opacity:.6}
+.status{min-height:1.6em;margin:14px 0;font-size:var(--font-label);line-height:var(--line-body);color:var(--wk-ink-soft)}
+.error{margin:14px 0;color:#ae4455;font-size:var(--font-body);line-height:var(--line-body);overflow-wrap:anywhere}
+.error p{margin:0 0 10px}.identity{font-size:var(--font-control);overflow-wrap:anywhere}
+.reset{display:grid;min-height:100dvh;place-items:center;padding:24px;background:var(--wk-cream);color:var(--wk-ink)}
+.resetCard{width:min(520px,100%);padding:28px;border:1px solid var(--wk-line-strong);border-radius:24px;background:#fff}
+.resetCard h1{font-size:var(--font-dialog-title);line-height:var(--line-title)}
+@media(--sheet-narrow){.dialog{width:calc(100vw - 24px);padding:46px 18px 22px}.reset{padding:12px}.resetCard{padding:22px 18px}.tabs,.actions{gap:8px}.tabs button,.primary,.secondary{padding:10px 16px}}

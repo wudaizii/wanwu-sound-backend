@@ -1,4 +1,5 @@
-import {getAudioContext} from './audioContext';
+import {RENDER_SAMPLE_RATE} from '@wanwu-v2/audio-engine/pcm';
+let decoder:OfflineAudioContext|null=null;
 
 export class AudioLoadError extends Error{
  readonly reason:'timeout'|'network'|'decode'|'aborted';
@@ -6,7 +7,11 @@ export class AudioLoadError extends Error{
 }
 
 export async function decodeAudio(bytes:ArrayBuffer){
- try{return await getAudioContext().decodeAudioData(bytes);}catch{throw new AudioLoadError('decode');}
+ try{
+  const Offline=window.OfflineAudioContext||(window as unknown as {webkitOfflineAudioContext:typeof OfflineAudioContext}).webkitOfflineAudioContext;
+  decoder??=new Offline(1,1,RENDER_SAMPLE_RATE);
+  return await decoder.decodeAudioData(bytes);
+ }catch{throw new AudioLoadError('decode');}
 }
 
 /** Fetch + decode with a deadline, so a weak connection ends in a clear retry state instead of an endless spinner. */

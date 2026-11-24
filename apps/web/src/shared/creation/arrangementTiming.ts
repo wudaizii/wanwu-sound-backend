@@ -3,18 +3,15 @@
 // Only left → right changes what is heard; rows only keep sounds from covering each other.
 import {SPAN_CHOICES,eventsInOrder} from '@wanwu-v2/contracts/arrangement';
 import type {Arrangement,PlacedEvent,SourceClip,SpanSeconds} from '@wanwu-v2/contracts/arrangement';
-import type {ChosenShape,SoundAnalysis,SoundUnitDraft} from '@wanwu-v2/contracts/sound';
-import {clipHeardSeconds} from '@wanwu-v2/sound-rules/shaping';
+import type {SoundUnitDraft} from '@wanwu-v2/contracts/sound';
+import {heardSeconds,unitOf} from '@wanwu-v2/audio-engine/timeline';
+export {heardSeconds,unitOf,planPlayback,timedEvents,pieceSeconds} from '@wanwu-v2/audio-engine/timeline';
+export type {PlannedEvent,TimedEvent} from '@wanwu-v2/audio-engine/timeline';
 
 /** Room a marker takes on either side of its start, in field units (keeps markers and names apart). */
 export const MARKER_HALF=.05;
 
 export const clipSeconds=(clip:SourceClip)=>(clip.endMs-clip.startMs)/1000;
-/** How long this occurrence is heard: the excerpt with the card's 长短 (stretch) and 出现方式 (layout); 高低 keeps the length. */
-export function heardSeconds(unit:Pick<SoundUnitDraft,'shape'|'analysis'>,event:Pick<PlacedEvent,'clip'>){
- return clipHeardSeconds(unit.shape,unit.analysis??null,event.clip);
-}
-export function unitOf(arrangement:Arrangement|null,unitId:string){return arrangement?.units.find(unit=>unit.id===unitId)??null;}
 
 /** The stretch of field an occurrence covers: its marker plus its length tail. */
 function coverage(arrangement:Arrangement,event:PlacedEvent):[number,number]{
@@ -86,32 +83,4 @@ export const spanHolds=(arrangement:Arrangement,spanSeconds:SpanSeconds)=>spanSe
 export function fitSpan(arrangement:Arrangement):Arrangement{
  const needed=minSpan(arrangement);
  return needed>arrangement.spanSeconds?withSpan(arrangement,needed):arrangement;
-}
-
-/** One scheduled occurrence for playback: when it starts, which excerpt, and the sound card's own shape. */
-export type PlannedEvent={eventId:string;unitId:string;sourceId:string;startSeconds:number;clip:SourceClip;shape:ChosenShape;analysis:SoundAnalysis|null};
-/** Playback order and timing derived from the arrangement only — the same data the field and the score read. */
-export function planPlayback(arrangement:Arrangement):PlannedEvent[]{
- return eventsInOrder(arrangement.events).flatMap(event=>{
-  const unit=unitOf(arrangement,event.unitId);
-  return unit?[{eventId:event.id,unitId:unit.id,sourceId:unit.sourceId,startSeconds:event.at*arrangement.spanSeconds,clip:event.clip,shape:unit.shape,analysis:unit.analysis??null}]:[];
- });
-}
-
-/** Every occurrence with its unit, row, start and heard length in seconds, in listening order. */
-export type TimedEvent={event:PlacedEvent;unit:SoundUnitDraft;start:number;seconds:number;end:number};
-export function timedEvents(arrangement:Arrangement):TimedEvent[]{
- return eventsInOrder(arrangement.events).flatMap(event=>{
-  const unit=unitOf(arrangement,event.unitId);if(!unit)return [];
-  const start=event.at*arrangement.spanSeconds,seconds=heardSeconds(unit,event);
-  return [{event,unit,start,seconds,end:start+seconds}];
- });
-}
-/**
- * How long the whole piece really lasts: the chosen length, or longer when a sound is still sounding at the end (the
- * field plays every sound in full, so the piece does too). Rounded up to a tenth of a second.
- */
-export function pieceSeconds(arrangement:Arrangement){
- const last=Math.max(0,...timedEvents(arrangement).map(item=>item.end));
- return Math.max(arrangement.spanSeconds,Math.ceil(last*10-1e-6)/10);
 }

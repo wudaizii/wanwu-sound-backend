@@ -12,12 +12,13 @@
 .steps [data-state=current] .num{background:var(--wk-green,#c0e64f);color:var(--wk-on-fill,#2f3b10)}
 .compact{display:none;margin:0;padding:6px 12px;border-radius:16px;background:var(--wk-soft,#f4f6f3);font-size:var(--font-small);font-weight:700;color:var(--wk-muted,#7b857e);font-variant-numeric:tabular-nums}
 .aside{display:flex;justify-content:flex-end;gap:6px;min-width:96px}
-.aside button{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border:0;border-radius:19px;background:var(--wk-soft,#f4f6f3);color:#5c635d;font-size:var(--font-body);font-weight:600;white-space:nowrap;transition:background .16s,transform .12s}
-.aside button:hover{background:#eceee8;color:var(--wk-ink,#252525)}.aside button[aria-current=page]{background:var(--wk-green-soft,#f5fcdc);color:var(--wk-green-text,#55720a);box-shadow:inset 0 0 0 1.5px var(--wk-green-mid,#e2f4a6)}.aside button:active{transform:scale(.96)}.aside svg{width:var(--icon-inline);height:var(--icon-inline)}
-@media(--header-compact){.steps li:not([data-state=current]) .stepLabel{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.steps li:not([data-state=current]) a,.steps li:not([data-state=current]) span{padding:0 6px}.aside{min-width:0}.aside button{padding:0 10px;font-size:var(--font-small)}}
+.aside button,.account{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 14px;border:0;border-radius:19px;background:var(--wk-soft,#f4f6f3);color:#5c635d;font-size:var(--font-body);font-weight:600;white-space:nowrap;transition:background .16s,transform .12s}
+.aside button:hover,.account:hover{background:#eceee8;color:var(--wk-ink,#252525)}.aside button[aria-current=page]{background:var(--wk-green-soft,#f5fcdc);color:var(--wk-green-text,#55720a);box-shadow:inset 0 0 0 1.5px var(--wk-green-mid,#e2f4a6)}.aside button:active,.account:active{transform:scale(.96)}.aside svg,.account svg{width:var(--icon-inline);height:var(--icon-inline)}
+@media(--header-compact){.steps li:not([data-state=current]) .stepLabel{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.steps li:not([data-state=current]) a,.steps li:not([data-state=current]) span{padding:0 6px}.aside{min-width:0}.aside button,.account{padding:0 10px;font-size:var(--font-small)}}
 @media(--phone){
  .header{height:auto;min-height:64px;gap:8px;padding:8px 12px}.brand{font-size:var(--font-brand)}
  .steps{padding:0;background:none}.steps li:not([data-state=current]){display:none}
  .header nav{justify-content:flex-start}.steps{min-width:0;max-width:100%}.steps [data-state=current] span{min-width:0;padding-right:10px}
  .compact{display:block;flex-shrink:0;padding:4px 8px}.aside{display:none}
+ .account{flex-shrink:0;width:44px;min-height:44px;padding:0}.account span{display:none}
 }

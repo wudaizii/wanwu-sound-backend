@@ -8,3 +8,4 @@ artifacts/
 .env.*
 !.env.example
 *.tsbuildinfo
+.secrets/

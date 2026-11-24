@@ -18,15 +18,18 @@ import type {Instrument} from '../../shared/background/instruments';
 import {services} from '../../app/services';
 import {WorkCard} from './components/WorkCard';
 import styles from './WorksPage.module.css';
+import {useCloud} from '../../shared/cloud/CloudProvider';
 
-/** 作品书架: the works put on the shelf during this visit (in memory — a refresh empties it). 听一听 plays one here; 打开曲谱
- *  returns to 万物成曲; a work can be renamed or taken off the shelf. */
+/** 作品书架: cloud snapshots for the account, or in-memory works for guests. 听一听 plays one here; 打开曲谱 returns to
+ *  万物成曲. Rename/delete use the selected repository, never page-level database or storage access. */
 export function WorksPage({onNavigate}:{onNavigate:(path:string)=>void}){
  const shelf=useWorkShelf();
+ const {accountId}=useCloud();
  const [asking,setAsking]=useState<SavedWork|null>(null);
  const [renaming,setRenaming]=useState<{work:SavedWork;title:string}|null>(null);
  const [removing,setRemoving]=useState<SavedWork|null>(null);
  const [failure,setFailure]=useState<ShelfPlayFailure|null>(null);
+ const [openError,setOpenError]=useState('');
  // What the background needs to play a saved work as it was kept: the instruments and the textbook songs.
  const [instruments,setInstruments]=useState<readonly Instrument[]>([]);
  const [tracks,setTracks]=useState<readonly TextbookTrack[]>([]);
@@ -36,15 +39,16 @@ export function WorksPage({onNavigate}:{onNavigate:(path:string)=>void}){
   return()=>{live=false;};
  },[]);
  const player=useShelfPlayer(instruments,tracks,setFailure);
- const open=(work:SavedWork)=>{player.stop();void shelf.open(work).then(()=>onNavigate('/compose'));};
+ const open=(work:SavedWork)=>{player.stop();setOpenError('');void shelf.open(work).then(()=>onNavigate('/compose')).catch(()=>setOpenError('暂时无法打开，当前创作仍保留。请检查上方云端状态后重试。'));};
  const text=failure?shelfCopy.failures[failure]:shelfCopy.bubble(shelf.works.length);
  const saveName=async()=>{if(renaming&&await shelf.rename(renaming.work.id,renaming.title))setRenaming(null);};
  return <div className={styles.shell}>
   <WorkBackdrop/>
   <FlowHeader steps={flowSteps} current={null} onNavigate={onNavigate} aside={<WorkHeaderActions onNavigate={onNavigate} current="shelf"/>}/>
   <main className={styles.page}>
-   <WorkIntro title={shelfCopy.title} subtitle={shelfCopy.subtitle} guide={shelfGuide} text={text} rekey={false} className={styles.intro}/>
-   <p className={styles.session}><span><KidIcon name="lock"/>{shelfCopy.sessionBadge}</span>{shelfCopy.accountNote}</p>
+   <WorkIntro title={shelfCopy.title} subtitle={accountId?'账号中正式保存的小曲子，都在这里。':shelfCopy.subtitle} guide={shelfGuide} text={text} rekey={false} className={styles.intro}/>
+   <p className={styles.session}><span><KidIcon name="lock"/>{accountId?'账号书架 · 默认仅自己可见':shelfCopy.sessionBadge}</span>{accountId?'编辑草稿不会自动改变已发布作品；分享需另行确认。':shelfCopy.accountNote}</p>
+   {openError&&<p role="alert">{openError}</p>}
    {shelf.works.length?<ul className={styles.grid}>
     {shelf.works.map(work=><WorkCard key={work.id} work={work} current={shelf.currentId===work.id}
      playing={player.playing===work.id} preparing={player.preparing===work.id} elapsed={player.elapsed}
@@ -61,7 +65,7 @@ export function WorksPage({onNavigate}:{onNavigate:(path:string)=>void}){
     </div>
    </section>}
   </main>
-  {renaming&&<WorkSheet title={shelfCopy.rename.title} description={shelfCopy.rename.description} onClose={()=>setRenaming(null)}>
+  {renaming&&<WorkSheet title={shelfCopy.rename.title} description={accountId?'最多 16 个字。修改账号中的名称，不会自动更新已发布分享。':shelfCopy.rename.description} onClose={()=>setRenaming(null)}>
    <form onSubmit={event=>{event.preventDefault();void saveName();}}>
     <input className={styles.renameField} value={renaming.title} maxLength={WORK_TITLE_MAX} placeholder={shelfCopy.rename.placeholder} aria-label={shelfCopy.rename.title}
      autoFocus onChange={event=>setRenaming({...renaming,title:event.target.value})}/>
@@ -71,7 +75,7 @@ export function WorksPage({onNavigate}:{onNavigate:(path:string)=>void}){
     </div>
    </form>
   </WorkSheet>}
-  {removing&&<WorkSheet title={shelfCopy.remove.title} description={shelfCopy.remove.description(removing.title)} onClose={()=>setRemoving(null)}>
+  {removing&&<WorkSheet title={shelfCopy.remove.title} description={accountId?`将删除「${removing.title}」并撤销其分享。当前页面未保存的修改仍保留。`:shelfCopy.remove.description(removing.title)} onClose={()=>setRemoving(null)}>
    <div className={sheetStyles.actions}>
     <button type="button" className={sheetStyles.secondary} onClick={()=>setRemoving(null)}>{shelfCopy.remove.cancel}</button>
     <button type="button" className={sheetStyles.primary} onClick={()=>{if(player.playing===removing.id)player.stop();void shelf.remove(removing.id);setRemoving(null);}}>{shelfCopy.remove.confirm}</button>
